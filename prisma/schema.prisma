@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Branch {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  code                 String   @unique
+  username             String   @unique
+  email                String   @unique
+  branchName           String   @unique
+  district             String
+  ps                   String
+  password             String
+  address              String
+  photoUrl             String[]
+  teamLeaderName       String
+  teamLeaderPhone      String
+  teamLeaderAddress    String
+  teamLeaderOccupation String
+  teamLeaderPhotoUrl   String
+  presidentName        String
+  presidentAddress     String
+  presidentPhone       String
+  presidentOccupation  String
+  ImamName             String
+  ImamAddress          String
+  ImamPhone            String
+  ImamOccupation       String
+  SecretaryName        String
+  SecretaryAddress     String
+  SecretaryPhone       String
+  SecretaryOccupation  String
+  status               String   @default("BRANCH")
+}
+
+model Loan {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  username   String  @unique
+  name       String
+  code       String  @unique
+  branch     String
+  address    String
+  about      String?
+  disbursed  String
+  recovered  String
+  balance    String
+  form1      String
+  form2      String
+  nidfont    String
+  nidback    String
+  occupation String
+  phone      String
+  photosUrl  String
+  status     Status  @default(RUNNING)
+}
+
+model Admin {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  email    String @unique
+  password String
+  photourl String
+}
+
+model Donor {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  username String @unique
+  email    String @unique
+  code     String @unique
+  password String
+  name     String
+  photoUrl String
+  about    String
+  amount   String
+  lives    String
+  hometown String
+  status   String
+}
+
+model Request {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  loanusername String
+  photoUrl     String
+  amount       String
+  method       String
+  createAt     DateTime @default(now())
+}
+
+model payment {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  loanusername String
+  photoUrl     String
+  amount       String
+  method       String
+  createAt     DateTime @default(now())
+}
+
+model DonorPayment {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  donorUsername String
+  amount        String
+  loanPayment   String
+  type          String?
+  createAt      DateTime @default(now())
+}
+
+enum Status {
+  PENDING
+  RUNNING
+  COMPLETED
+}
