@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss"
+import { withUt } from "uploadthing/tw";
+
 
 const config = {
   darkMode: ["class"],
@@ -7,7 +9,7 @@ const config = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+  ],
   prefix: "",
   theme: {
     container: {
@@ -52,6 +54,8 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        "color-main": "#282561",
+        "color-sub": "#F1592B"
       },
       borderRadius: {
         lg: "var(--radius)",

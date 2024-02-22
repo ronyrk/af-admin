@@ -41,7 +41,7 @@ export interface BranchIProps {
 	SecretaryAddress: string,
 	SecretaryPhone: string,
 	SecretaryOccupation: string,
-	status: string,
+	status?: string,
 };
 export interface UserNameIProps {
 	username: string,
@@ -80,7 +80,7 @@ export interface LoanIProps {
 	occupation: string,
 	phone: string,
 	photosUrl: string,
-	status: string,
+	status?: string,
 };
 
 export interface PaymentIProps {
