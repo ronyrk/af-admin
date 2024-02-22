@@ -2,6 +2,7 @@ import React, { Suspense } from 'react'
 import {
 	Table,
 	TableBody,
+	TableCaption,
 	TableCell,
 	TableHead,
 	TableHeader,
@@ -13,7 +14,6 @@ import { BranchIProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import { Input } from '@/components/ui/input';
 import DeleteButton from '@/components/DeleteButton';
-import { Loader2Icon } from 'lucide-react';
 
 async function BranchList() {
 	unstable_noStore();
@@ -65,7 +65,7 @@ async function page() {
 						<TableHead>DETAILS</TableHead>
 					</TableRow>
 				</TableHeader>
-				<Suspense fallback={<Loader2Icon className="h-10 w-10 text-center py-6 text-blue-500 animate-spin" />} >
+				<Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
 					<BranchList />
 				</Suspense>
 			</Table>
