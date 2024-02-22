@@ -18,11 +18,11 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
 
-function DeleteButton({ username }: { username: string }) {
+function DeleteButton({ username, type }: { username: string, type: string }) {
 	const router = useRouter();
 	const { mutate, isPending } = useMutation({
 		mutationFn: async (username: string) => {
-			const response = await axios.delete(`/api/branch/${username}`);
+			const response = await axios.delete(`/api/${type}/${username}`);
 			return response.data;
 		},
 	});
