@@ -30,11 +30,11 @@ async function BranchList() {
 					<TableRow key={index}>
 						<TableCell className="font-medium">{item.code}</TableCell>
 						<TableCell className="font-medium uppercase">{item.branchName}</TableCell>
-						<TableCell className="font-medium uppercase" >{item.district}</TableCell>
-						<TableCell className="font-medium uppercase">{item.ps}</TableCell>
+						<TableCell className="font-medium " >{item.email}</TableCell>
+						<TableCell className="font-medium ">{item.password}</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Suspense fallback={<h2>Loading...</h2>}>
-								<DeleteButton username={item.username} />
+								<DeleteButton type="branch" username={item.username} />
 							</Suspense>
 						</TableCell>
 					</TableRow>
@@ -60,9 +60,9 @@ async function page() {
 					<TableRow>
 						<TableHead>CODE</TableHead>
 						<TableHead className='md:w-[300px]'>BRANCH</TableHead>
-						<TableHead>DISTRICT</TableHead>
-						<TableHead>PS(TANA)</TableHead>
-						<TableHead>DETAILS</TableHead>
+						<TableHead>Email</TableHead>
+						<TableHead>Password</TableHead>
+						<TableHead>Delete</TableHead>
 					</TableRow>
 				</TableHeader>
 				<Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
