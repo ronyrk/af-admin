@@ -51,7 +51,7 @@ const formSchema = z.object({
 
 function BranchCreate() {
 	const [team, setTeam] = useState<string>("");
-	let branch: string[] = [];
+	const [branch, setBranch] = useState<string[]>([]);
 	const router = useRouter();
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -68,7 +68,6 @@ function BranchCreate() {
 	});
 
 	const upload = branch.length >= 1 && team.length >= 1;
-	console.log(upload, "upload option");
 
 	// 2. Define a submit handler.
 	function onSubmit(values: z.infer<typeof formSchema>) {
@@ -103,11 +102,11 @@ function BranchCreate() {
 		mutate({ username, email, password, branchName, address, photoUrl, teamLeaderName, teamLeaderAddress, teamLeaderPhone, teamLeaderOccupation, teamLeaderPhotoUrl, presidentName, presidentAddress, presidentPhone, presidentOccupation, ImamName, ImamAddress, ImamPhone, ImamOccupation, SecretaryName, SecretaryAddress, SecretaryPhone, SecretaryOccupation, code, district, ps }, {
 			onSuccess: ({ message, result }: { message: string, result: BranchIProps }) => {
 				if (result.id) {
-					toast.success(message)
+					toast.success(message);
 				} else {
 					throw new Error("Branch Created Failed")
 				}
-				router.push('/admin');
+				router.push(`/dashboard`);
 			},
 			onError: (error) => {
 				toast.error("payment Request Created Failed");
@@ -187,16 +186,18 @@ function BranchCreate() {
 								</FormItem>
 							)}
 						/>
-						<div className="flex flex-col justify-center mb-[-10px] p-0">
-							<Label className="pb-[12px]">Photos</Label>
+						<div className="flex flex-col justify-center items-center p-0">
+							<Label className="pb-1">Photos</Label>
 							<UploadButton
-								className="bg-blue-500 h-10 border-2   px-4 rounded-md cursor-pointer "
-								endpoint="imageUploader"
+								className="ut-button:bg-color-sub mb-[-40px] ut-button:ut-readying:bg-color-sub/80"
+								endpoint="branchUploader"
 								onClientUploadComplete={(res) => {
+									let photos = [];
 									// Do something with the response
 									for (const file of res) {
-										branch.push(file.url);
+										photos.push(file.url);
 									}
+									setBranch(photos);
 									toast.success("Image Upload successfully")
 								}}
 								onUploadError={(error: Error) => {
@@ -258,10 +259,10 @@ function BranchCreate() {
 								</FormItem>
 							)}
 						/>
-						<div className="flex flex-col justify-center mb-[-10px] p-0">
-							<Label className="pb-[12px]">Team Leader Photos</Label>
+						<div className="flex flex-col justify-center items-center p-0">
+							<Label className="pb-1">Team Leader Photo</Label>
 							<UploadButton
-								className="bg-blue-500 h-10  px-4 rounded-md cursor-pointer "
+								className="ut-button:bg-color-sub mb-[-30px] ut-button:ut-readying:bg-color-sub/80"
 								endpoint="imageUploader"
 								onClientUploadComplete={(res) => {
 									// Do something with the response
