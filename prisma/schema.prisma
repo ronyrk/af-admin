@@ -49,8 +49,8 @@ model Loan {
   branch     String
   address    String
   about      String?
-  disbursed  String
-  recovered  String
+  disbursed  String?
+  recovered  String?
   balance    String
   form1      String
   form2      String
