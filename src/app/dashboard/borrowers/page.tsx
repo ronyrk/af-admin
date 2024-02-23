@@ -15,7 +15,7 @@ import DeleteButton from '@/components/DeleteButton';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-export async function getUser(username: string) {
+async function getUser(username: string) {
 	unstable_noStore();
 	const res = await fetch(`https://arafatfoundation.vercel.app/api/loan/${username}`);
 	if (!res.ok) {
