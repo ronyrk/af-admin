@@ -83,6 +83,7 @@ async function DonorList() {
 async function page() {
 	return (
 		<div className='flex flex-col'>
+			<h2 className="text-center text-xl">Donor List</h2>
 			<div className="p-2 flex justify-between ">
 				<Button asChild>
 					<Link className=' bg-color-main hover:bg-color-sub' href={`donor/create`}>Donor Create</Link>

@@ -69,9 +69,10 @@ async function DonorPaymentList() {
 async function page() {
 	return (
 		<div className='flex flex-col'>
+			<h2 className="text-center text-xl">Donor Payment</h2>
 			<div className="p-2 flex justify-between ">
 				<Button asChild>
-					<Link className=' bg-color-main hover:bg-color-sub' href={`donor/payment/create`}>Donor payment Create</Link>
+					<Link className=' bg-color-main hover:bg-color-sub' href={`payment/create`}>Donor payment Create</Link>
 				</Button>
 				<Input className='w-64' type="text" placeholder="Search" />
 			</div>
