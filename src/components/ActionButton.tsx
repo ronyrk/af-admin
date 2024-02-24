@@ -47,7 +47,7 @@ function ActionButton({ item }: { item: PaymentApproveIProps }) {
 		<>
 			<AlertDialog>
 				<AlertDialogTrigger><Button className='bg-color-sub' size={"sm"}>
-					Delete
+					Action
 				</Button></AlertDialogTrigger>
 				<AlertDialogContent>
 					<AlertDialogHeader>

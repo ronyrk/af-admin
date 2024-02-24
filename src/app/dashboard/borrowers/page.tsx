@@ -90,6 +90,7 @@ async function BorrowersList() {
 async function page() {
 	return (
 		<div className='flex flex-col'>
+
 			<div className="p-2 flex justify-between ">
 				<Button asChild>
 					<Link className=' bg-color-main hover:bg-color-sub' href={`borrowers/create`}>Borrowers Create</Link>

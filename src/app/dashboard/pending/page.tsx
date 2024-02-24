@@ -116,6 +116,7 @@ async function BorrowersList() {
 async function page() {
 	return (
 		<div className='flex flex-col'>
+			<h2 className="text-center text-xl">Pending Payment Request List</h2>
 			<div className="p-2 flex justify-end">
 				<Input className='w-64' type="text" placeholder="Search" />
 			</div>
