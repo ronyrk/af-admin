@@ -68,6 +68,7 @@ model Admin {
   email    String @unique
   password String
   photourl String
+  username String @unique
 }
 
 model Donor {

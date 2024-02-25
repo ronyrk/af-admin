@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
+import Navbar from "@/components/Navbar";
 
 const inter = Anek_Bangla({ subsets: ["latin"] });
 
@@ -28,6 +29,7 @@ export default function RootLayout({
             <NextSSRPlugin
               routerConfig={extractRouterConfig(ourFileRouter)}
             />
+            <Navbar />
             {children}
             <Toaster />
           </ContextProvider>
