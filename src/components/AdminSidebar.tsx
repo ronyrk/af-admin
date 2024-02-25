@@ -32,8 +32,8 @@ function AdminSidebar() {
 		},
 		{
 			name: "Borrowers Payment Pending",
-			path: "pending",
-			active: false
+			path: "/dashboard/pending",
+			active: path === '/dashboard/pending'
 		}
 	];
 	return (
