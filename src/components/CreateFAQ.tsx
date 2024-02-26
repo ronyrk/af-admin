@@ -14,16 +14,19 @@ import {
 	FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { Textarea } from "@/components/ui/textarea"
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog"
+import { useMutation } from "@tanstack/react-query"
+import axios from "axios"
+import { FaqIProps } from "@/types"
+import toast from "react-hot-toast"
+import { useRouter } from "next/navigation"
 
 
 
@@ -33,16 +36,39 @@ const formSchema = z.object({
 	description: z.string(),
 });
 
-export default function CreateFAQ() {
-
+function CreateFAQ() {
+	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-	})
+	});
+
+	const { mutate, isPending } = useMutation({
+		mutationFn: async ({ title, description }: FaqIProps) => {
+			const response = await axios.post("/api/faq", {
+				title, description
+			});
+			return response.data;
+		},
+	});
 
 	// 2. Define a submit handler.
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		const title = values.title;
 		const description = values.description;
+
+		mutate({ title, description }, {
+			onSuccess: (data: FaqIProps) => {
+				if (data.id) {
+					toast.success("Create Successfully FAQ");
+				} else {
+					throw new Error("Branch Created Failed")
+				}
+				router.refresh();
+			},
+			onError: (error) => {
+				toast.error("Created Failed");
+			}
+		});
 	}
 	return (
 		<div>
@@ -76,7 +102,7 @@ export default function CreateFAQ() {
 											<FormItem>
 												<FormLabel>Description</FormLabel>
 												<FormControl>
-													<ReactQuill {...field} />
+													<Textarea placeholder="Type your message here." {...field} />
 												</FormControl>
 												<FormMessage />
 											</FormItem>
@@ -92,3 +118,5 @@ export default function CreateFAQ() {
 		</div>
 	)
 }
+
+export default CreateFAQ
