@@ -14,8 +14,8 @@ import {
 	FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+// import ReactQuill from "react-quill";
+// import "react-quill/dist/quill.snow.css";
 import {
 	Dialog,
 	DialogContent,
@@ -74,7 +74,7 @@ function CreateFAQ() {
 											<FormItem>
 												<FormLabel>Description</FormLabel>
 												<FormControl>
-													<ReactQuill {...field} />
+													{/* <ReactQuill {...field} /> */}
 												</FormControl>
 												<FormMessage />
 											</FormItem>
