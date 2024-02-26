@@ -24,14 +24,3 @@ export const POST = async (request: Request) => {
 		throw new Error("Data fetch Fail");
 	}
 }
-
-// Deleted branch
-export const DELETE = async (request: Request, { params }: ParamsIdIProps) => {
-	try {
-		const { id } = params;
-		await prisma.faq.delete({ where: { id } });
-		return NextResponse.json({ message: "deleted successfully" });
-	} catch (error) {
-		return NextResponse.json({ error });
-	}
-}

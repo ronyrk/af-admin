@@ -112,3 +112,8 @@ export interface FaqIProps {
 	title: string,
 	description: string,
 }
+export interface FaqProps {
+	id: string,
+	title: string,
+	description: string,
+}
