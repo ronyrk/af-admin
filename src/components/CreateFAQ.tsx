@@ -19,7 +19,6 @@ import "react-quill/dist/quill.snow.css";
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
@@ -33,8 +32,7 @@ const formSchema = z.object({
 	description: z.string(),
 });
 
-export default function CreateFAQ() {
-
+function CreateFAQ() {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 	})
@@ -92,3 +90,5 @@ export default function CreateFAQ() {
 		</div>
 	)
 }
+
+export default CreateFAQ
