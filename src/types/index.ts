@@ -107,3 +107,8 @@ export interface DonorPaymentIProps {
 	createAt?: Date,
 	type: string,
 };
+export interface FaqIProps {
+	id?: string,
+	title: string,
+	description: string,
+}
