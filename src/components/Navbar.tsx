@@ -27,31 +27,37 @@ function Navbar() {
 		setUser(null);
 		localStorage.removeItem("admin");
 	};
+	if (isUserLoading) {
+		return <h2 className=' text-center'>Loading...</h2>
+	}
 	return (
 		<div className=" bg-color-main">
-			<div className='md:px-20 px-4 flex flex-row  justify-end items-center py-6'>
-				<div className=" px-2">
-					{user?.username &&
-						<AlertDialog>
-							<AlertDialogTrigger>
-								<Avatar>
-									<AvatarImage src={user?.photoUrl} />
-									<AvatarFallback>U</AvatarFallback>
-								</Avatar>
-							</AlertDialogTrigger>
-							<AlertDialogContent>
-								<AlertDialogHeader>
-									<AlertDialogTitle>Are you absolutely logout?</AlertDialogTitle>
-								</AlertDialogHeader>
-								<AlertDialogFooter>
-									<AlertDialogCancel className=' text-color-main'>Cancel</AlertDialogCancel>
-									<AlertDialogAction onClick={logOut} >Continue</AlertDialogAction>
-								</AlertDialogFooter>
-							</AlertDialogContent>
-						</AlertDialog>
-					}
-				</div>
-			</div>
+			{
+				isUserLoading ? <h2 className=' text-center py-8'>Loading...</h2> :
+					<div className='md:px-20 px-4 flex flex-row  justify-end items-center py-6'>
+						<div className=" px-2">
+							{user?.username &&
+								<AlertDialog>
+									<AlertDialogTrigger>
+										<Avatar>
+											<AvatarImage src={user?.photoUrl} />
+											<AvatarFallback>U</AvatarFallback>
+										</Avatar>
+									</AlertDialogTrigger>
+									<AlertDialogContent>
+										<AlertDialogHeader>
+											<AlertDialogTitle>Are you absolutely logout?</AlertDialogTitle>
+										</AlertDialogHeader>
+										<AlertDialogFooter>
+											<AlertDialogCancel className=' text-color-main'>Cancel</AlertDialogCancel>
+											<AlertDialogAction onClick={logOut} >Continue</AlertDialogAction>
+										</AlertDialogFooter>
+									</AlertDialogContent>
+								</AlertDialog>
+							}
+						</div>
+					</div>
+			}
 		</div>
 	)
 }

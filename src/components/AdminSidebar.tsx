@@ -12,7 +12,7 @@ interface RoutesIProps {
 
 function AdminSidebar() {
 	const path = usePathname();
-	const { user } = useUser();
+	const { user, isUserLoading } = useUser();
 	const route = path.split('/');
 	const routes: RoutesIProps[] = [
 		{
