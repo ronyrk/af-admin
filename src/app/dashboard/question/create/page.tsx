@@ -27,7 +27,8 @@ import axios from "axios"
 import { FaqIProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import TailwindEditor from "./editor"
+import TailwindEditor from "@/components/editor"
+
 
 
 
@@ -70,52 +71,45 @@ function CreateFAQ() {
 				toast.error("Created Failed");
 			}
 		});
+		console.log(values, "result");
 	}
 	return (
 		<div>
-			<Dialog>
-				<DialogTrigger>
-					<Button>Create FAQ</Button>
-				</DialogTrigger>
-				<div className="px-8">
-					<DialogContent className="sm:w-full">
-						<DialogHeader>
-							<DialogTitle>Create FAQ</DialogTitle>
-							<Form {...form}>
-								<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-									<FormField
-										control={form.control}
-										name="title"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Title</FormLabel>
-												<FormControl>
-													<Input placeholder="title" {...field} />
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={form.control}
-										name="description"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Description</FormLabel>
-												<FormControl>
-													<TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<Button type="submit">Submit</Button>
-								</form>
-							</Form>
-						</DialogHeader>
-					</DialogContent>
-				</div>
-			</Dialog>
+			<div className="p-2">
+				<h2 className="text-center py-2 text-color-main">Create FAQ</h2>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+						<FormField
+							control={form.control}
+							name="title"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Title</FormLabel>
+									<FormControl>
+										<Input placeholder="title" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="description"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Description</FormLabel>
+									<FormControl className="p-2">
+										<TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button type="submit">Submit</Button>
+					</form>
+				</Form>
+
+			</div>
 		</div>
 	)
 }

@@ -2,7 +2,6 @@
 import Link from 'next/link'
 import { redirect, usePathname } from 'next/navigation';
 import React, { useEffect } from 'react'
-import { useUser } from './ContextProvider';
 
 interface RoutesIProps {
 	name: string,
@@ -12,7 +11,6 @@ interface RoutesIProps {
 
 function AdminSidebar() {
 	const path = usePathname();
-	const { user, isUserLoading } = useUser();
 	const route = path.split('/');
 	const routes: RoutesIProps[] = [
 		{
@@ -41,12 +39,6 @@ function AdminSidebar() {
 			active: path === "/dashboard/question"
 		}
 	];
-
-	useEffect(() => {
-		if (!user?.email) {
-			redirect('/');
-		}
-	}, [user?.email]);
 
 	return (
 		<div className='h-[280px]'>

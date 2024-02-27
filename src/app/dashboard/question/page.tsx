@@ -12,6 +12,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import DeleteButtonFAQ from '@/components/DeletedFAQ';
+import TailwindEditor from '@/components/editor';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 async function Question() {
   unstable_noStore();
@@ -39,8 +42,14 @@ async function Question() {
 function page() {
   return (
     <div className=" flex flex-col gap-4">
-      <h2 className=" text-xl text-color-main text-center">FAQ</h2>
-      <CreateFAQ />
+      <div className="">
+        <h2 className=" text-xl text-color-main text-center">FAQ</h2>
+      </div>
+      <div className="flex justify-start gap-2">
+        <Button className=' w-fit' size={"sm"} asChild>
+          <Link href="/dashboard/question/create">Create FAQ</Link>
+        </Button>
+      </div>
       <div className="p-2">
         <Table>
           <TableHeader>

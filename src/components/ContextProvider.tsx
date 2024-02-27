@@ -1,4 +1,5 @@
 "use client";
+import { redirect } from 'next/navigation';
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 
 export interface User {
@@ -48,8 +49,7 @@ export function ContextProvider({ children }: { children: ReactNode }) {
 			};
 			getUser(username);
 		} else {
-			setGust(true);
-			console.log("Guest Users");
+			redirect('/');
 		}
 	}, []);
 

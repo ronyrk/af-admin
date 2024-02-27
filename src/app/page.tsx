@@ -1,18 +1,8 @@
-"use client";
-import { useUser } from '@/components/ContextProvider'
 import { SingInForm } from '@/components/SingInForm'
-import { redirect } from 'next/navigation'
-import React, { useEffect } from 'react'
 
 function Home() {
   // const router = useRouter();
-  const { user } = useUser();
 
-  useEffect(() => {
-    if (user?.email) {
-      redirect('/dashboard');
-    }
-  }, [user?.email]);
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 bg-slate-50 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
