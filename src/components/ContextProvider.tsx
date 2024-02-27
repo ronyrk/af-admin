@@ -37,7 +37,7 @@ export function ContextProvider({ children }: { children: ReactNode }) {
 		if (username) {
 			const getUser = async (username: string) => {
 				try {
-					const res = await fetch(`/api/admin/${username}`);
+					const res = await fetch(`/api/${username}`);
 					const data = await res.json();
 					setUser(data);
 					setIsLoading(false);
