@@ -50,7 +50,7 @@ function AdminSidebar() {
 				redirect('/');
 			}
 		}
-	}, []);
+	}, [user?.email, isUserLoading]);
 
 	return (
 		<div className='h-[280px]'>
