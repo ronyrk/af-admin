@@ -1,5 +1,4 @@
 "use client";
-import { redirect } from 'next/navigation';
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 
 export interface User {
@@ -49,10 +48,9 @@ export function ContextProvider({ children }: { children: ReactNode }) {
 			};
 			getUser(username);
 		} else {
-			redirect('/');
+			// redirect('/');
 		}
 	}, []);
-
 
 	return <GlobalContext.Provider value={{ user, setUser, isUserLoading }} >{children}</GlobalContext.Provider>
 };

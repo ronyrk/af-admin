@@ -97,7 +97,7 @@ export function SingInForm() {
 						</FormItem>
 					)}
 				/>
-				{isPending ? <Button type="submit" disabled>Loading...</Button> : <Button type="submit">Submit</Button>}
+				{isPending ? <Button type="submit" disabled>Loading...</Button> : <Button type="submit">Login</Button>}
 			</form>
 		</Form>
 	);
