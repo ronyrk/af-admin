@@ -12,7 +12,7 @@ interface RoutesIProps {
 
 function AdminSidebar() {
 	const path = usePathname();
-	const { user } = useUser();
+	const { user, isUserLoading } = useUser();
 	const route = path.split('/');
 	const routes: RoutesIProps[] = [
 		{
@@ -43,10 +43,14 @@ function AdminSidebar() {
 	];
 
 	useEffect(() => {
-		if (!user?.email) {
-			redirect('/');
+		if (isUserLoading) {
+			console.log("Loading..")
+		} else {
+			if (!user?.email) {
+				redirect('/');
+			}
 		}
-	}, [user?.email]);
+	}, []);
 
 	return (
 		<div className='h-[280px]'>
