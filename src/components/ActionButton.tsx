@@ -17,10 +17,12 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import ApproveButton from './ApproveButton';
 import { PaymentApproveIProps } from '@/types';
+import { useFormStatus } from 'react-dom';
 
 
 function ActionButton({ item }: { item: PaymentApproveIProps }) {
 	const router = useRouter();
+	const { pending } = useFormStatus()
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: async (id: string) => {
@@ -46,8 +48,10 @@ function ActionButton({ item }: { item: PaymentApproveIProps }) {
 	return (
 		<>
 			<AlertDialog>
-				<AlertDialogTrigger><Button className='bg-color-sub' size={"sm"}>
-					Action
+				<AlertDialogTrigger><Button aria-disabled={pending} className='bg-color-sub' size={"sm"}>
+					{
+						pending ? "Loading..." : "Action"
+					}
 				</Button></AlertDialogTrigger>
 				<AlertDialogContent>
 					<AlertDialogHeader>

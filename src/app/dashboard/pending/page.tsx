@@ -24,48 +24,21 @@ import Moment from "moment"
 import ActionButton from '@/components/ActionButton';
 import prisma from '@/lib/prisma';
 import Image from 'next/image';
+import { GetBranchDetails } from '@/lib/getBranchList';
+import { GetLoanDetails } from '@/lib/getLoanName';
 
-// Loan Details
-async function GetLoanDetails(username: string) {
-	try {
-		unstable_noStore();
-		let res = await fetch(`https://arafatfoundation.vercel.app/api/loan/${username}`);
-		if (!res.ok) {
-			throw new Error("Failed to fetch data");
-		};
-		const loan: LoanIProps = await res.json();
-		const name = loan.name;
-		return name;
-	} catch (error) {
-		throw new Error("Server Error get Loan Details");
-	}
-}
-// Loan to Branch Details
-async function GetBranchDetails(username: string) {
-	try {
-		unstable_noStore();
-		let res = await fetch(`https://arafatfoundation.vercel.app/api/loan/${username}`);
-		if (!res.ok) {
-			throw new Error("Failed to fetch data");
-		};
-		const loan: LoanIProps = await res.json();
-		const BranchUserName = loan.branch;
-		const branch = await prisma.branch.findUnique({ where: { username: BranchUserName } });
-		return `${branch?.branchName}`;
-	} catch (error) {
-		throw new Error("Server Error  Branch");
-	}
-}
+
+
 
 
 
 async function BorrowersList() {
-	let res = await fetch('https://af-admin.vercel.app/api/request', { next: { revalidate: 1 } });
+	unstable_noStore();
+	const res = await fetch('https://af-admin.vercel.app/api/request');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
 	};
 	const payments: PaymentApproveIProps[] = await res.json();
-
 
 	return (
 		<TableBody>
