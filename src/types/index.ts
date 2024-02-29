@@ -97,7 +97,7 @@ export interface PaymentApproveIProps {
 	photoUrl: string,
 	amount: string,
 	method: string,
-	createAt?: Date
+	createAt: Date
 };
 export interface DonorPaymentIProps {
 	id?: string,

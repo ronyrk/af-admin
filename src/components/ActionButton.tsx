@@ -30,7 +30,7 @@ function ActionButton({ item }: { item: PaymentApproveIProps }) {
 	});
 	// // Deleted handler
 	function handleDeleted(id: string) {
-		mutate(item.id, {
+		mutate(id, {
 			onSuccess: (data: any) => {
 				// console.log(data);
 				router.refresh();

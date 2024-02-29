@@ -61,7 +61,7 @@ async function GetBranchDetails(username: string) {
 
 async function BorrowersList() {
 	unstable_noStore();
-	let res = await fetch('https://arafatfoundation.vercel.app/api/requestPayment');
+	let res = await fetch('https://af-admin.vercel.app/api/request');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
 	};
