@@ -18,10 +18,10 @@ export const GET = async () => {
 export const POST = async (request: Request) => {
 	try {
 		const body: PaymentIProps = await request.json();
-		const { loanusername, photoUrl, amount, method } = body;
+		const { loanusername, photoUrl, amount, method, createAt } = body;
 		const payment = await prisma.request.create({
 			data: {
-				loanusername, photoUrl, amount, method
+				loanusername, photoUrl, amount, method, createAt
 			}
 		});
 		return NextResponse.json({ message: "payment Successfully Added", payment });

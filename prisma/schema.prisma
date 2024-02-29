@@ -92,7 +92,7 @@ model Request {
   photoUrl     String
   amount       String
   method       String
-  createAt     DateTime @default(now())
+  createAt     DateTime
 }
 
 model payment {
@@ -101,7 +101,7 @@ model payment {
   photoUrl     String
   amount       String
   method       String
-  createAt     DateTime @default(now())
+  createAt     DateTime
 }
 
 model DonorPayment {
