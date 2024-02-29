@@ -60,8 +60,7 @@ async function GetBranchDetails(username: string) {
 
 
 async function BorrowersList() {
-	unstable_noStore();
-	let res = await fetch('https://af-admin.vercel.app/api/request');
+	let res = await fetch('https://af-admin.vercel.app/api/request', { next: { revalidate: 1 } });
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
 	};

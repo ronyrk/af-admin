@@ -29,7 +29,7 @@ function Navbar() {
 		localStorage.removeItem("admin");
 	};
 	return (
-		<div className=" bg-color-main">
+		<div className=" bg-slate-200">
 			{
 				isUserLoading ? <h2 className=' text-center py-8'>Loading...</h2> :
 					<div className='md:px-20 px-4 flex flex-row  justify-end items-center py-6'>
