@@ -101,15 +101,16 @@ function BranchCreate() {
 		// Branch Created
 		mutate({ username, email, password, branchName, address, photoUrl, teamLeaderName, teamLeaderAddress, teamLeaderPhone, teamLeaderOccupation, teamLeaderPhotoUrl, presidentName, presidentAddress, presidentPhone, presidentOccupation, ImamName, ImamAddress, ImamPhone, ImamOccupation, SecretaryName, SecretaryAddress, SecretaryPhone, SecretaryOccupation, code, district, ps }, {
 			onSuccess: ({ message, result }: { message: string, result: BranchIProps }) => {
-				if (result.id) {
+				if (result?.id) {
 					toast.success(message);
 				} else {
-					throw new Error("Branch Created Failed")
+					throw new Error(message)
 				}
-				router.push(`/dashboard`);
+				// router.push(`/dashboard`);
 			},
-			onError: (error) => {
-				toast.error("payment Request Created Failed");
+			onError: ({ message }: { message: any }) => {
+				console.log(message, "comment");
+				toast.error(message);
 			}
 		});
 	};
