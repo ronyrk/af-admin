@@ -22,7 +22,7 @@ async function getUserName(username: string) {
 		throw new Error("Failed to fetch data");
 	};
 	const user: DonorIProps = await res.json();
-	const name = user.name;
+	const name = user?.name;
 	return name;
 }
 async function getUserStatus(username: string) {
@@ -32,7 +32,7 @@ async function getUserStatus(username: string) {
 		throw new Error("Failed to fetch data");
 	};
 	const user: DonorIProps = await res.json();
-	const status = user.status;
+	const status = user?.status;
 	return status;
 }
 
