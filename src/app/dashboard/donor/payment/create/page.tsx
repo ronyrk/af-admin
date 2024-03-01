@@ -98,7 +98,7 @@ function DonorPaymentCreate() {
 							control={form.control}
 							name="date"
 							render={({ field }) => (
-								<FormItem className="flex flex-col w-[350px]">
+								<FormItem className="flex flex-col">
 									<FormLabel>Date</FormLabel>
 									<Popover>
 										<PopoverTrigger asChild>
