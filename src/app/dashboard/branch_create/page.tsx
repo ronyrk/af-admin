@@ -119,357 +119,372 @@ function BranchCreate() {
 		<div className="">
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-					<div className=" grid grid-cols-3 items-center gap-3">
-						<FormField
-							control={form.control}
-							name="code"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Code</FormLabel>
-									<FormControl>
-										<Input placeholder="code" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+					<div className=" flex flex-col gap-3">
+						<h2 className=" text-lg text-color-main font-medium">Branch Information</h2>
+						<div className=" grid grid-cols-3 gap-3 border-2 rounded p-3">
+							<FormField
+								control={form.control}
+								name="code"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Code</FormLabel>
+										<FormControl>
+											<Input placeholder="code" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-						<FormField
-							control={form.control}
-							name="username"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Username</FormLabel>
-									<FormControl>
-										<Input placeholder="username" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="branchName"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Branch Name</FormLabel>
-									<FormControl>
-										<Input placeholder="Branch Name" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="email"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Email</FormLabel>
-									<FormControl>
-										<Input placeholder="email" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="password"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Password</FormLabel>
-									<FormControl>
-										<Input placeholder="password" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<div className="flex flex-col justify-center items-center p-0">
-							<Label className="pb-1">Photos</Label>
-							<UploadButton
-								className="ut-button:bg-color-sub mb-[-40px] ut-button:ut-readying:bg-color-sub/80"
-								endpoint="branchUploader"
-								onClientUploadComplete={(res) => {
-									let photos = [];
-									// Do something with the response
-									for (const file of res) {
-										photos.push(file.url);
-									}
-									setBranch(photos);
-									toast.success("Image Upload successfully")
-								}}
-								onUploadError={(error: Error) => {
-									// Do something with the error.
-									toast.error(error.message);
-								}}
+							<FormField
+								control={form.control}
+								name="username"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Username</FormLabel>
+										<FormControl>
+											<Input placeholder="username" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="branchName"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Branch Name</FormLabel>
+										<FormControl>
+											<Input placeholder="Branch Name" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="email"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Email</FormLabel>
+										<FormControl>
+											<Input placeholder="email" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="password"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Password</FormLabel>
+										<FormControl>
+											<Input placeholder="password" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<div className="flex flex-col justify-center items-center p-0">
+								<Label className="pb-1">Photos</Label>
+								<UploadButton
+									className="ut-button:bg-color-sub mb-[-40px] ut-button:ut-readying:bg-color-sub/80"
+									endpoint="branchUploader"
+									onClientUploadComplete={(res) => {
+										let photos = [];
+										// Do something with the response
+										for (const file of res) {
+											photos.push(file.url);
+										}
+										setBranch(photos);
+										toast.success("Image Upload successfully")
+									}}
+									onUploadError={(error: Error) => {
+										// Do something with the error.
+										toast.error(error.message);
+									}}
+								/>
+							</div>
+							<FormField
+								control={form.control}
+								name="district"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>District</FormLabel>
+										<FormControl>
+											<Input placeholder="district" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="ps"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>PS</FormLabel>
+										<FormControl>
+											<Input placeholder="ps" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="address"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Address</FormLabel>
+										<FormControl>
+											<Input placeholder="address" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
 							/>
 						</div>
-						<FormField
-							control={form.control}
-							name="district"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>District</FormLabel>
-									<FormControl>
-										<Input placeholder="district" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="ps"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>PS</FormLabel>
-									<FormControl>
-										<Input placeholder="ps" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="address"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Address</FormLabel>
-									<FormControl>
-										<Input placeholder="address" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="teamLeaderName"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Team Leader Name</FormLabel>
-									<FormControl>
-										<Input placeholder="team leader name" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<div className="flex flex-col justify-center items-center p-0">
-							<Label className="pb-1">Team Leader Photo</Label>
-							<UploadButton
-								className="ut-button:bg-color-sub mb-[-30px] ut-button:ut-readying:bg-color-sub/80"
-								endpoint="imageUploader"
-								onClientUploadComplete={(res) => {
-									// Do something with the response
-									setTeam(res[0].url);
-									toast.success("Image Upload successfully")
-								}}
-								onUploadError={(error: Error) => {
-									// Do something with the error.
-									toast.error(error.message);
-								}}
+						<h2 className=" text-lg text-color-main font-medium">Team Leader Information</h2>
+						<div className=" grid grid-cols-3 gap-3 border-2 rounded p-3">
+							<FormField
+								control={form.control}
+								name="teamLeaderName"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Team Leader Name</FormLabel>
+										<FormControl>
+											<Input placeholder="team leader name" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<div className="flex flex-col justify-center items-center p-0">
+								<Label className="pb-1">Team Leader Photo</Label>
+								<UploadButton
+									className="ut-button:bg-color-sub mb-[-30px] ut-button:ut-readying:bg-color-sub/80"
+									endpoint="imageUploader"
+									onClientUploadComplete={(res) => {
+										// Do something with the response
+										setTeam(res[0].url);
+										toast.success("Image Upload successfully")
+									}}
+									onUploadError={(error: Error) => {
+										// Do something with the error.
+										toast.error(error.message);
+									}}
+								/>
+							</div>
+							<FormField
+								control={form.control}
+								name="teamLeaderPhone"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Team Leader Phone</FormLabel>
+										<FormControl>
+											<Input placeholder="team Leader Phone" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="teamLeaderAddress"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Team Leader Address</FormLabel>
+										<FormControl>
+											<Input placeholder="team leader Address" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="teamLeaderOccupation"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Team Leader Occupation</FormLabel>
+										<FormControl>
+											<Input placeholder="occupation" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
 							/>
 						</div>
-						<FormField
-							control={form.control}
-							name="teamLeaderPhone"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Team Leader Phone</FormLabel>
-									<FormControl>
-										<Input placeholder="team Leader Phone" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="teamLeaderAddress"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Team Leader Address</FormLabel>
-									<FormControl>
-										<Input placeholder="team leader Address" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="teamLeaderOccupation"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Team Leader Occupation</FormLabel>
-									<FormControl>
-										<Input placeholder="occupation" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="presidentName"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>President Name</FormLabel>
-									<FormControl>
-										<Input placeholder="name" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="presidentAddress"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>President Address</FormLabel>
-									<FormControl>
-										<Input placeholder="address" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="presidentPhone"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>President Phone</FormLabel>
-									<FormControl>
-										<Input placeholder="phone" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="presidentOccupation"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>President Occupation</FormLabel>
-									<FormControl>
-										<Input placeholder="occupation" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="ImamName"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Imam Name</FormLabel>
-									<FormControl>
-										<Input placeholder="name" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="ImamAddress"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Imam Address</FormLabel>
-									<FormControl>
-										<Input placeholder="address" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="ImamPhone"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Imam Phone</FormLabel>
-									<FormControl>
-										<Input placeholder="phone" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="ImamOccupation"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Imam Occupation</FormLabel>
-									<FormControl>
-										<Input placeholder="occupation" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="SecretaryName"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Secretary Name</FormLabel>
-									<FormControl>
-										<Input placeholder="name" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="SecretaryAddress"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Secretary Address</FormLabel>
-									<FormControl>
-										<Input placeholder="name" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="SecretaryPhone"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Secretary Phone</FormLabel>
-									<FormControl>
-										<Input placeholder="phone" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="SecretaryOccupation"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Secretary Occupation</FormLabel>
-									<FormControl>
-										<Input placeholder="occupation" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						<h2 className=" text-lg text-color-main font-medium" >President Information</h2>
+						<div className=" grid grid-cols-3 gap-3 border-2 rounded p-3">
+							<FormField
+								control={form.control}
+								name="presidentName"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>President Name</FormLabel>
+										<FormControl>
+											<Input placeholder="name" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="presidentAddress"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>President Address</FormLabel>
+										<FormControl>
+											<Input placeholder="address" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="presidentPhone"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>President Phone</FormLabel>
+										<FormControl>
+											<Input placeholder="phone" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="presidentOccupation"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>President Occupation</FormLabel>
+										<FormControl>
+											<Input placeholder="occupation" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+						<h2 className=" text-lg text-color-main font-medium">Imam Information</h2>
+						<div className=" grid grid-cols-3 gap-3 border-2 rounded p-3">
+							<FormField
+								control={form.control}
+								name="ImamName"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Imam Name</FormLabel>
+										<FormControl>
+											<Input placeholder="name" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="ImamAddress"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Imam Address</FormLabel>
+										<FormControl>
+											<Input placeholder="address" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="ImamPhone"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Imam Phone</FormLabel>
+										<FormControl>
+											<Input placeholder="phone" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="ImamOccupation"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Imam Occupation</FormLabel>
+										<FormControl>
+											<Input placeholder="occupation" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+						<h2 className=" text-lg text-color-main font-medium">Secretary Information</h2>
+						<div className=" grid grid-cols-3 gap-3 border-2 rounded p-3">
+							<FormField
+								control={form.control}
+								name="SecretaryName"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Secretary Name</FormLabel>
+										<FormControl>
+											<Input placeholder="name" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="SecretaryAddress"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Secretary Address</FormLabel>
+										<FormControl>
+											<Input placeholder="name" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="SecretaryPhone"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Secretary Phone</FormLabel>
+										<FormControl>
+											<Input placeholder="phone" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="SecretaryOccupation"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Secretary Occupation</FormLabel>
+										<FormControl>
+											<Input placeholder="occupation" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
 					</div>
 					{isPending ? <Button disabled >Loading...</Button> : <Button disabled={upload === false} type="submit">Submit</Button>}
 				</form>

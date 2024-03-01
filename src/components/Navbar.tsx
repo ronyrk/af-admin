@@ -35,7 +35,7 @@ function Navbar() {
 				<div className=" px-2 ">
 					{user?.username &&
 						<div className="flex flex-row items-center gap-4">
-							<Button variant={"secondary"} asChild>
+							<Button className='text-black' variant={"outline"} asChild>
 								<Link href="/dashboard">DashBoard</Link>
 							</Button>
 							<AlertDialog>
@@ -50,8 +50,8 @@ function Navbar() {
 										<AlertDialogTitle>Are you absolutely logout?</AlertDialogTitle>
 									</AlertDialogHeader>
 									<AlertDialogFooter>
-										<AlertDialogCancel className=' text-color-main'>Cancel</AlertDialogCancel>
-										<AlertDialogAction onClick={logOut} >Continue</AlertDialogAction>
+										<AlertDialogCancel className=' text-color-main'>No</AlertDialogCancel>
+										<AlertDialogAction onClick={logOut} >Yes</AlertDialogAction>
 									</AlertDialogFooter>
 								</AlertDialogContent>
 							</AlertDialog>

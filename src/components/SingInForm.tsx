@@ -20,6 +20,9 @@ import { useMutation } from "@tanstack/react-query"
 import { LoginIProps } from "@/types"
 import toast from "react-hot-toast"
 import { useUser } from "./ContextProvider"
+import { useState } from "react"
+import { Eye, EyeOff } from "lucide-react"
+import Link from "next/link"
 
 
 
@@ -32,6 +35,12 @@ const formSchema = z.object({
 
 export function SingInForm() {
 	const { user, setUser } = useUser();
+
+	const [showPassword, setShowPassword] = useState(false);
+	const togglePasswordVisibility = () => {
+		setShowPassword(!showPassword);
+	};
+
 	const router = useRouter();
 	// Login
 	const { mutate, isPending } = useMutation({
@@ -69,36 +78,57 @@ export function SingInForm() {
 	}
 
 	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-				<FormField
-					control={form.control}
-					name="email"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Email</FormLabel>
-							<FormControl>
-								<Input className="bg-white" placeholder="example@gmail.com" {...field} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="password"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Password</FormLabel>
-							<FormControl>
-								<Input className="bg-white" placeholder="password" {...field} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				{isPending ? <Button disabled>Loading...</Button> : <Button type="submit">Login</Button>}
-			</form>
-		</Form>
+		<>
+			{
+				user?.email ? <Button variant={"outline"} size={"lg"} className=" text-black flex justify-center" asChild>
+					<Link href="/dashboard">Dashboard</Link>
+				</Button> : (
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+							<FormField
+								control={form.control}
+								name="email"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Email</FormLabel>
+										<FormControl >
+											<Input className="appearance-none border rounded w-full text-base py-[20px] px-3 leading-tight focus:outline-none focus:shadow-outline" type="email" placeholder="example@gmail.com" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<div className=" relative">
+								<FormField
+									control={form.control}
+									name="password"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Password</FormLabel>
+											<FormControl >
+												<Input className="appearance-none border rounded w-full text-base py-[20px] px-3 leading-tight focus:outline-none focus:shadow-outline" type={showPassword ? 'text' : 'password'} placeholder="password" {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<div
+									className="absolute  bottom-3 right-0 pr-3 flex items-center cursor-pointer"
+									onClick={togglePasswordVisibility}
+								>
+									{showPassword ? (
+										<EyeOff size={20} />
+									) : (
+
+										<Eye size={20} />
+									)}
+								</div>
+							</div>
+							{isPending ? <Button disabled>Loading...</Button> : <Button type="submit">Login</Button>}
+						</form>
+					</Form>
+				)
+			}
+		</>
 	);
 };

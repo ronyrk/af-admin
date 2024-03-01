@@ -116,7 +116,7 @@ function DonorPaymentCreate() {
 							name="amount"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Name</FormLabel>
+									<FormLabel>Amount</FormLabel>
 									<FormControl>
 										<Input type="number" placeholder="Amount" {...field} />
 									</FormControl>

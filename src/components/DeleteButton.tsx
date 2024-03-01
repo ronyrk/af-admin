@@ -51,8 +51,8 @@ function DeleteButton({ username, type }: { username: string, type: string }) {
 						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 					</AlertDialogHeader>
 					{isPending ? <Button disabled>Loading...</Button> : <AlertDialogFooter>
-						<AlertDialogCancel className=' bg-color-main hover:bg-color-main'>Cancel</AlertDialogCancel>
-						<AlertDialogAction className=' bg-color-sub hover:bg-color-sub' onClick={() => handleDeleted(username)}>Continue</AlertDialogAction>
+						<AlertDialogCancel className=' bg-color-main hover:bg-color-main'>No</AlertDialogCancel>
+						<AlertDialogAction className=' bg-color-sub hover:bg-color-sub' onClick={() => handleDeleted(username)}>Yes</AlertDialogAction>
 					</AlertDialogFooter>}
 				</AlertDialogContent>
 			</AlertDialog>
