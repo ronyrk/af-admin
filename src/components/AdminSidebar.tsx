@@ -38,7 +38,7 @@ function AdminSidebar() {
 		{
 			name: "FAQ",
 			path: "/dashboard/question",
-			active: path === "/dashboard/question"
+			active: path === "/dashboard/question" || path === "/dashboard/question/create"
 		}
 	];
 

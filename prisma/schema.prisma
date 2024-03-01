@@ -15,7 +15,7 @@ model Branch {
   code                 String   @unique
   username             String   @unique
   email                String   @unique
-  branchName           String   @unique
+  branchName           String
   district             String
   ps                   String
   password             String
@@ -109,8 +109,8 @@ model DonorPayment {
   donorUsername String
   amount        String
   loanPayment   String
-  type          String?
-  createAt      DateTime @default(now())
+  type          String
+  createAt      DateTime
 }
 
 model Faq {

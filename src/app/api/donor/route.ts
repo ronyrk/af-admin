@@ -24,7 +24,10 @@ export const POST = async (request: Request) => {
 			data: { username, email, code, password, name, photoUrl, about, amount, lives, hometown, status }
 		});
 		return NextResponse.json({ message: "successfully Donor Created", result }, { status: 200 });
-	} catch (error) {
-		return NextResponse.json({ message: error });
+	} catch (error: any) {
+		if (error?.code === 'P2002') {
+			return NextResponse.json({ message: `a new user cannot be created with this ${error?.meta?.target}` });
+		}
+		return NextResponse.json({ message: "Branch Created Failed" });
 	}
 }

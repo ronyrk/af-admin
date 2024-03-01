@@ -9,8 +9,8 @@ export interface DonorIProps {
 	about: string,
 	amount: string,
 	lives: string,
-	hometown: string
-	status: string
+	hometown: string,
+	status: string,
 };
 
 export interface BranchIProps {
@@ -104,7 +104,7 @@ export interface DonorPaymentIProps {
 	donorUsername: string,
 	loanPayment: string,
 	amount: string,
-	createAt?: Date,
+	createAt: Date,
 	type: string,
 };
 export interface FaqIProps {
