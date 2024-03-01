@@ -19,7 +19,11 @@ import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import { DonorIProps, DonorPaymentIProps, LoanIProps } from "@/types"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { DonorPayment } from "@prisma/client"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { CalendarIcon } from "lucide-react"
+import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils"
+import { format } from "date-fns"
 
 
 const formSchema = z.object({
@@ -27,7 +31,11 @@ const formSchema = z.object({
 	amount: z.string(),
 	loanPayment: z.string(),
 	type: z.string(),
+	date: z.date({
+		required_error: "A date is required.",
+	}),
 });
+
 
 function DonorPaymentCreate() {
 	const router = useRouter();
@@ -37,9 +45,9 @@ function DonorPaymentCreate() {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ donorUsername, amount, loanPayment, type }: DonorPaymentIProps) => {
+		mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt }: DonorPaymentIProps) => {
 			const response = await axios.post("/api/donor_payment", {
-				donorUsername, amount, loanPayment, type
+				donorUsername, amount, loanPayment, type, createAt
 			});
 			return response.data;
 		},
@@ -60,8 +68,11 @@ function DonorPaymentCreate() {
 		const amount = values.amount;
 		const loanPayment = values.loanPayment;
 		const type = values.type;
+		const previous = values.date;
+		const createAt = new Date(previous);
+		createAt.setDate(previous.getDate() + 1);
 		// Branch Created
-		mutate({ donorUsername, amount, loanPayment, type }, {
+		mutate({ donorUsername, amount, loanPayment, type, createAt }, {
 			onSuccess: (data: DonorPaymentIProps) => {
 				if (data?.id) {
 					toast.success("Donor Payment Create Successfully");
@@ -83,6 +94,47 @@ function DonorPaymentCreate() {
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
 					<div className=" grid grid-cols-3 items-center gap-3">
+						<FormField
+							control={form.control}
+							name="date"
+							render={({ field }) => (
+								<FormItem className="flex flex-col w-[350px]">
+									<FormLabel>Date</FormLabel>
+									<Popover>
+										<PopoverTrigger asChild>
+											<FormControl>
+												<Button
+													variant={"outline"}
+													className={cn(
+														"text-color-main pl-3 text-left font-normal",
+														!field.value && "text-muted-foreground"
+													)}
+												>
+													{field.value ? (
+														format(field.value, "PPP")
+													) : (
+														<span>Pick a date</span>
+													)}
+													<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+												</Button>
+											</FormControl>
+										</PopoverTrigger>
+										<PopoverContent className="w-auto p-0" align="start">
+											<Calendar
+												mode="single"
+												selected={field.value}
+												onSelect={field.onChange}
+												disabled={(date) =>
+													date > new Date() || date < new Date("1900-01-01")
+												}
+												initialFocus
+											/>
+										</PopoverContent>
+									</Popover>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<FormField
 							control={form.control}
 							name="donorUsername"

@@ -9,8 +9,8 @@ export interface DonorIProps {
 	about: string,
 	amount: string,
 	lives: string,
-	hometown: string
-	status: string
+	hometown: string,
+	status: string,
 };
 
 export interface BranchIProps {
