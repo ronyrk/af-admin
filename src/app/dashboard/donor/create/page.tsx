@@ -218,7 +218,7 @@ function DonorCreate() {
 							name="status"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Team Leader Name</FormLabel>
+									<FormLabel>Donor Or Lender</FormLabel>
 									<FormControl>
 										<Select onValueChange={field.onChange} defaultValue={field.value}>
 											<FormControl>
@@ -227,7 +227,7 @@ function DonorCreate() {
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												<SelectItem value="LEADER">LEADER</SelectItem>
+												<SelectItem value="LEADER">LENDER</SelectItem>
 												<SelectItem value="DONOR">DONOR</SelectItem>
 											</SelectContent>
 										</Select>
