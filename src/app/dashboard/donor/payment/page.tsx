@@ -40,10 +40,6 @@ async function getUserStatus(username: string) {
 	}
 }
 
-async function getStatus(status: string) {
-
-};
-
 
 
 async function DonorPaymentList() {
