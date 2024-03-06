@@ -102,10 +102,10 @@ export interface PaymentApproveIProps {
 export interface DonorPaymentIProps {
 	id?: string,
 	donorUsername: string,
-	loanPayment: string,
-	amount: string,
+	loanPayment?: string,
+	amount?: string,
 	createAt: Date,
-	type: string,
+	type?: string,
 };
 export interface FaqIProps {
 	id?: string,

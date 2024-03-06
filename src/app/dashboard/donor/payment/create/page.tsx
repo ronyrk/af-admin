@@ -29,9 +29,9 @@ import { useState } from "react"
 
 const formSchema = z.object({
 	donorUsername: z.string(),
-	amount: z.string(),
-	loanPayment: z.string(),
-	type: z.string(),
+	amount: z.string().optional(),
+	loanPayment: z.string().optional(),
+	type: z.string().optional(),
 	date: z.date({
 		required_error: "A date is required.",
 	}),
