@@ -17,7 +17,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import { DonorIProps, DonorPaymentIProps, LoanIProps } from "@/types"
+import { DonorIProps, DonorPaymentIProps, DonorPaymentIPropsSend, LoanIProps } from "@/types"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon } from "lucide-react"
@@ -29,9 +29,9 @@ import { useState } from "react"
 
 const formSchema = z.object({
 	donorUsername: z.string(),
-	amount: z.string(),
-	loanPayment: z.string(),
-	type: z.string(),
+	amount: z.string().optional(),
+	loanPayment: z.string().optional(),
+	type: z.string().optional(),
 	date: z.date({
 		required_error: "A date is required.",
 	}),
@@ -57,7 +57,7 @@ function DonorPaymentCreate() {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt }: DonorPaymentIProps) => {
+		mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt }: DonorPaymentIPropsSend) => {
 			const response = await axios.post("/api/donor_payment", {
 				donorUsername, amount, loanPayment, type, createAt
 			});

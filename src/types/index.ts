@@ -107,6 +107,14 @@ export interface DonorPaymentIProps {
 	createAt: Date,
 	type: string,
 };
+export interface DonorPaymentIPropsSend {
+	id?: string,
+	donorUsername: string,
+	loanPayment?: string,
+	amount?: string,
+	createAt: Date,
+	type: string,
+};
 export interface FaqIProps {
 	id?: string,
 	title: string,
