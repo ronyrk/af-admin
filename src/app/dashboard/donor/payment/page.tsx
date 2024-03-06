@@ -33,8 +33,16 @@ async function getUserStatus(username: string) {
 	};
 	const user: DonorIProps = await res.json();
 	const status = user?.status;
-	return status;
+	if (status === "LEADER") {
+		return "LENDER"
+	} else {
+		return status;
+	}
 }
+
+async function getStatus(status: string) {
+
+};
 
 
 
