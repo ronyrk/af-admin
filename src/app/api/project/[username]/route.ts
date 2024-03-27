@@ -2,6 +2,24 @@ import prisma from "@/lib/prisma";
 import { ParamsIdIProps } from "@/types";
 import { NextResponse } from "next/server";
 
+
+export const GET = async (request: Request, { params }: {
+	params: {
+		username: string
+	}
+}) => {
+	try {
+		const { username } = params;
+		const result = await prisma.project.findUnique({
+			where: {
+				username
+			}
+		})
+		return NextResponse.json(result);
+	} catch (error) {
+		throw new Error("Data fetch fail");
+	}
+}
 // Deleted branch
 export const DELETE = async (request: Request, { params }: {
 	params: {

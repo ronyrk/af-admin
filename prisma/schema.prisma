@@ -127,7 +127,7 @@ model Project {
   shortDes    String
   description String
   title       String
-  username    String
+  username    String   @unique
 }
 
 enum Status {
