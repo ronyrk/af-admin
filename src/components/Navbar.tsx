@@ -1,10 +1,7 @@
 "use client"
-import Image from 'next/image'
 import React from 'react';
-import logo from '../../public/karze-hasana.png';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Lock } from 'lucide-react';
-import Marquee from 'react-fast-marquee'
+
 
 import Link from 'next/link';
 import { useUser } from './ContextProvider';
