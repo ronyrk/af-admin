@@ -133,4 +133,6 @@ export interface ProjectsIProps {
 	photoUrl: string,
 	shortDes: string,
 	description: string,
+	createAt?: Date,
+	username: string,
 }

@@ -7,33 +7,57 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { DonorPaymentIProps } from '@/types';
+import { DonorPaymentIProps, ProjectsIProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import moment from 'moment';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import Image from 'next/image';
 
 
 
 async function ProjectsList() {
 	unstable_noStore();
-	let res = await fetch('https://arafatfoundation.vercel.app/api/donor_payment');
+	let res = await fetch('https://af-admin.vercel.app/api/project');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");
 	};
-	const payment: DonorPaymentIProps[] = await res.json();
+	const project: ProjectsIProps[] = await res.json();
 
 	return (
 		<TableBody>
 			{
-				payment.map((item, index: number) => (
+				project.map((item, index: number) => (
 					<TableRow key={index}>
-						<TableCell className="font-medium">{`${moment(item.createAt).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
-						<TableCell className="font-medium uppercase">Name</TableCell>
-						<TableCell className="font-medium uppercase">{item.amount}</TableCell>
-						<TableCell className="font-medium uppercase" >{item.loanPayment}</TableCell>
-						<TableCell className="font-medium uppercase">{item.type}</TableCell>
+						<TableCell className="font-medium">{`${moment(item?.createAt).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
+						<TableCell className="font-medium uppercase">{item.title}</TableCell>
+						<TableCell className="font-medium uppercase">{item.author}</TableCell>
+						<TableCell className="font-medium uppercase">
+							<TableCell className="font-medium uppercase">
+								<Dialog>
+									<DialogTrigger>
+										<Image
+											alt='payment proved'
+											src={item.photoUrl}
+											width={80}
+											height={50}
+											className=' object-contain'
+										/></DialogTrigger>
+									<DialogContent>
+										<Image
+											alt='payment proved'
+											src={item.photoUrl}
+											width={500}
+											height={200}
+											className=' object-fill rounded-md'
+										/>
+									</DialogContent>
+								</Dialog>
+
+							</TableCell>
+						</TableCell>
 						<TableCell className="font-medium uppercase">SetUp</TableCell>
 					</TableRow>
 				))
