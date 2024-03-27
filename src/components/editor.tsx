@@ -68,7 +68,7 @@ const TailwindEditor = ({ description, value, onChange }: { description: string,
 				<EditorContent
 					initialContent={initialContent}
 					extensions={extensions}
-					className="relative min-h-[500px] w-full max-w-screen-lg border-muted bg-background sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-lg p-2"
+					className="relative min-h-[400px] w-full max-w-screen-lg border-muted bg-background sm:mb-[calc(5vh)] sm:rounded-lg sm:border sm:shadow-lg p-4"
 					editorProps={{
 						...defaultEditorProps,
 						attributes: {

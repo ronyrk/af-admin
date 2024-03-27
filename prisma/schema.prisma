@@ -120,13 +120,13 @@ model Faq {
 }
 
 model Project {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  createAt DateTime @default(now())
-  name     String
-  photoUrl String
-  shortDec String
-  Decs     String
-  title    String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  createAt    DateTime @default(now())
+  author      String
+  photoUrl    String
+  shortDes    String
+  description String
+  title       String
 }
 
 enum Status {
