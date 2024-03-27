@@ -125,3 +125,12 @@ export interface FaqProps {
 	title: string,
 	description: string,
 }
+
+export interface ProjectsIProps {
+	id?: string,
+	author: string,
+	title: string,
+	photoUrl: string,
+	shortDes: string,
+	description: string,
+}

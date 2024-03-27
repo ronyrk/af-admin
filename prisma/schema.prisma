@@ -119,6 +119,16 @@ model Faq {
   description String
 }
 
+model Project {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  createAt    DateTime @default(now())
+  author      String
+  photoUrl    String
+  shortDes    String
+  description String
+  title       String
+}
+
 enum Status {
   PENDING
   RUNNING
