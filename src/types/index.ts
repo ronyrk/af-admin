@@ -154,3 +154,11 @@ export interface NewsProps {
 	createAt: Date,
 	username: string,
 }
+export interface NewsIProps {
+	id?: string,
+	title: string,
+	photoUrl: string,
+	description: string,
+	createAt?: Date,
+	username: string,
+}
