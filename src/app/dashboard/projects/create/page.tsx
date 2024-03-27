@@ -34,6 +34,7 @@ const formSchema = z.object({
 	description: z.any(),
 	shortDec: z.string(),
 	author: z.string(),
+	username: z.string(),
 });
 
 function ProjectCreate() {
@@ -47,9 +48,9 @@ function ProjectCreate() {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ title, description, author, shortDes, photoUrl }: ProjectsIProps) => {
+		mutationFn: async ({ title, description, author, shortDes, photoUrl, username }: ProjectsIProps) => {
 			const response = await axios.post("/api/project", {
-				title, description, author, shortDes, photoUrl
+				title, description, author, shortDes, photoUrl, username
 			});
 			return response.data;
 		},
@@ -62,8 +63,9 @@ function ProjectCreate() {
 		const author = values.author;
 		const photoUrl = image;
 		const shortDes = values.shortDec;
+		const username = values.username;
 
-		mutate({ title, description, author, photoUrl, shortDes }, {
+		mutate({ title, description, author, photoUrl, shortDes, username }, {
 			onSuccess: (data: ProjectsIProps) => {
 				if (data?.id) {
 					toast.success("Create Successfully Project");
@@ -84,6 +86,19 @@ function ProjectCreate() {
 				<h2 className="text-center py-2 text-color-main">Create Project</h2>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+						<FormField
+							control={form.control}
+							name="username"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>UserName</FormLabel>
+									<FormControl>
+										<Input placeholder="username" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<FormField
 							control={form.control}
 							name="title"
