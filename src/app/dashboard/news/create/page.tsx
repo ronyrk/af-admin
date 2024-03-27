@@ -14,10 +14,9 @@ import {
 	FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
-import { FaqIProps, NewsProps, ProjectsIProps } from "@/types"
+import { NewsIProps, NewsProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import TailwindEditor from "@/components/editor"
@@ -45,14 +44,14 @@ function NewsCreate() {
 		resolver: zodResolver(formSchema),
 	});
 
-	// const { mutate, isPending } = useMutation({
-	// 	mutationFn: async ({ title, description, photoUrl, username }: NewsProps) => {
-	// 		const response = await axios.post("/api/news", {
-	// 			title, description, photoUrl, username
-	// 		});
-	// 		return response.data;
-	// 	},
-	// });
+	const { mutate, isPending } = useMutation({
+		mutationFn: async ({ title, description, photoUrl, username }: NewsIProps) => {
+			const response = await axios.post("/api/news", {
+				title, description, photoUrl, username
+			});
+			return response.data;
+		},
+	});
 
 	// 2. Define a submit handler.
 	function onSubmit(values: z.infer<typeof formSchema>) {
@@ -61,20 +60,20 @@ function NewsCreate() {
 		const photoUrl = image;
 		const username = values.username;
 
-		// mutate({ title, description, photoUrl, username }, {
-		// 	onSuccess: (data: NewsProps) => {
-		// 		if (data?.id) {
-		// 			toast.success("Create Successfully Project");
-		// 		} else {
-		// 			throw new Error("News Created Failed")
-		// 		}
-		// 		router.refresh();
-		// 		router.push(`/dashboard/news`);
-		// 	},
-		// 	onError: (error) => {
-		// 		toast.error("Created Failed");
-		// 	}
-		// });
+		mutate({ title, description, photoUrl, username }, {
+			onSuccess: (data: NewsProps) => {
+				if (data?.id) {
+					toast.success("Create Successfully Project");
+				} else {
+					throw new Error("News Created Failed")
+				}
+				router.refresh();
+				router.push(`/dashboard/news`);
+			},
+			onError: (error) => {
+				toast.error("Created Failed");
+			}
+		});
 		console.log(values, "result");
 	}
 	return (
@@ -137,8 +136,8 @@ function NewsCreate() {
 								</FormItem>
 							)}
 						/>
-						{/* {isPending ? <Button disabled >Loading...</Button> : <Button disabled={upload === false} type="submit">Submit</Button>} */}
-						<Button disabled={upload === false} type="submit">Submit</Button>
+						{isPending ? <Button disabled >Loading...</Button> : <Button disabled={upload === false} type="submit">Submit</Button>}
+
 					</form>
 				</Form>
 

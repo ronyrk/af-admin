@@ -7,7 +7,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { ProjectsProps } from '@/types';
+import { NewsProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -22,11 +22,11 @@ import DeleteButton from '@/components/DeleteButton';
 
 async function NewsList() {
 	unstable_noStore();
-	let res = await fetch('https://af-admin.vercel.app/api/project');
+	let res = await fetch('https://af-admin.vercel.app/api/news');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");
 	};
-	const project: ProjectsProps[] = await res.json();
+	const project: NewsProps[] = await res.json();
 
 	return (
 		<TableBody>
@@ -60,7 +60,7 @@ async function NewsList() {
 							<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' ><PencilIcon color='blue' size={18} /> </Button>
 						</TableCell>
 						<TableCell className="font-medium uppercase">
-							<DeleteButton type='project' username={item?.id} />
+							<DeleteButton type='news' username={item.username} />
 						</TableCell>
 					</TableRow>
 				))
