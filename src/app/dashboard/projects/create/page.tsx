@@ -73,6 +73,7 @@ function ProjectCreate() {
 					throw new Error("Branch Created Failed")
 				}
 				router.refresh();
+				router.push(`/dashboard/projects`);
 			},
 			onError: (error) => {
 				toast.error("Created Failed");
