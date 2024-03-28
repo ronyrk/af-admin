@@ -164,3 +164,13 @@ export interface NewsIProps {
 	username: string,
 	shortDes: string,
 }
+export interface DonateProps {
+	id: string,
+	name: string,
+	email: string,
+	amount: string,
+	method?: string,
+	photoUrl?: string,
+	about?: string,
+	createAt: Date,
+}

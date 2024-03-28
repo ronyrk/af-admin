@@ -74,10 +74,10 @@ async function NewsList() {
 async function page() {
 	return (
 		<div className='flex flex-col'>
-			<h2 className="text-center text-xl">News List</h2>
+			<h2 className="text-center text-xl">Blog List</h2>
 			<div className="p-2 flex justify-between ">
 				<Button asChild>
-					<Link className=' bg-color-main hover:bg-color-sub' href={`news/create`}>Create</Link>
+					<Link className=' bg-color-main hover:bg-color-sub' href={`blog/create`}>Create</Link>
 				</Button>
 				<Input className='w-64' type="text" placeholder="Search" />
 			</div>

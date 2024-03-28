@@ -49,6 +49,11 @@ function AdminSidebar() {
 			name: "Blog",
 			path: "/dashboard/blog",
 			active: path === "/dashboard/blog" || path === "/dashboard/blog/create"
+		},
+		{
+			name: "Donate",
+			path: "/dashboard/donate",
+			active: path === "/dashboard/donate"
 		}
 	];
 
