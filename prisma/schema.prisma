@@ -137,6 +137,7 @@ model News {
   description String
   title       String
   username    String   @unique
+  shortDes    String
 }
 
 enum Status {

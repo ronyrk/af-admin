@@ -153,6 +153,7 @@ export interface NewsProps {
 	description: string,
 	createAt: Date,
 	username: string,
+	shortDes: string,
 }
 export interface NewsIProps {
 	id?: string,
@@ -161,4 +162,5 @@ export interface NewsIProps {
 	description: string,
 	createAt?: Date,
 	username: string,
+	shortDes: string,
 }
