@@ -23,6 +23,7 @@ import TailwindEditor from "@/components/editor"
 import { Label } from "@/components/ui/label"
 import { UploadButton } from "@/lib/uploadthing"
 import { useState } from "react"
+import { Textarea } from "@/components/ui/textarea"
 
 
 
@@ -32,6 +33,7 @@ const formSchema = z.object({
 	title: z.string(),
 	description: z.any(),
 	username: z.string(),
+	shortDes: z.string(),
 });
 
 function NewsCreate() {
@@ -45,9 +47,9 @@ function NewsCreate() {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ title, description, photoUrl, username }: NewsIProps) => {
+		mutationFn: async ({ title, description, photoUrl, username, shortDes }: NewsIProps) => {
 			const response = await axios.post("/api/news", {
-				title, description, photoUrl, username
+				title, description, photoUrl, username, shortDes
 			});
 			return response.data;
 		},
@@ -59,8 +61,9 @@ function NewsCreate() {
 		const description = values.description;
 		const photoUrl = image;
 		const username = values.username;
+		const shortDes = values.shortDes;
 
-		mutate({ title, description, photoUrl, username }, {
+		mutate({ title, description, photoUrl, username, shortDes }, {
 			onSuccess: (data: NewsProps) => {
 				if (data?.id) {
 					toast.success("Create Successfully Project");
@@ -68,7 +71,7 @@ function NewsCreate() {
 					throw new Error("News Created Failed")
 				}
 				router.refresh();
-				router.push(`/dashboard/news`);
+				router.push(`/dashboard/blog`);
 			},
 			onError: (error) => {
 				toast.error("Created Failed");
@@ -123,6 +126,19 @@ function NewsCreate() {
 								}}
 							/>
 						</div>
+						<FormField
+							control={form.control}
+							name="shortDes"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Short Description</FormLabel>
+									<FormControl>
+										<Textarea placeholder="Short Description" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<FormField
 							control={form.control}
 							name="description"
