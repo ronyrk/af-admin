@@ -140,6 +140,29 @@ model News {
   shortDes    String
 }
 
+model DonationChild {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  username String
+  email    String
+  amount   String
+  method   String?
+  photoUrl String?
+  about    String?
+  createAt DateTime @default(now())
+}
+
+model Child {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  username    String @unique
+  name        String
+  photoUrl    String
+  description String
+  dream       String
+  phone       String
+  address     String
+}
+
 enum Status {
   PENDING
   RUNNING

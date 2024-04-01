@@ -174,3 +174,13 @@ export interface DonateProps {
 	about?: string,
 	createAt: Date,
 }
+export interface SponsorProps {
+	id?: string,
+	name: string,
+	username: string,
+	email: string,
+	amount: string,
+	method?: string,
+	photoUrl?: string,
+	about?: string,
+}
