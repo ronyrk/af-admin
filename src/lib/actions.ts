@@ -18,12 +18,13 @@ export async function deleteRequest(item: any) {
 }
 export async function ApproveChildSponsor(item: any) {
 	try {
-		const { id, loanusername, photoUrl, method, createAt, amount } = item;
-		const approved = await prisma.payment.create({
+		// console.log(item, "log");
+		const { id, name, username, email, amount, method, photoUrl, about, createAt } = item;
+		await prisma.donationChild.create({
 			data: {
-				loanusername, photoUrl, method, createAt, amount
+				name, username, email, amount, method, photoUrl, about, createAt
 			}
-		});
+		})
 		const removed = await prisma.donationChild.delete({ where: { id } });
 	} catch (error) {
 		console.log(error);

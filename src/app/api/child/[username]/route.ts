@@ -5,11 +5,12 @@ import { NextResponse } from "next/server";
 export const GET = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		const result = await prisma?.child.findUnique({
+		const result = await prisma.child.findUnique({
 			where: {
 				username
 			}
-		})
+		});
+		return NextResponse.json(result);
 	} catch (error) {
 		throw new Error("Server Error");
 	}
