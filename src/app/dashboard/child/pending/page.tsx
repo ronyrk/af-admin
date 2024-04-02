@@ -7,33 +7,38 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { ChildIProps, LoanIProps, PaymentApproveIProps } from '@/types';
+import { LoanIProps, PaymentApproveIProps, SponsorProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import { Input } from '@/components/ui/input';
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog"
+
+import Moment from "moment"
+import ActionButton from '@/components/ActionButton';
+import prisma from '@/lib/prisma';
 import Image from 'next/image';
-
-import DeleteButton from '@/components/DeleteButton';
-import { Button } from '@/components/ui/button';
-import { PencilIcon } from 'lucide-react';
-import Link from 'next/link';
+import { GetBranchDetails } from '@/lib/getBranchList';
+import { GetLoanDetails } from '@/lib/getLoanName';
+import ChildAction from '@/components/ChildAction';
 
 
 
 
 
 
-async function BorrowersList() {
+async function ChildDonationList() {
 	unstable_noStore();
-	const res = await fetch('https://af-admin.vercel.app/api/child');
+	const res = await fetch('https://af-admin.vercel.app/api/request');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
 	};
-	const payments: ChildIProps[] = await res.json();
+	const payments: SponsorProps[] = await res.json();
 
 	return (
 		<TableBody>
@@ -41,14 +46,17 @@ async function BorrowersList() {
 				payments.map((item, index: number) => (
 					<TableRow key={index}>
 						<TableCell>{index + 1}</TableCell>
-						<TableCell className="font-medium uppercase" >{item.name}</TableCell>
-						<TableCell className="font-medium uppercase">{item.phone}</TableCell>
+
+						{/* <TableCell className="font-medium uppercase" >{GetBranchDetails(item.loanusername)}</TableCell>
+						<TableCell className="font-medium uppercase">{GetLoanDetails(item.loanusername)}</TableCell> */}
+						<TableCell className="font-medium uppercase">{item.amount}</TableCell>
+						<TableCell className="font-medium uppercase">{item.method}</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Dialog>
 								<DialogTrigger>
 									<Image
 										alt='payment proved'
-										src={item.photoUrl}
+										src={item.photoUrl as string}
 										width={80}
 										height={50}
 										className=' object-contain'
@@ -56,7 +64,7 @@ async function BorrowersList() {
 								<DialogContent>
 									<Image
 										alt='payment proved'
-										src={item.photoUrl}
+										src={item.photoUrl as string}
 										width={500}
 										height={200}
 										className=' object-fill rounded-md'
@@ -66,10 +74,7 @@ async function BorrowersList() {
 
 						</TableCell>
 						<TableCell className="font-medium uppercase">
-							<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' ><PencilIcon color='blue' size={18} /> </Button>
-						</TableCell>
-						<TableCell className="font-medium uppercase">
-							<DeleteButton type='child' username={item.username} />
+							<ChildAction item={item} />
 						</TableCell>
 					</TableRow>
 				))
@@ -83,16 +88,8 @@ async function BorrowersList() {
 async function page() {
 	return (
 		<div className='flex flex-col'>
-			<div className="p-2 flex justify-between ">
-				<Button asChild>
-					<Link className=' bg-color-main hover:bg-color-sub' href={`child/create`}>Create</Link>
-				</Button>
-				<Button asChild>
-					<Link className=' bg-color-main hover:bg-color-sub' href={`child/donation`}>Donation</Link>
-				</Button>
-				<Button asChild>
-					<Link className=' bg-color-main hover:bg-color-sub' href={`child/pending`}>Pending</Link>
-				</Button>
+			<h2 className="text-center text-xl">Pending Payment Request List</h2>
+			<div className="p-2 flex justify-end">
 				<Input className='w-64' type="text" placeholder="Search" />
 			</div>
 			<Table>
@@ -100,14 +97,14 @@ async function page() {
 					<TableRow>
 						<TableHead>INDEX</TableHead>
 						<TableHead className='w-[300px]'>NAME</TableHead>
-						<TableHead>PHONE</TableHead>
+						<TableHead>CHILD</TableHead>
+						<TableHead>AMOUNT</TableHead>
 						<TableHead>PHOTOS</TableHead>
-						<TableHead>UPDATE</TableHead>
-						<TableHead>DELETE</TableHead>
+						<TableHead>ACTION</TableHead>
 					</TableRow>
 				</TableHeader>
 				<Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
-					<BorrowersList />
+					<ChildDonationList />
 				</Suspense>
 			</Table>
 
