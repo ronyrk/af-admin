@@ -4,10 +4,10 @@ import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
 	try {
-		const { date, description, username } = await request.json();
+		const { date, description, username, amount } = await request.json();
 		const result = await prisma.disbursement.create({
 			data: {
-				date, description, username
+				date, description, username, amount
 			}
 		});
 		return NextResponse.json(result);
