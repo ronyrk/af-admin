@@ -195,3 +195,10 @@ export interface ChildIProps {
 	phone: string,
 	address: string
 }
+export interface DisbursementIProps {
+	id?: string,
+	date: Date,
+	description: string,
+	username: string,
+	amount: string,
+}

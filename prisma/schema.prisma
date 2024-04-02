@@ -180,6 +180,7 @@ model disbursement {
   date        String
   description String
   username    String
+  amount      String
 }
 
 enum Status {
