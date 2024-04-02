@@ -41,7 +41,7 @@ async function ProjectsList() {
 					<TableRow key={index}>
 						<TableCell className="font-medium">{`${moment(item?.date).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
 						<TableCell className="font-medium uppercase">{getChildName(item.username)}</TableCell>
-						<TableCell className="font-medium uppercase">{item.amount}</TableCell>
+						<TableCell className="font-medium uppercase">{item?.amount}</TableCell>
 
 						<TableCell className="font-medium uppercase">
 							<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' ><PencilIcon color='blue' size={18} /> </Button>
@@ -72,9 +72,8 @@ async function page() {
 				<TableHeader>
 					<TableRow>
 						<TableHead>DATE</TableHead>
-						<TableHead className='w-[300px] uppercase'>Title</TableHead>
-						<TableHead className=' uppercase'>Author</TableHead>
-						<TableHead className=' uppercase'>Picture</TableHead>
+						<TableHead className='w-[300px] uppercase'>Child</TableHead>
+						<TableHead className=' uppercase'>Amount</TableHead>
 						<TableHead className=' uppercase'>Updated</TableHead>
 						<TableHead className=' uppercase'>Deleted</TableHead>
 					</TableRow>

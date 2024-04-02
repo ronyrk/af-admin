@@ -17,7 +17,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import { DisbursementIProps, DonorIProps, DonorPaymentIProps, DonorPaymentIPropsSend, LoanIProps } from "@/types"
+import { ChildIProps, DisbursementIProps, DonorIProps, DonorPaymentIProps, DonorPaymentIPropsSend, LoanIProps } from "@/types"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon } from "lucide-react"
@@ -48,18 +48,18 @@ function DonorPaymentCreate() {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ }: DisbursementIProps) => {
+		mutationFn: async ({ username, date, amount, description }: DisbursementIProps) => {
 			const response = await axios.post("/api/disbursement", {
-
+				username, date, amount, description
 			});
 			return response.data;
 		},
 	});
 	// Branch List
-	const { data, isLoading } = useQuery<DonorIProps[]>({
-		queryKey: ["branch"],
+	const { data, isLoading } = useQuery<ChildIProps[]>({
+		queryKey: ["child"],
 		queryFn: async () => {
-			const response = await axios.get('/api/disbursement');
+			const response = await axios.get('/api/child');
 			return response.data;
 		},
 		refetchInterval: 10000,
@@ -112,16 +112,11 @@ function DonorPaymentCreate() {
 											</FormControl>
 											<SelectContent>
 												{
-													data?.length === 0 ? <SelectItem value={""}> Select a verified Payment Type</SelectItem> :
-														<div>
-															{
-																data?.map((item, index) => (
+													data?.map((item, index) => (
 
-																	<SelectItem key={index} value={item.username}>{item.name}</SelectItem>
+														<SelectItem key={index} value={item.username}>{item.name}</SelectItem>
 
-																))
-															}
-														</div>
+													))
 												}
 											</SelectContent>
 										</Select>

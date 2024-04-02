@@ -59,7 +59,12 @@ function AdminSidebar() {
 			name: "Child",
 			path: "/dashboard/child",
 			active: path === "/dashboard/child" || path === "/dashboard/child/create" || path === "/dashboard/child/donation" || path === "/dashboard/child/pending"
-		}
+		},
+		{
+			name: "Disbursement",
+			path: "/dashboard/disbursement",
+			active: path === "/dashboard/disbursement" || path === "/dashboard/disbursement/create"
+		},
 	];
 
 	useEffect(() => {
@@ -73,7 +78,7 @@ function AdminSidebar() {
 	}, [user?.email, isUserLoading]);
 
 	return (
-		<div className='h-[280px]'>
+		<div className='h-fit'>
 			<div className="flex flex-col gap-2">
 				{
 					routes.map((item, index) => (
