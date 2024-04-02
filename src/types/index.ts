@@ -183,6 +183,7 @@ export interface SponsorProps {
 	method?: string,
 	photoUrl?: string,
 	about?: string,
+	createAt: Date,
 }
 export interface ChildIProps {
 	id?: string,

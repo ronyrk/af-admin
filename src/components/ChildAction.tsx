@@ -15,13 +15,13 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import ApproveButton from './ApproveButton';
-import { PaymentApproveIProps, SponsorProps } from '@/types';
+import { DonateProps, SponsorProps } from '@/types';
 import { useFormStatus } from 'react-dom';
 import SponsorApprove from './SponsorApprove';
 
 
 function ChildAction({ item }: { item: SponsorProps }) {
+	// console.log(item, "child Action-24");
 	const router = useRouter();
 	const { pending } = useFormStatus()
 

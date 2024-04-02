@@ -1,4 +1,4 @@
-import { ParamsIdIProps, PaymentIProps } from "@/types";
+import { ParamsIdIProps } from "@/types";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
