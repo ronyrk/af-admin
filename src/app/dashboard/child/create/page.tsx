@@ -68,7 +68,6 @@ function NewsCreate() {
 
 		mutate({ name, username, photoUrl, phone, dream, description, address }, {
 			onSuccess: ({ message, result }: { message: string, result: ChildIProps }) => {
-				console.log(message, "message", result)
 				if (result?.id) {
 					toast.success(message);
 					router.refresh();
