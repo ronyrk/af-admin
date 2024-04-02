@@ -20,7 +20,7 @@ export async function ApproveChildSponsor(item: any) {
 	try {
 		// console.log(item, "log");
 		const { id, name, username, email, amount, method, photoUrl, about, createAt } = item;
-		await prisma.donationChild.create({
+		await prisma.donation.create({
 			data: {
 				name, username, email, amount, method, photoUrl, about, createAt
 			}

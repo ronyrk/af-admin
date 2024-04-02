@@ -152,6 +152,18 @@ model DonationChild {
   createAt DateTime @default(now())
 }
 
+model Donation {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  username String
+  email    String
+  amount   String
+  method   String?
+  photoUrl String?
+  about    String?
+  createAt DateTime @default(now())
+}
+
 model Child {
   id          String @id @default(auto()) @map("_id") @db.ObjectId
   username    String @unique
@@ -161,6 +173,13 @@ model Child {
   dream       String
   phone       String
   address     String
+}
+
+model disbursement {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  date        String
+  description String
+  username    String
 }
 
 enum Status {

@@ -4,8 +4,8 @@ import toast from 'react-hot-toast';
 import {
 	AlertDialogAction,
 } from "@/components/ui/alert-dialog"
-import { SponsorProps } from '@/types';
 import { ApproveChildSponsor } from '@/lib/actions';
+import { SponsorProps } from '@/types';
 
 function SponsorApprove({ item }: { item: SponsorProps }) {
 	const deletedList = ApproveChildSponsor.bind(null, item);

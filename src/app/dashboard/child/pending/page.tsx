@@ -18,41 +18,42 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog"
-
 import Moment from "moment"
-import ActionButton from '@/components/ActionButton';
 import prisma from '@/lib/prisma';
 import Image from 'next/image';
-import { GetBranchDetails } from '@/lib/getBranchList';
-import { GetLoanDetails } from '@/lib/getLoanName';
 import ChildAction from '@/components/ChildAction';
 
-
-
+async function getChildName(username: string) {
+	const child = await prisma.child.findUnique({
+		where: {
+			username
+		}
+	});
+	return child?.name;
+}
 
 
 
 async function ChildDonationList() {
 	unstable_noStore();
-	const res = await fetch('https://af-admin.vercel.app/api/request');
+	let res = await fetch('https://af-admin.vercel.app/api/donation-request');
 	if (!res.ok) {
-		throw new Error("Failed to fetch data");
+		throw new Error("Failed to fetch data list");
 	};
-	const payments: SponsorProps[] = await res.json();
+	const data: SponsorProps[] = await res.json();
 
 	return (
 		<TableBody>
 			{
-				payments.map((item, index: number) => (
+				data?.map((item, index: number) => (
 					<TableRow key={index}>
-						<TableCell>{index + 1}</TableCell>
-
-						{/* <TableCell className="font-medium uppercase" >{GetBranchDetails(item.loanusername)}</TableCell>
-						<TableCell className="font-medium uppercase">{GetLoanDetails(item.loanusername)}</TableCell> */}
+						<TableCell>{`${Moment(item.createAt).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
+						<TableCell className="font-medium uppercase">{item.name}</TableCell>
+						<TableCell className="font-medium uppercase">{getChildName(item.username)}</TableCell>
 						<TableCell className="font-medium uppercase">{item.amount}</TableCell>
-						<TableCell className="font-medium uppercase">{item.method}</TableCell>
+						<TableCell className="font-medium uppercase">{item?.method}</TableCell>
 						<TableCell className="font-medium uppercase">
-							<Dialog>
+							{item.photoUrl === '' ? "N/A" : <Dialog>
 								<DialogTrigger>
 									<Image
 										alt='payment proved'
@@ -70,7 +71,7 @@ async function ChildDonationList() {
 										className=' object-fill rounded-md'
 									/>
 								</DialogContent>
-							</Dialog>
+							</Dialog>}
 
 						</TableCell>
 						<TableCell className="font-medium uppercase">
@@ -95,10 +96,11 @@ async function page() {
 			<Table>
 				<TableHeader>
 					<TableRow>
-						<TableHead>INDEX</TableHead>
-						<TableHead className='w-[300px]'>NAME</TableHead>
-						<TableHead>CHILD</TableHead>
+						<TableHead>DATE</TableHead>
+						<TableHead className='w-[200px]'>NAME</TableHead>
+						<TableHead className='w-[200px]'>CHILD</TableHead>
 						<TableHead>AMOUNT</TableHead>
+						<TableHead>METHOD</TableHead>
 						<TableHead>PHOTOS</TableHead>
 						<TableHead>ACTION</TableHead>
 					</TableRow>
