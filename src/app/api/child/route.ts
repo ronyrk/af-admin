@@ -9,7 +9,7 @@ export const POST = async (request: Request) => {
 				username, name, dream, description, photoUrl, phone, address
 			}
 		});
-		return NextResponse.json(result);
+		return NextResponse.json({ message: "Successfully Child Created", result }, { status: 201 });
 	} catch (error: any) {
 		if (error?.code === 'P2002') {
 			return NextResponse.json({ message: `a new user cannot be created with this ${error?.meta?.target}` });

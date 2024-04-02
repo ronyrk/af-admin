@@ -7,24 +7,20 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { LoanIProps, PaymentApproveIProps } from '@/types';
+import { ChildIProps, LoanIProps, PaymentApproveIProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import { Input } from '@/components/ui/input';
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog"
-
-import Moment from "moment"
-import ActionButton from '@/components/ActionButton';
-import prisma from '@/lib/prisma';
 import Image from 'next/image';
-import { GetBranchDetails } from '@/lib/getBranchList';
-import { GetLoanDetails } from '@/lib/getLoanName';
+
+import DeleteButton from '@/components/DeleteButton';
+import { Button } from '@/components/ui/button';
+import { PencilIcon } from 'lucide-react';
+import Link from 'next/link';
 
 
 
@@ -33,23 +29,20 @@ import { GetLoanDetails } from '@/lib/getLoanName';
 
 async function BorrowersList() {
 	unstable_noStore();
-	const res = await fetch('https://af-admin.vercel.app/api/request');
+	const res = await fetch('https://af-admin.vercel.app/api/child');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
 	};
-	const payments: PaymentApproveIProps[] = await res.json();
+	const payments: ChildIProps[] = await res.json();
 
 	return (
 		<TableBody>
 			{
 				payments.map((item, index: number) => (
 					<TableRow key={index}>
-						<TableCell>{`${Moment(item.createAt).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
-
-						<TableCell className="font-medium uppercase" >{GetBranchDetails(item.loanusername)}</TableCell>
-						<TableCell className="font-medium uppercase">{GetLoanDetails(item.loanusername)}</TableCell>
-						<TableCell className="font-medium uppercase">{item.amount}</TableCell>
-						<TableCell className="font-medium uppercase">{item.method}</TableCell>
+						<TableCell>{index + 1}</TableCell>
+						<TableCell className="font-medium uppercase" >{item.name}</TableCell>
+						<TableCell className="font-medium uppercase">{item.phone}</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Dialog>
 								<DialogTrigger>
@@ -73,7 +66,10 @@ async function BorrowersList() {
 
 						</TableCell>
 						<TableCell className="font-medium uppercase">
-							<ActionButton item={item} />
+							<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' ><PencilIcon color='blue' size={18} /> </Button>
+						</TableCell>
+						<TableCell className="font-medium uppercase">
+							<DeleteButton type='child' username={item.username} />
 						</TableCell>
 					</TableRow>
 				))
@@ -87,20 +83,21 @@ async function BorrowersList() {
 async function page() {
 	return (
 		<div className='flex flex-col'>
-			<h2 className="text-center text-xl">Pending Payment Request List</h2>
-			<div className="p-2 flex justify-end">
+			<div className="p-2 flex justify-between ">
+				<Button asChild>
+					<Link className=' bg-color-main hover:bg-color-sub' href={`child/create`}>Create</Link>
+				</Button>
 				<Input className='w-64' type="text" placeholder="Search" />
 			</div>
 			<Table>
 				<TableHeader>
 					<TableRow>
-						<TableHead>DATE</TableHead>
-						<TableHead className='w-[300px]'>BRANCH NAME</TableHead>
-						<TableHead>Name</TableHead>
-						<TableHead>AMOUNT</TableHead>
-						<TableHead>METHOD</TableHead>
+						<TableHead>INDEX</TableHead>
+						<TableHead className='w-[300px]'>NAME</TableHead>
+						<TableHead>PHONE</TableHead>
 						<TableHead>PHOTOS</TableHead>
-						<TableHead>ACTION</TableHead>
+						<TableHead>UPDATE</TableHead>
+						<TableHead>DELETE</TableHead>
 					</TableRow>
 				</TableHeader>
 				<Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
