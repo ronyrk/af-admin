@@ -24,6 +24,7 @@ import Image from 'next/image';
 import ChildAction from '@/components/ChildAction';
 
 async function getChildName(username: string) {
+	unstable_noStore();
 	const child = await prisma.child.findUnique({
 		where: {
 			username

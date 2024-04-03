@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { ParamsIProps } from "@/types";
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic'
+
 export const GET = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
