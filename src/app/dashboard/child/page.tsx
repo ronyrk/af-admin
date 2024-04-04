@@ -88,9 +88,6 @@ async function page() {
 					<Link className=' bg-color-main hover:bg-color-sub' href={`child/create`}>Create</Link>
 				</Button>
 				<Button asChild>
-					<Link className=' bg-color-main hover:bg-color-sub' href={`child/donation`}>Donation</Link>
-				</Button>
-				<Button asChild>
 					<Link className=' bg-color-main hover:bg-color-sub' href={`child/pending`}>Pending</Link>
 				</Button>
 				<Input className='w-64' type="text" placeholder="Search" />
