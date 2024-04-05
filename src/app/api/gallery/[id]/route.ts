@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 export const DELETE = async (request: Request, { params }: ParamsIdIProps) => {
 	try {
 		const { id } = params;
-		await prisma.faq.delete({ where: { id } });
+		await prisma.gallery.delete({ where: { id } });
 		return NextResponse.json({ message: "deleted successfully" });
 	} catch (error) {
 		throw new Error("Data fetch fail");
