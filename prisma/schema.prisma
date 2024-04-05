@@ -183,6 +183,29 @@ model disbursement {
   amount      String
 }
 
+model Gallery {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  category String
+  content  String
+}
+
+model Category {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  path String @unique
+}
+
+model Donate {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  email    String
+  amount   String
+  method   String?
+  photoUrl String?
+  about    String?
+  createAt DateTime @default(now())
+}
+
 enum Status {
   PENDING
   RUNNING

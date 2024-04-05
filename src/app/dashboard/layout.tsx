@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<section className=" p-4 flex flex-row gap-4 ">
-			<div className="w-1/4 border-2 rounded-md h-[90vh]">
+			<div className="w-1/4 border-2 rounded-md h-fit">
 				<AdminSidebar />
 			</div>
 			<div className="w-3/4 p-4 border-2 rounded-md">
