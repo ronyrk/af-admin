@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/table";
 import { CategoryIProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
-import { Input } from '@/components/ui/input';
 import DeleteButton from '@/components/DeleteButton';
 import { Button } from '@/components/ui/button';
 import { PencilIcon } from 'lucide-react';
