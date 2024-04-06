@@ -65,6 +65,16 @@ function AdminSidebar() {
 			path: "/dashboard/disbursement",
 			active: path === "/dashboard/disbursement" || path === "/dashboard/disbursement/create"
 		},
+		{
+			name: "Category",
+			path: "/dashboard/category",
+			active: path === "/dashboard/category" || path === "/dashboard/category/create"
+		},
+		{
+			name: "Gallery",
+			path: "/dashboard/gallery",
+			active: path === "/dashboard/gallery" || path === "/dashboard/gallery/create"
+		},
 	];
 
 	useEffect(() => {

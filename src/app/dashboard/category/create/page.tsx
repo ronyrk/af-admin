@@ -14,20 +14,11 @@ import {
 	FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
-import { CategoryIProps, FaqIProps } from "@/types"
+import { CategoryIProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import TailwindEditor from "@/components/editor"
 
 
 
@@ -38,7 +29,7 @@ const formSchema = z.object({
 	path: z.string(),
 });
 
-function CreateFAQ() {
+function CreateCategory() {
 	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -63,8 +54,9 @@ function CreateFAQ() {
 				if (data.id) {
 					toast.success("Create Successfully");
 				} else {
-					throw new Error("Branch Created Failed")
+					throw new Error("Created Failed");
 				}
+				router.push("/dashboard/category");
 				router.refresh();
 			},
 			onError: (error) => {
@@ -113,4 +105,4 @@ function CreateFAQ() {
 	)
 }
 
-export default CreateFAQ
+export default CreateCategory

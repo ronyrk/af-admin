@@ -76,6 +76,7 @@ function ProjectCreate() {
 				}
 				router.refresh();
 				router.push(`/dashboard/gallery`);
+				router.refresh();
 			},
 			onError: (error) => {
 				toast.error("Created Failed");
