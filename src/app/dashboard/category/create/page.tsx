@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
-import { FaqIProps } from "@/types"
+import { CategoryIProps, FaqIProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import TailwindEditor from "@/components/editor"
@@ -34,8 +34,8 @@ import TailwindEditor from "@/components/editor"
 
 
 const formSchema = z.object({
-	title: z.string(),
-	description: z.string(),
+	name: z.string(),
+	path: z.string(),
 });
 
 function CreateFAQ() {
@@ -45,9 +45,9 @@ function CreateFAQ() {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ title, description }: FaqIProps) => {
-			const response = await axios.post("/api/faq", {
-				title, description
+		mutationFn: async ({ name, path }: CategoryIProps) => {
+			const response = await axios.post("/api/category", {
+				name, path
 			});
 			return response.data;
 		},
@@ -55,13 +55,13 @@ function CreateFAQ() {
 
 	// 2. Define a submit handler.
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		const title = values.title;
-		const description = values.description;
+		const name = values.name;
+		const path = values.path;
 
-		mutate({ title, description }, {
-			onSuccess: (data: FaqIProps) => {
+		mutate({ name, path }, {
+			onSuccess: (data: CategoryIProps) => {
 				if (data.id) {
-					toast.success("Create Successfully FAQ");
+					toast.success("Create Successfully");
 				} else {
 					throw new Error("Branch Created Failed")
 				}
@@ -71,22 +71,21 @@ function CreateFAQ() {
 				toast.error("Created Failed");
 			}
 		});
-		console.log(values, "result");
 	}
 	return (
 		<div>
 			<div className="p-2">
-				<h2 className="text-center py-2 text-color-main">Create FAQ</h2>
+				<h2 className="text-center py-2 text-color-main">Create Category</h2>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 						<FormField
 							control={form.control}
-							name="title"
+							name="name"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Title</FormLabel>
+									<FormLabel>Name</FormLabel>
 									<FormControl>
-										<Input placeholder="title" {...field} />
+										<Input placeholder="Name" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -94,12 +93,12 @@ function CreateFAQ() {
 						/>
 						<FormField
 							control={form.control}
-							name="description"
+							name="path"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Description</FormLabel>
-									<FormControl className="p-2">
-										<TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
+									<FormLabel>Path</FormLabel>
+									<FormControl>
+										<Input placeholder="path" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>

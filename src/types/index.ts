@@ -202,3 +202,13 @@ export interface DisbursementIProps {
 	username: string,
 	amount: string,
 }
+export interface GalleryIProps {
+	id?: string,
+	category: string,
+	content: string,
+}
+export interface CategoryIProps {
+	id?: string,
+	name: string,
+	path: string,
+}
