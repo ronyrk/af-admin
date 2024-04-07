@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import { CategoryIProps, FaqIProps, GalleryIProps, GalleryProps, ProjectsIProps } from "@/types"
+import { CategoryIProps, GalleryIProps, GalleryProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import { Label } from "@/components/ui/label"
