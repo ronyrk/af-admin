@@ -14,13 +14,11 @@ import {
 	FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import { CategoryIProps, FaqIProps, GalleryIProps, ProjectsIProps } from "@/types"
+import { CategoryIProps, GalleryIProps, GalleryProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import TailwindEditor from "@/components/editor"
 import { Label } from "@/components/ui/label"
 import { UploadButton } from "@/lib/uploadthing"
 import { useState } from "react"
@@ -32,10 +30,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const formSchema = z.object({
 	category: z.string(),
+	link: z.string().optional(),
 });
 
 function ProjectCreate() {
 	const [image, setImage] = useState<string>("");
+	const [categoryType, setCategoryType] = useState<string>("");
+
+	const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const selectedValue = e.target.value;
+		setCategoryType(selectedValue)
+	};
 
 	const upload = image.length >= 1;
 
@@ -67,8 +72,9 @@ function ProjectCreate() {
 		const category = values.category;
 		const content = image;
 
+
 		mutate({ category, content }, {
-			onSuccess: (data: GalleryIProps) => {
+			onSuccess: (data: GalleryProps) => {
 				if (data?.id) {
 					toast.success("Create Successfully");
 				} else {
@@ -87,13 +93,29 @@ function ProjectCreate() {
 		<div>
 			<div className="p-2">
 				<h2 className="text-center py-2 text-color-main">Create Project</h2>
+				<div className="rounded">
+					<label htmlFor="CategoryType" className="block mb-2">
+						Category Type:
+					</label>
+					<select
+						id="CategoryType"
+						value={categoryType}
+						onChange={handleTypeChange}
+						className="w-full border rounded px-1 py-[1px] cursor-pointer"
+					>
+						<option value="">Select a file type</option>
+						<option value="video">Video</option>
+						<option value="Picture">Picture</option>
+
+					</select>
+				</div>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
 						<FormField
 							control={form.control}
 							name="category"
 							render={({ field }) => (
-								<FormItem>
+								<FormItem className="">
 									<FormLabel>Category</FormLabel>
 									<FormControl>
 										<Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -103,6 +125,7 @@ function ProjectCreate() {
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
+												<SelectItem value="video">Video</SelectItem>
 												{
 													data?.map((item, index) => (
 
@@ -117,21 +140,39 @@ function ProjectCreate() {
 								</FormItem>
 							)}
 						/>
-						<div className="flex flex-col justify-center items-center p-0">
-							<Label className="pb-1">Photos</Label>
-							<UploadButton
-								className="ut-button:bg-color-sub mb-[-40px] ut-button:ut-readying:bg-color-sub/80"
-								endpoint="imageUploader"
-								onClientUploadComplete={(res) => {
-									setImage(res[0].url)
-									toast.success("Image Upload successfully")
-								}}
-								onUploadError={(error: Error) => {
-									// Do something with the error.
-									toast.error(error.message);
-								}}
+						{
+							categoryType === "picture" &&
+							<div className="flex flex-col justify-center items-center p-0">
+								<Label className="pb-1">Photos</Label>
+								<UploadButton
+									className="ut-button:bg-color-sub mb-[-40px] ut-button:ut-readying:bg-color-sub/80"
+									endpoint="imageUploader"
+									onClientUploadComplete={(res) => {
+										setImage(res[0].url)
+										toast.success("Image Upload successfully")
+									}}
+									onUploadError={(error: Error) => {
+										// Do something with the error.
+										toast.error(error.message);
+									}}
+								/>
+							</div>
+						}
+						{
+							categoryType === "video" && <FormField
+								control={form.control}
+								name="link"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>YouTube Video Link</FormLabel>
+										<FormControl>
+											<Input value={image} placeholder="Youtube Video Link" onChange={(e) => setImage(e.target.value)} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
 							/>
-						</div>
+						}
 
 						{isPending ? <Button disabled >Loading...</Button> : <Button disabled={upload === false} type="submit">Submit</Button>}
 					</form>

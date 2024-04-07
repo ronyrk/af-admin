@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/table";
 import { GalleryIProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
@@ -36,21 +35,30 @@ async function GalleryList() {
 						<TableCell className="font-medium uppercase">
 							<Dialog>
 								<DialogTrigger>
-									<Image
-										alt='payment proved'
-										src={item.content}
-										width={80}
-										height={50}
-										className='object-contain rounded-md h-[60px]'
-									/></DialogTrigger>
+									{
+										item.category === "video" ?
+											<Button className=' bg-color-sub'>Video</Button>
+											: <Image
+												alt='payment proved'
+												src={item.content}
+												width={80}
+												height={50}
+												className='object-contain rounded-md h-[60px]'
+											/>
+									}
+								</DialogTrigger>
 								<DialogContent className=''>
-									<Image
-										alt='payment proved'
-										src={item.content}
-										width={500}
-										height={200}
-										className=' object-fill rounded-md'
-									/>
+									{
+										item.category === "video" ?
+											<iframe width="450" height="315" className='object-fill rounded-md' src={`${item.content}`} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen ></iframe>
+											: <Image
+												alt='payment proved'
+												src={item.content}
+												width={600}
+												height={315}
+												className=' object-fill rounded-md'
+											/>
+									}
 								</DialogContent>
 							</Dialog>
 						</TableCell>
@@ -78,7 +86,6 @@ async function page() {
 			<Table>
 				<TableHeader>
 					<TableRow>
-
 						<TableHead className='w-[300px] uppercase'>Category</TableHead>
 						<TableHead className=' uppercase'>Picture</TableHead>
 						<TableHead className=' uppercase'>Deleted</TableHead>
