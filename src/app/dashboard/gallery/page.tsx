@@ -55,7 +55,7 @@ async function GalleryList() {
 												alt='payment proved'
 												src={item.content}
 												width={600}
-												height={315}
+												height={320}
 												className=' object-fill rounded-md'
 											/>
 									}
