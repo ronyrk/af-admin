@@ -35,9 +35,6 @@ async function CategoryList() {
 						<TableCell>{index + 1}</TableCell>
 						<TableCell className="font-medium uppercase" >{item.name}</TableCell>
 						<TableCell className="font-medium uppercase">
-							<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' ><PencilIcon color='blue' size={18} /> </Button>
-						</TableCell>
-						<TableCell className="font-medium uppercase">
 							<DeleteButton type='category' username={item?.id as string} />
 						</TableCell>
 					</TableRow>

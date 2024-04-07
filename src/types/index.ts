@@ -207,6 +207,11 @@ export interface GalleryIProps {
 	category: string,
 	content: string,
 }
+export interface GalleryProps {
+	id?: string,
+	category: string,
+	content: any,
+}
 export interface CategoryIProps {
 	id?: string,
 	name: string,
