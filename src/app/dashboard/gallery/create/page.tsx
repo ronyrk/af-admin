@@ -14,13 +14,11 @@ import {
 	FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { CategoryIProps, FaqIProps, GalleryIProps, GalleryProps, ProjectsIProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import TailwindEditor from "@/components/editor"
 import { Label } from "@/components/ui/label"
 import { UploadButton } from "@/lib/uploadthing"
 import { useState } from "react"
