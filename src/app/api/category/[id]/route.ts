@@ -6,6 +6,16 @@ import { NextResponse } from "next/server";
 export const DELETE = async (request: Request, { params }: ParamsIdIProps) => {
 	try {
 		const { id } = params;
+		const category = await prisma.category.findUnique({
+			where: {
+				id
+			}
+		});
+		await prisma.gallery.deleteMany({
+			where: {
+				category: category?.path
+			}
+		});
 		await prisma.category.delete({ where: { id } });
 		return NextResponse.json({ message: "deleted successfully" });
 	} catch (error) {
