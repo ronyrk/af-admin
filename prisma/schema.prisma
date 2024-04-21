@@ -173,6 +173,7 @@ model Child {
   dream       String
   phone       String
   address     String
+  academy     String
 }
 
 model disbursement {

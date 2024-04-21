@@ -22,12 +22,7 @@ import { Button } from '@/components/ui/button';
 import { PencilIcon } from 'lucide-react';
 import Link from 'next/link';
 
-
-
-
-
-
-async function BorrowersList() {
+async function ChildsList() {
 	unstable_noStore();
 	const res = await fetch('https://af-admin.vercel.app/api/child');
 	if (!res.ok) {
@@ -40,7 +35,7 @@ async function BorrowersList() {
 			{
 				payments.map((item, index: number) => (
 					<TableRow key={index}>
-						<TableCell>{index + 1}</TableCell>
+						<TableCell>{item.academy}</TableCell>
 						<TableCell className="font-medium uppercase" >{item.name}</TableCell>
 						<TableCell className="font-medium uppercase">{item.phone}</TableCell>
 						<TableCell className="font-medium uppercase">
@@ -95,7 +90,7 @@ async function page() {
 			<Table>
 				<TableHeader>
 					<TableRow>
-						<TableHead>INDEX</TableHead>
+						<TableHead>Academy</TableHead>
 						<TableHead className='w-[300px]'>NAME</TableHead>
 						<TableHead>PHONE</TableHead>
 						<TableHead>PHOTOS</TableHead>
@@ -104,7 +99,7 @@ async function page() {
 					</TableRow>
 				</TableHeader>
 				<Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
-					<BorrowersList />
+					<ChildsList />
 				</Suspense>
 			</Table>
 
