@@ -193,7 +193,8 @@ export interface ChildIProps {
 	photoUrl: string,
 	dream: string,
 	phone: string,
-	address: string
+	address: string,
+	academy: string
 }
 export interface DisbursementIProps {
 	id?: string,

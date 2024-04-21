@@ -35,6 +35,7 @@ const formSchema = z.object({
 	dream: z.string(),
 	phone: z.string(),
 	address: z.string(),
+	academy: z.string(),
 });
 
 function NewsCreate() {
@@ -48,9 +49,9 @@ function NewsCreate() {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ name, username, photoUrl, phone, dream, description, address }: ChildIProps) => {
+		mutationFn: async ({ name, username, photoUrl, phone, dream, description, address, academy }: ChildIProps) => {
 			const response = await axios.post("/api/child", {
-				name, username, photoUrl, phone, dream, description, address
+				name, username, photoUrl, phone, dream, description, address, academy
 			});
 			return response.data;
 		},
@@ -65,8 +66,9 @@ function NewsCreate() {
 		const dream = values.dream;
 		const phone = values.phone;
 		const address = values.address;
+		const academy = values.academy;
 
-		mutate({ name, username, photoUrl, phone, dream, description, address }, {
+		mutate({ name, username, photoUrl, phone, dream, description, address, academy }, {
 			onSuccess: ({ message, result }: { message: string, result: ChildIProps }) => {
 				if (result?.id) {
 					toast.success(message);
@@ -80,7 +82,7 @@ function NewsCreate() {
 				toast.error(message);
 			}
 		});
-		console.log(values, "result");
+		// console.log(values, "result");
 	}
 	return (
 		<div>
@@ -151,6 +153,19 @@ function NewsCreate() {
 										<FormLabel>Dream</FormLabel>
 										<FormControl>
 											<Input placeholder="Dream" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="academy"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Academy</FormLabel>
+										<FormControl>
+											<Input placeholder="academy" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
