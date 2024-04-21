@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { ParamsIdIProps } from "@/types";
 import { NextResponse } from "next/server";
 
-// Deleted branch
+// Deleted category and all list category list
 export const DELETE = async (request: Request, { params }: ParamsIdIProps) => {
 	try {
 		const { id } = params;
@@ -16,6 +16,7 @@ export const DELETE = async (request: Request, { params }: ParamsIdIProps) => {
 				category: category?.path
 			}
 		});
+
 		await prisma.category.delete({ where: { id } });
 		return NextResponse.json({ message: "deleted successfully" });
 	} catch (error) {
