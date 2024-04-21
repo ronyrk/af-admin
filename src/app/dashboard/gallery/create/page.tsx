@@ -105,7 +105,7 @@ function ProjectCreate() {
 					>
 						<option value="">Select a file type</option>
 						<option value="video">Video</option>
-						<option value="Picture">Picture</option>
+						<option value="picture">Picture</option>
 
 					</select>
 				</div>
