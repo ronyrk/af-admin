@@ -121,7 +121,7 @@ function BranchUpdated({ data }: { data: BranchIProps }) {
 		mutate({ password, branchName, address, photoUrl, teamLeaderName, teamLeaderAddress, teamLeaderPhone, teamLeaderOccupation, teamLeaderPhotoUrl, presidentName, presidentAddress, presidentPhone, presidentOccupation, ImamName, ImamAddress, ImamPhone, ImamOccupation, SecretaryName, SecretaryAddress, SecretaryPhone, SecretaryOccupation, district, ps }, {
 			onSuccess: ({ message, result }: { message: string, result: BranchIProps }) => {
 				if (result?.id) {
-					console.log(result, "result");
+					// console.log(result, "result");
 					toast.success(message);
 				} else {
 					throw new Error(message)
@@ -129,7 +129,7 @@ function BranchUpdated({ data }: { data: BranchIProps }) {
 				router.push(`/dashboard`);
 			},
 			onError: ({ message }: { message: any }) => {
-				console.log(message, "comment");
+				// console.log(message, "comment");
 				toast.error(message);
 			}
 		});

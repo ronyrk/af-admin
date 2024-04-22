@@ -245,3 +245,12 @@ export interface CategoryIProps {
 	name: string,
 	path: string,
 }
+export interface MemberIProps {
+	id?: string,
+	branch: string,
+	teamMemberName: string,
+	teamMemberPhone: string,
+	teamMemberAddress: string,
+	teamMemberOccupation: string,
+	teamMemberPhotoUrl: string,
+}
