@@ -24,16 +24,11 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		const body: DonorIProps = await request.json();
-		const { password, code, photoUrl, about, amount } = body;
+		const { password, name, photoUrl, about, lives, hometown, status } = await request.json();
 		const result = await prisma.donor.update({
 			where: { username },
 			data: {
-				password,
-				about,
-				code,
-				photoUrl,
-				amount
+				password, name, photoUrl, about, lives, hometown, status
 			}
 		});
 		return NextResponse.json({ message: "successfully updated", result })
@@ -46,6 +41,11 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
+		await prisma.donorPayment.deleteMany({
+			where: {
+				donorUsername: username
+			}
+		});
 		await prisma.donor.delete({ where: { username } });
 		return NextResponse.json({ message: "deleted successfully" });
 	} catch (error) {
