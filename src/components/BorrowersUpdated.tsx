@@ -75,13 +75,14 @@ function BorrowerUpdated({ data }: { data: LoanIProps }) {
 		const about = values.about;
 		// Branch Created
 		mutate({ name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl }, {
-			onSuccess: ({ message, loan }: { message: string, loan: LoanIProps }) => {
-				if (loan?.id) {
+			onSuccess: ({ message, result }: { message: string, result: LoanIProps }) => {
+				if (result?.id) {
 					toast.success(message);
 				} else {
 					throw new Error("Borrowers Updated  Failed")
 				}
 				router.push(`/dashboard/borrowers`);
+				router.refresh();
 			},
 			onError: (error) => {
 				toast.error("Borrowers Updated  Failed");
