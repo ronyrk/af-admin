@@ -41,6 +41,11 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
+		await prisma.donorPayment.deleteMany({
+			where: {
+				donorUsername: username
+			}
+		});
 		await prisma.donor.delete({ where: { username } });
 		return NextResponse.json({ message: "deleted successfully" });
 	} catch (error) {
