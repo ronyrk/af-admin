@@ -76,6 +76,11 @@ async function BorrowersList() {
 						<TableCell className="font-medium uppercase">{allPayment(item?.username)}</TableCell>
 						<TableCell className="font-medium uppercase">{duePayment(item?.username)}</TableCell>
 						<TableCell className="font-medium uppercase">
+							<Button className='bg-color-main' variant={"outline"} size={"sm"} asChild>
+								<Link href={`borrowers/${item.username}`}>Updated</Link>
+							</Button>
+						</TableCell>
+						<TableCell className="font-medium uppercase">
 							<DeleteButton type='loan' username={item.username} />
 						</TableCell>
 					</TableRow>
@@ -91,7 +96,7 @@ async function page() {
 	return (
 		<div className='flex flex-col'>
 
-			<div className="p-2 flex justify-between ">
+			<div className="flex justify-between p-2 ">
 				<Button asChild>
 					<Link className=' bg-color-main hover:bg-color-sub' href={`borrowers/create`}>Borrowers Create</Link>
 				</Button>
@@ -105,10 +110,11 @@ async function page() {
 						<TableHead>DISBURSED</TableHead>
 						<TableHead>RECOVERED</TableHead>
 						<TableHead>BALANCE</TableHead>
+						<TableHead>UPDATED</TableHead>
 						<TableHead>DELETE</TableHead>
 					</TableRow>
 				</TableHeader>
-				<Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
+				<Suspense fallback={<h2 className='p-4 text-center '>Loading...</h2>} >
 					<BorrowersList />
 				</Suspense>
 			</Table>
