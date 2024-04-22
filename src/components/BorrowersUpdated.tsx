@@ -52,7 +52,7 @@ function BorrowerUpdated({ data }: { data: LoanIProps }) {
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: async ({ name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl }: LoanIUpdatedProps) => {
-			const response = await axios.post("/api/loan", {
+			const response = await axios.patch(`/api/loan/${data.username}`, {
 				name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl
 			});
 			return response.data;
@@ -79,12 +79,12 @@ function BorrowerUpdated({ data }: { data: LoanIProps }) {
 				if (loan?.id) {
 					toast.success(message);
 				} else {
-					throw new Error("Donor Created Failed")
+					throw new Error("Borrowers Updated  Failed")
 				}
 				router.push(`/dashboard/borrowers`);
 			},
 			onError: (error) => {
-				toast.error("payment Request Created Failed");
+				toast.error("Borrowers Updated  Failed");
 			}
 		});
 	};
