@@ -91,7 +91,7 @@ function DonorUpdated({ data }: { data: DonorIProps }) {
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-				<div className="grid items-center grid-cols-3 gap-3 ">
+				<div className="grid items-center grid-flow-row-dense grid-cols-3 gap-3 ">
 					<FormField
 						control={form.control}
 						name="name"
@@ -184,19 +184,21 @@ function DonorUpdated({ data }: { data: DonorIProps }) {
 						)}
 					/>
 
-					<FormField
-						control={form.control}
-						name="about"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>About</FormLabel>
-								<FormControl>
-									<Textarea placeholder="Type your message here." {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+					<div className="col-span-3">
+						<FormField
+							control={form.control}
+							name="about"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>About</FormLabel>
+									<FormControl>
+										<Textarea rows={6} placeholder="Type your message here." {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
 				</div>
 				{isPending ? <Button disabled >Loading...</Button> : <Button disabled={upload === false} type="submit">Submit</Button>}
 			</form>

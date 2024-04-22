@@ -77,6 +77,11 @@ async function DonorList() {
 						<TableCell className="font-medium">{item.email}</TableCell>
 						<TableCell className="font-medium">{item.password}</TableCell>
 						<TableCell className="font-medium uppercase">
+							<Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
+								<Link href={`donor/${item.username}`}>Updated</Link>
+							</Button>
+						</TableCell>
+						<TableCell className="font-medium uppercase">
 							<DeleteButton type='donor' username={item.username} />
 						</TableCell>
 					</TableRow>
@@ -91,8 +96,8 @@ async function DonorList() {
 async function page() {
 	return (
 		<div className='flex flex-col'>
-			<h2 className="text-center text-xl">Donor List</h2>
-			<div className="p-2 flex justify-between ">
+			<h2 className="text-xl text-center">Donor List</h2>
+			<div className="flex justify-between p-2 ">
 				<Button asChild>
 					<Link className=' bg-color-main hover:bg-color-sub' href={`donor/create`}>Donor Create</Link>
 				</Button>
@@ -108,12 +113,13 @@ async function page() {
 						<TableHead className='w-[300px]'>NAME</TableHead>
 						<TableHead>AMOUNT</TableHead>
 						<TableHead>TYPE</TableHead>
-						<TableHead>Email</TableHead>
-						<TableHead>Password</TableHead>
-						<TableHead>Delete</TableHead>
+						<TableHead>EMAIL</TableHead>
+						<TableHead>PASSWORD</TableHead>
+						<TableHead>UPDATED</TableHead>
+						<TableHead>DELETED</TableHead>
 					</TableRow>
 				</TableHeader>
-				<Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
+				<Suspense fallback={<h2 className='p-4 text-center '>Loading...</h2>} >
 					<DonorList />
 				</Suspense>
 			</Table>
