@@ -109,6 +109,22 @@ export interface LoanIProps {
 	photosUrl: string,
 	status?: string,
 };
+export interface LoanIUpdatedProps {
+	id?: string,
+	name: string,
+	address: string,
+	about?: string,
+	disbursed?: string,
+	recovered?: string,
+	form1: string,
+	form2: string,
+	nidfont: string,
+	nidback: string,
+	occupation: string,
+	phone: string,
+	photosUrl: string,
+	status?: string,
+};
 
 export interface PaymentIProps {
 	id?: string,
