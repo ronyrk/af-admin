@@ -82,15 +82,15 @@ model Admin {
 }
 
 model Donor {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  username String @unique
-  email    String @unique
-  code     String @unique
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  username String  @unique
+  email    String  @unique
+  code     String  @unique
   password String
   name     String
   photoUrl String
   about    String
-  amount   String
+  amount   String?
   lives    String
   hometown String
   status   String

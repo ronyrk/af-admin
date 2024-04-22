@@ -12,6 +12,16 @@ export interface DonorIProps {
 	hometown: string,
 	status: string,
 };
+export interface DonorIUpdatedProps {
+	id?: string,
+	password: string,
+	name: string,
+	photoUrl: string,
+	about: string,
+	lives: string,
+	hometown: string,
+	status: string,
+};
 export interface BranchIUpdatedProps {
 	id?: string,
 	district: string,
