@@ -32,6 +32,11 @@ async function BranchList() {
 						<TableCell className="font-medium uppercase">{item.branchName}</TableCell>
 						<TableCell className="font-medium " >{item.email}</TableCell>
 						<TableCell className="font-medium ">{item.password}</TableCell>
+						<TableCell className="font-medium ">
+							<Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
+								<Link href={`/dashboard/${item.username}`}>Updated</Link>
+							</Button>
+						</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Suspense fallback={<h2>Loading...</h2>}>
 								<DeleteButton type="branch" username={item.username} />
@@ -62,6 +67,7 @@ async function page() {
 						<TableHead className='md:w-[300px]'>BRANCH</TableHead>
 						<TableHead>Email</TableHead>
 						<TableHead>Password</TableHead>
+						<TableHead>Update</TableHead>
 						<TableHead>Delete</TableHead>
 					</TableRow>
 				</TableHeader>

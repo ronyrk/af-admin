@@ -55,7 +55,6 @@ function ProjectCreate() {
 			const response = await axios.get('/api/category');
 			return response.data;
 		},
-		refetchInterval: 10000,
 	});
 
 	const { mutate, isPending } = useMutation({
