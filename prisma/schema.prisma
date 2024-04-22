@@ -41,6 +41,16 @@ model Branch {
   status               String   @default("BRANCH")
 }
 
+model Member {
+  id                   String @id @default(auto()) @map("_id") @db.ObjectId
+  branch               String
+  teamMemberName       String
+  teamMemberPhone      String
+  teamMemberAddress    String
+  teamMemberOccupation String
+  teamMemberPhotoUrl   String
+}
+
 model Loan {
   id         String  @id @default(auto()) @map("_id") @db.ObjectId
   username   String  @unique

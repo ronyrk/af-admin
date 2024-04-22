@@ -12,6 +12,33 @@ export interface DonorIProps {
 	hometown: string,
 	status: string,
 };
+export interface BranchIUpdatedProps {
+	id?: string,
+	district: string,
+	ps: string,
+	branchName: string,
+	password: string,
+	address: string,
+	photoUrl: string[],
+	teamLeaderName: string,
+	teamLeaderPhone: string,
+	teamLeaderAddress: string,
+	teamLeaderOccupation: string,
+	teamLeaderPhotoUrl: string,
+	presidentName: string,
+	presidentAddress: string,
+	presidentPhone: string,
+	presidentOccupation: string
+	ImamName: string,
+	ImamAddress: string,
+	ImamPhone: string,
+	ImamOccupation: string,
+	SecretaryName: string,
+	SecretaryAddress: string,
+	SecretaryPhone: string,
+	SecretaryOccupation: string,
+	status?: string,
+};
 
 export interface BranchIProps {
 	id?: string,
@@ -217,4 +244,13 @@ export interface CategoryIProps {
 	id?: string,
 	name: string,
 	path: string,
+}
+export interface MemberIProps {
+	id?: string,
+	branch: string,
+	teamMemberName: string,
+	teamMemberPhone: string,
+	teamMemberAddress: string,
+	teamMemberOccupation: string,
+	teamMemberPhotoUrl: string,
 }

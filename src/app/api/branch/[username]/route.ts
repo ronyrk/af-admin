@@ -21,13 +21,13 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
 		const body = await request.json();
-		const { password } = body;
+		const { password, branchName, address, photoUrl, teamLeaderName, teamLeaderAddress, teamLeaderPhone, teamLeaderOccupation, teamLeaderPhotoUrl, presidentName, presidentAddress, presidentPhone, presidentOccupation, ImamName, ImamAddress, ImamPhone, ImamOccupation, SecretaryName, SecretaryAddress, SecretaryPhone, SecretaryOccupation, district, ps } = body;
 		const result = await prisma.branch.update({
 			where: {
 				username
 			},
 			data: {
-				password,
+				password, branchName, address, photoUrl, teamLeaderName, teamLeaderAddress, teamLeaderPhone, teamLeaderOccupation, teamLeaderPhotoUrl, presidentName, presidentAddress, presidentPhone, presidentOccupation, ImamName, ImamAddress, ImamPhone, ImamOccupation, SecretaryName, SecretaryAddress, SecretaryPhone, SecretaryOccupation, district, ps
 			}
 		});
 		return NextResponse.json({ message: "successfully updated", result })
@@ -40,6 +40,29 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
+
+		const loanList = await prisma.loan.findMany({
+			where: {
+				branch: username
+			}
+		});
+		for (const loans of loanList) {
+			await prisma.request.deleteMany({
+				where: {
+					loanusername: loans.username,
+				}
+			});
+			await prisma.payment.deleteMany({
+				where: {
+					loanusername: loans.username,
+				}
+			});
+		};
+		await prisma.member.deleteMany({
+			where: {
+				branch: username,
+			}
+		});
 		await prisma.branch.delete({ where: { username } });
 		return NextResponse.json({ message: "deleted successfully" });
 	} catch (error) {
