@@ -105,7 +105,7 @@ function BorrowerCreate() {
 		<div className="">
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-					<div className=" grid grid-cols-3 items-center gap-3">
+					<div className="grid items-center grid-flow-row-dense grid-cols-3 gap-3 ">
 						<FormField
 							control={form.control}
 							name="code"
@@ -200,10 +200,10 @@ function BorrowerCreate() {
 								</FormItem>
 							)}
 						/>
-						<div className="flex flex-col justify-center items-center p-0">
+						<div className="flex flex-col items-center justify-center p-0">
 							<Label className="pb-1">Profile Picture</Label>
 							<UploadButton
-								className="ut-button:bg-color-sub  ut-button:ut-readying:bg-color-sub/80"
+								className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
 								endpoint="imageUploader"
 								onClientUploadComplete={(res) => {
 									setImage(res[0].url)
@@ -215,10 +215,10 @@ function BorrowerCreate() {
 								}}
 							/>
 						</div>
-						<div className="flex flex-col justify-center items-center p-0">
+						<div className="flex flex-col items-center justify-center p-0">
 							<Label className="pb-1">Form One Picture</Label>
 							<UploadButton
-								className="ut-button:bg-color-sub  ut-button:ut-readying:bg-color-sub/80"
+								className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
 								endpoint="imageUploader"
 								onClientUploadComplete={(res) => {
 									setForm1(res[0].url)
@@ -230,10 +230,10 @@ function BorrowerCreate() {
 								}}
 							/>
 						</div>
-						<div className="flex flex-col justify-center items-center p-0">
+						<div className="flex flex-col items-center justify-center p-0">
 							<Label className="pb-1">Form two Picture</Label>
 							<UploadButton
-								className="ut-button:bg-color-sub  ut-button:ut-readying:bg-color-sub/80"
+								className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
 								endpoint="imageUploader"
 								onClientUploadComplete={(res) => {
 									setForm2(res[0].url)
@@ -245,10 +245,10 @@ function BorrowerCreate() {
 								}}
 							/>
 						</div>
-						<div className="flex flex-col justify-center items-center p-0">
+						<div className="flex flex-col items-center justify-center p-0">
 							<Label className="pb-1">NID Font Picture</Label>
 							<UploadButton
-								className="ut-button:bg-color-sub  ut-button:ut-readying:bg-color-sub/80"
+								className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
 								endpoint="imageUploader"
 								onClientUploadComplete={(res) => {
 									setNidFont(res[0].url)
@@ -260,10 +260,10 @@ function BorrowerCreate() {
 								}}
 							/>
 						</div>
-						<div className="flex flex-col justify-center items-center p-0">
+						<div className="flex flex-col items-center justify-center p-0">
 							<Label className="pb-1">NID Back Picture</Label>
 							<UploadButton
-								className="ut-button:bg-color-sub  ut-button:ut-readying:bg-color-sub/80"
+								className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
 								endpoint="imageUploader"
 								onClientUploadComplete={(res) => {
 									setNidBack(res[0].url)
@@ -301,19 +301,21 @@ function BorrowerCreate() {
 								</FormItem>
 							)}
 						/>
-						<FormField
-							control={form.control}
-							name="about"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>About</FormLabel>
-									<FormControl>
-										<Textarea placeholder="Type your message here." {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						<div className="col-span-2">
+							<FormField
+								control={form.control}
+								name="about"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>About</FormLabel>
+										<FormControl>
+											<Textarea cols={20} rows={4} placeholder="Type your message here." {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
 					</div>
 					{isPending ? <Button disabled >Loading...</Button> : <Button disabled={upload === false} type="submit">Submit</Button>}
 				</form>
