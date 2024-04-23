@@ -1,3 +1,4 @@
+import FAQUpdated from '@/components/FaqUpdated';
 import { FaqProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import React from 'react'
@@ -14,7 +15,9 @@ async function page({ params }: {
 	};
 	const data: FaqProps = await res.json();
 	return (
-		<div>page</div>
+		<div>
+			<FAQUpdated data={data} />
+		</div>
 	)
 }
 
