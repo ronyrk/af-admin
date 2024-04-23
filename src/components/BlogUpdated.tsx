@@ -70,7 +70,6 @@ function BlogUpdated({ data }: { data: NewsIProps }) {
 			onSuccess: (data: NewsProps) => {
 				toast.success(" Successfully Updated");
 				router.refresh();
-				router.push(`/dashboard/blog`);
 			},
 			onError: (error) => {
 				toast.error("Updated Failed");
