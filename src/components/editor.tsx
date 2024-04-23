@@ -43,7 +43,7 @@ const TailwindEditor = ({ description, value, onChange }: { description: string,
 			const json = editor.getJSON();
 			const html = editor.getHTML();
 			onChange(html);
-			console.log(editor.getHTML(), 'result')
+			// console.log(editor.getHTML(), 'result')
 
 			window.localStorage.setItem("content", JSON.stringify(json));
 			setSaveStatus("Saved");
@@ -54,7 +54,7 @@ const TailwindEditor = ({ description, value, onChange }: { description: string,
 	useEffect(() => {
 		const content = window.localStorage.getItem("content-1");
 		if (content) setInitialContent(JSON.parse(content));
-		else setInitialContent(defaultEditorContent);
+		else setInitialContent(JSON.parse(description));
 	}, []);
 
 	if (!initialContent) return null;

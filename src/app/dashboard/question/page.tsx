@@ -30,6 +30,11 @@ async function Question() {
           <TableRow key={index}>
             <TableCell className="font-medium">{item.title}</TableCell>
             <TableCell className="font-medium uppercase">
+              <Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
+                <Link href={`question/${item.id}`}>Updated</Link>
+              </Button>
+            </TableCell>
+            <TableCell className="font-medium uppercase">
               <DeleteButtonFAQ id={item.id} />
             </TableCell>
           </TableRow>
@@ -55,6 +60,7 @@ function page() {
           <TableHeader>
             <TableRow>
               <TableHead>TITLE</TableHead>
+              <TableHead>UPDATED</TableHead>
               <TableHead>DELETE</TableHead>
             </TableRow>
           </TableHeader>

@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
-import { FaqIProps } from "@/types"
+import { FaqIProps, FaqProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import TailwindEditor from "@/components/editor"
@@ -38,15 +38,18 @@ const formSchema = z.object({
 	description: z.string(),
 });
 
-function CreateFAQ() {
+function FAQUpdated({ data }: { data: FaqProps }) {
 	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
+		defaultValues: {
+			title: data.title,
+		}
 	});
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: async ({ title, description }: FaqIProps) => {
-			const response = await axios.post("/api/faq", {
+			const response = await axios.patch(`"/api/faq/${data.id}`, {
 				title, description
 			});
 			return response.data;
@@ -61,14 +64,14 @@ function CreateFAQ() {
 		mutate({ title, description }, {
 			onSuccess: (data: FaqIProps) => {
 				if (data.id) {
-					toast.success("Create Successfully FAQ");
+					toast.success("Updated Successfully");
 				} else {
-					throw new Error("Branch Created Failed")
+					throw new Error("Updated Failed")
 				}
 				router.refresh();
 			},
 			onError: (error) => {
-				toast.error("Created Failed");
+				toast.error("Updated Failed");
 			}
 		});
 		// console.log(values, "result");
@@ -76,7 +79,7 @@ function CreateFAQ() {
 	return (
 		<div>
 			<div className="p-2">
-				<h2 className="text-center py-2 text-color-main">Create FAQ</h2>
+				<h2 className="text-center py-2 text-color-main">Updated FAQ</h2>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 						<FormField
@@ -86,7 +89,7 @@ function CreateFAQ() {
 								<FormItem>
 									<FormLabel>Title</FormLabel>
 									<FormControl>
-										<Input placeholder="title" {...field} />
+										<Input defaultValue={data.title} placeholder="title" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -99,7 +102,7 @@ function CreateFAQ() {
 								<FormItem>
 									<FormLabel>Description</FormLabel>
 									<FormControl className="p-2">
-										<TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
+										<TailwindEditor description={data.description} onChange={field.onChange} value={field.value} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -113,4 +116,4 @@ function CreateFAQ() {
 	)
 }
 
-export default CreateFAQ
+export default FAQUpdated
