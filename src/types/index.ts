@@ -217,6 +217,14 @@ export interface NewsIProps {
 	username: string,
 	shortDes: string,
 }
+export interface NewsIUpdatedProps {
+	id?: string,
+	title: string,
+	photoUrl: string,
+	description: string,
+	createAt?: Date,
+	shortDes: string,
+}
 export interface DonateProps {
 	id: string,
 	name: string,
