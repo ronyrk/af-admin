@@ -54,12 +54,8 @@ function FAQUpdated({ data }: { data: FaqProps }) {
 		const description = values.description;
 
 		mutate({ title, description }, {
-			onSuccess: (data: FaqIProps) => {
-				if (data.id) {
-					toast.success("Updated Successfully");
-				} else {
-					throw new Error("Updated Failed")
-				}
+			onSuccess: () => {
+				toast.success("Updated Successfully");
 				router.refresh();
 			},
 			onError: (error) => {
