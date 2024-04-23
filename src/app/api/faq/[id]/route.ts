@@ -35,7 +35,7 @@ export const PATCH = async (request: Request, { params }: ParamsIdIProps) => {
 				title, description
 			}
 		});
-		return NextResponse.json({ message: "FAQ updated" })
+		return NextResponse.json({ message: "FAQ updated" }, { status: 200 });
 
 	} catch (error) {
 		throw new Error("Data fetch fail");
