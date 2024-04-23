@@ -13,7 +13,7 @@ export const GET = async (request: Request, { params }: {
 		const { username } = params;
 		const result = await prisma.news.findUnique({
 			where: {
-				username
+				username: params.username,
 			}
 		})
 		return NextResponse.json(result);
