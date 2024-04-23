@@ -52,7 +52,7 @@ function BlogUpdated({ data }: { data: NewsIProps }) {
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: async ({ title, description, photoUrl, shortDes }: NewsIUpdatedProps) => {
-			const response = await axios.patch(`"/api/news/${data.username}`, {
+			const response = await axios.patch(`/api/news/${data.username}`, {
 				title, description, photoUrl, shortDes
 			});
 			return response.data;
