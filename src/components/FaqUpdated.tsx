@@ -14,20 +14,12 @@ import {
 	FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import { FaqIProps, FaqProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import TailwindEditor from "@/components/editor"
+import UpdatedEditor from "./UpdatedEditor"
 
 
 
@@ -49,7 +41,7 @@ function FAQUpdated({ data }: { data: FaqProps }) {
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: async ({ title, description }: FaqIProps) => {
-			const response = await axios.patch(`"/api/faq/${data.id}`, {
+			const response = await axios.patch(`/api/faq/${data.id}`, {
 				title, description
 			});
 			return response.data;
@@ -102,7 +94,7 @@ function FAQUpdated({ data }: { data: FaqProps }) {
 								<FormItem>
 									<FormLabel>Description</FormLabel>
 									<FormControl className="p-2">
-										<TailwindEditor description={data.description} onChange={field.onChange} value={field.value} />
+										<UpdatedEditor content={data.description} description={data.description} onChange={field.onChange} value={field.value} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>

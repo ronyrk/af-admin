@@ -28,11 +28,13 @@ import { defaultExtensions } from "@/lib/extenstion";
 
 const extensions = [...defaultExtensions, slashCommand];
 
-const TailwindEditor = ({ description, value, onChange }: { description: string, value: string, onChange: (richText: string) => void }) => {
+const UpdatedEditor = ({ description, value, onChange, content }: { description: string, content: string, value: string, onChange: (richText: string) => void }) => {
 	const [initialContent, setInitialContent] = useState<null | JSONContent>(
 		null,
 	);
 	const [saveStatus, setSaveStatus] = useState("Saved");
+	const itemList = content.split('^');
+	const jsonType = itemList[1];
 
 	const [openNode, setOpenNode] = useState(false);
 	const [openColor, setOpenColor] = useState(false);
@@ -43,7 +45,7 @@ const TailwindEditor = ({ description, value, onChange }: { description: string,
 			const json = editor.getJSON();
 			const html = editor.getHTML();
 			onChange(`${html}^${JSON.stringify(json)}`);
-			console.log(editor.getHTML(), 'result')
+			// console.log(editor.getHTML(), 'result')
 
 			window.localStorage.setItem("content", JSON.stringify(json));
 			setSaveStatus("Saved");
@@ -54,7 +56,7 @@ const TailwindEditor = ({ description, value, onChange }: { description: string,
 	useEffect(() => {
 		const content = window.localStorage.getItem("content-1");
 		if (content) setInitialContent(JSON.parse(content));
-		else setInitialContent(defaultEditorContent);
+		else setInitialContent(JSON.parse(jsonType));
 	}, []);
 
 	if (!initialContent) return null;
@@ -127,4 +129,4 @@ const TailwindEditor = ({ description, value, onChange }: { description: string,
 	);
 };
 
-export default TailwindEditor;
+export default UpdatedEditor;

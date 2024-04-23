@@ -14,14 +14,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import { FaqIProps } from "@/types"
@@ -63,15 +55,16 @@ function CreateFAQ() {
 				if (data.id) {
 					toast.success("Create Successfully FAQ");
 				} else {
-					throw new Error("Branch Created Failed")
+					throw new Error("Created Failed")
 				}
+				router.push('/dashboard/question');
 				router.refresh();
 			},
 			onError: (error) => {
 				toast.error("Created Failed");
 			}
 		});
-		// console.log(values, "result");
+		console.log(values, "result");
 	}
 	return (
 		<div>
@@ -108,6 +101,7 @@ function CreateFAQ() {
 						{isPending ? <Button disabled >Loading...</Button> : <Button type="submit">Submit</Button>}
 					</form>
 				</Form>
+
 			</div>
 		</div>
 	)
