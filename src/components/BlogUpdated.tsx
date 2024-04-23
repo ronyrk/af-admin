@@ -37,16 +37,16 @@ const formSchema = z.object({
 });
 
 function BlogUpdated({ data }: { data: NewsIProps }) {
-	const [image, setImage] = useState<string>(data.photoUrl);
+	const [image, setImage] = useState<string>(data?.photoUrl);
 
-	const upload = image.length >= 1;
+	const upload = image?.length >= 1;
 
 	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			title: data.title,
-			shortDes: data.shortDes,
+			title: data?.title,
+			shortDes: data?.shortDes,
 		}
 	});
 
