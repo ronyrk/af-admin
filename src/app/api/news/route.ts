@@ -24,7 +24,10 @@ export const POST = async (request: Request) => {
 			}
 		})
 		return NextResponse.json(result);
-	} catch (error) {
-		throw new Error("Data fetch Failed");
+	} catch (error: any) {
+		if (error?.code === 'P2002') {
+			return NextResponse.json({ message: `a new user cannot be created with this ${error?.meta?.target}` });
+		}
+		return NextResponse.json({ message: "Branch Created Failed" });
 	}
 }

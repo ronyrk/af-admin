@@ -84,20 +84,26 @@ function BorrowerCreate() {
 		const phone = values.phone;
 		const about = values.about;
 		const branch = values.branch;
-		// Branch Created
-		mutate({ username, name, code, branch, address, about, balance, form1, form2, nidback, nidfont, occupation, phone, photosUrl }, {
-			onSuccess: ({ message, loan }: { message: string, loan: LoanIProps }) => {
-				if (loan?.id) {
-					toast.success(message);
-				} else {
-					throw new Error("Donor Created Failed")
+		// Borrowers Created
+		if (upload === true) {
+			mutate({ username, name, code, branch, address, about, balance, form1, form2, nidback, nidfont, occupation, phone, photosUrl }, {
+				onSuccess: ({ message, loan }: { message: string, loan: LoanIProps }) => {
+					if (loan?.id) {
+						toast.success(message);
+					} else {
+						toast.error("Created Failed");
+					}
+					router.push(`/dashboard/borrowers`);
+					router.refresh();
+				},
+				onError: ({ message }: { message: any }) => {
+					// console.log(message, "comment");
+					toast.error(message);
 				}
-				router.push(`/dashboard/borrowers`);
-			},
-			onError: (error) => {
-				toast.error("payment Request Created Failed");
-			}
-		});
+			});
+		} else {
+			toast.error("Upload Photo");
+		}
 	};
 	// console.log(state, stateBranch);
 

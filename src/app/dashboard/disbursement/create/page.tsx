@@ -69,7 +69,7 @@ function DonorPaymentCreate() {
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		const previous = values.date;
 		const date = new Date(previous);
-		date.setDate(previous.getDate() + 1);
+		date.setDate(previous.getDate());
 		const username = values.username;
 		const description = values.description;
 		const amount = values.amount;
@@ -82,6 +82,7 @@ function DonorPaymentCreate() {
 					throw new Error("Disbursement Created Failed")
 				}
 				router.push(`/dashboard/disbursement`);
+				router.refresh();
 			},
 			onError: (error) => {
 				toast.error("Request Created Failed");
