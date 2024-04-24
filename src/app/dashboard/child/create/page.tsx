@@ -68,20 +68,25 @@ function NewsCreate() {
 		const address = values.address;
 		const academy = values.academy;
 
-		mutate({ name, username, photoUrl, phone, dream, description, address, academy }, {
-			onSuccess: ({ message, result }: { message: string, result: ChildIProps }) => {
-				if (result?.id) {
-					toast.success(message);
-					router.refresh();
-					router.push(`/dashboard/child`);
-				} else {
+		if (upload === true) {
+			mutate({ name, username, photoUrl, phone, dream, description, address, academy }, {
+				onSuccess: ({ message, result }: { message: string, result: ChildIProps }) => {
+					if (result?.id) {
+						toast.success(message);
+						router.refresh();
+						router.push(`/dashboard/child`);
+					} else {
+						toast.error(message);
+					}
+				},
+				onError: ({ message }: { message: any }) => {
+					// console.log(message, "comment");
 					toast.error(message);
 				}
-			},
-			onError: ({ message }) => {
-				toast.error(message);
-			}
-		});
+			});
+		} else {
+
+		}
 		// console.log(values, "result");
 	}
 	return (
