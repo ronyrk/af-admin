@@ -1,3 +1,4 @@
+import ChildUpdated from '@/components/ChildUpdated';
 import { ChildIProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import React from 'react'
@@ -14,7 +15,9 @@ async function page({ params }: {
 	};
 	const payments: ChildIProps = await res.json();
 	return (
-		<div>page</div>
+		<div>
+			<ChildUpdated data={payments} />
+		</div>
 	)
 }
 

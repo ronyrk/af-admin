@@ -77,6 +77,7 @@ function ChildUpdated({ data }: { data: ChildIProps }) {
 			mutate({ name, photoUrl, phone, dream, description, address, academy }, {
 				onSuccess: ({ message, result }: { message: string, result: ChildIProps }) => {
 					toast.success(message);
+					router.refresh();
 				},
 				onError: ({ message }: { message: any }) => {
 					// console.log(message, "comment");
