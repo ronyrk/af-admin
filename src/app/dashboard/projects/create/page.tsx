@@ -30,7 +30,7 @@ import { useState } from "react"
 
 
 const formSchema = z.object({
-	title: z.string(),
+	title: z.string().min(4),
 	description: z.any(),
 	shortDec: z.string(),
 	author: z.string(),
@@ -65,21 +65,23 @@ function ProjectCreate() {
 		const shortDes = values.shortDec;
 		const username = values.username;
 
-		mutate({ title, description, author, photoUrl, shortDes, username }, {
-			onSuccess: (data: ProjectsIProps) => {
-				if (data?.id) {
-					toast.success("Create Successfully Project");
-				} else {
-					throw new Error("Branch Created Failed")
+		{
+			upload === true && mutate({ title, description, author, photoUrl, shortDes, username }, {
+				onSuccess: (data: ProjectsIProps) => {
+					if (data?.id) {
+						toast.success("Create Successfully Project");
+					} else {
+						throw new Error("Branch Created Failed")
+					}
+					router.push(`/dashboard/projects`);
+					router.refresh();
+				},
+				onError: (error) => {
+					toast.error("Created Failed");
 				}
-				router.push(`/dashboard/projects`);
-				router.refresh();
-			},
-			onError: (error) => {
-				toast.error("Created Failed");
-			}
-		});
-		console.log(values, "result");
+			});
+		}
+		console.log(values.description, "result");
 	}
 	return (
 		<div>

@@ -59,7 +59,7 @@ async function ProjectsList() {
 						</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Button asChild className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' >
-								<Link href={`project/${item.username}`}><PencilIcon color='blue' size={18} /></Link>
+								<Link href={`projects/${item.username}`}><PencilIcon color='blue' size={18} /></Link>
 							</Button>
 						</TableCell>
 						<TableCell className="font-medium uppercase">
