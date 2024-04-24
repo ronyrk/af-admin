@@ -17,40 +17,44 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
-import { FaqIProps, ProjectsIProps } from "@/types"
+import { FaqIProps, ProjectsIProps, ProjectsIUpdatedProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import TailwindEditor from "@/components/editor"
 import { Label } from "@/components/ui/label"
 import { UploadButton } from "@/lib/uploadthing"
 import { useState } from "react"
+import UpdatedEditor from "./UpdatedEditor"
 
 
 
 
 
 const formSchema = z.object({
-	title: z.string().min(4),
+	title: z.string(),
 	description: z.any(),
 	shortDec: z.string(),
-	author: z.string(),
-	username: z.string(),
+
 });
 
-function ProjectCreate() {
-	const [image, setImage] = useState<string>("");
+function ProjectUpdated({ data }: { data: ProjectsIProps }) {
+	const [image, setImage] = useState<string>(data.photoUrl);
 
 	const upload = image.length >= 1;
 
 	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
+		defaultValues: {
+			title: data.title,
+			shortDec: data.shortDes
+		}
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ title, description, author, shortDes, photoUrl, username }: ProjectsIProps) => {
-			const response = await axios.post("/api/project", {
-				title, description, author, shortDes, photoUrl, username
+		mutationFn: async ({ title, description, shortDes, photoUrl }: ProjectsIUpdatedProps) => {
+			const response = await axios.patch(`/api/project/${data.username}`, {
+				title, description, shortDes, photoUrl
 			});
 			return response.data;
 		},
@@ -60,28 +64,20 @@ function ProjectCreate() {
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		const title = values.title;
 		const description = values.description;
-		const author = values.author;
 		const photoUrl = image;
 		const shortDes = values.shortDec;
-		const username = values.username;
 
-		{
-			upload === true && mutate({ title, description, author, photoUrl, shortDes, username }, {
-				onSuccess: (data: ProjectsIProps) => {
-					if (data?.id) {
-						toast.success("Create Successfully Project");
-					} else {
-						throw new Error("Branch Created Failed")
-					}
-					router.push(`/dashboard/projects`);
-					router.refresh();
-				},
-				onError: (error) => {
-					toast.error("Created Failed");
-				}
-			});
-		}
-		console.log(values.description, "result");
+		mutate({ title, description, photoUrl, shortDes }, {
+			onSuccess: (data: ProjectsIProps) => {
+				toast.success("Successfully Updated");
+				router.push(`/dashboard/projects`);
+				router.refresh();
+			},
+			onError: (error) => {
+				toast.error("Updated Failed");
+			}
+		});
+		// console.log(values, "result");
 	}
 	return (
 		<div>
@@ -89,19 +85,7 @@ function ProjectCreate() {
 				<h2 className="text-center py-2 text-color-main">Create Project</h2>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-						<FormField
-							control={form.control}
-							name="username"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>UserName</FormLabel>
-									<FormControl>
-										<Input placeholder="username" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+
 						<FormField
 							control={form.control}
 							name="title"
@@ -109,20 +93,7 @@ function ProjectCreate() {
 								<FormItem>
 									<FormLabel>Title</FormLabel>
 									<FormControl>
-										<Input placeholder="title" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="author"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Author</FormLabel>
-									<FormControl>
-										<Input placeholder="Author" {...field} />
+										<Input defaultValue={data.title} placeholder="title" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -150,7 +121,7 @@ function ProjectCreate() {
 								<FormItem>
 									<FormLabel>Short Description</FormLabel>
 									<FormControl>
-										<Textarea placeholder="Short Description" {...field} />
+										<Textarea defaultValue={data.shortDes} placeholder="Short Description" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -163,7 +134,7 @@ function ProjectCreate() {
 								<FormItem className="">
 									<FormLabel>Description</FormLabel>
 									<FormControl className="">
-										<TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
+										<UpdatedEditor content={data.description} description={field.name} onChange={field.onChange} value={field.value} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -178,4 +149,4 @@ function ProjectCreate() {
 	)
 }
 
-export default ProjectCreate
+export default ProjectUpdated

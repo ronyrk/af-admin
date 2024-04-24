@@ -43,7 +43,7 @@ const TailwindEditor = ({ description, value, onChange }: { description: string,
 			const json = editor.getJSON();
 			const html = editor.getHTML();
 			onChange(`${html}^${JSON.stringify(json)}`);
-			console.log(editor.getHTML(), 'result')
+			// console.log(`${html}^${JSON.stringify(json)}`, 'result')
 
 			window.localStorage.setItem("content", JSON.stringify(json));
 			setSaveStatus("Saved");
