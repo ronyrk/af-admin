@@ -6,8 +6,10 @@ import {
 } from "@/components/ui/alert-dialog"
 import { PaymentApproveIProps } from '@/types';
 import { deleteRequest } from '@/lib/actions';
+import { unstable_noStore } from 'next/cache';
 
 function ApproveButton({ item }: { item: PaymentApproveIProps }) {
+	unstable_noStore();
 	const deletedList = deleteRequest.bind(null, item);
 	const router = useRouter();
 	return (
