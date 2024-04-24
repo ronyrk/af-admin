@@ -50,6 +50,10 @@ function DonorPaymentCreate() {
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
+		defaultValues: {
+			amount: "0",
+			loanPayment: "0"
+		}
 	});
 
 	const { mutate, isPending } = useMutation({
@@ -67,8 +71,9 @@ function DonorPaymentCreate() {
 			const response = await axios.get(`/api/donor-and-lender/${userType}`);
 			return response.data;
 		},
-		refetchInterval: 10000,
+		refetchInterval: 1000,
 	});
+	// console.log(data, "donor");
 
 	// 2. Define a submit handler.
 	function onSubmit(values: z.infer<typeof formSchema>) {
@@ -88,6 +93,7 @@ function DonorPaymentCreate() {
 					throw new Error("Donor Payment Created Failed")
 				}
 				router.push(`/dashboard/donor/payment`);
+				router.refresh();
 			},
 			onError: (error) => {
 				toast.error("Donor payment Request Created Failed");
@@ -132,16 +138,11 @@ function DonorPaymentCreate() {
 											</FormControl>
 											<SelectContent>
 												{
-													data?.length === 0 ? <SelectItem value={""}> Select a verified Payment Type</SelectItem> :
-														<div>
-															{
-																data?.map((item, index) => (
+													data?.map((item, index) => (
 
-																	<SelectItem key={index} value={item.username}>{item.name}</SelectItem>
+														<SelectItem key={index} value={item.username}>{item.name}</SelectItem>
 
-																))
-															}
-														</div>
+													))
 												}
 											</SelectContent>
 										</Select>
