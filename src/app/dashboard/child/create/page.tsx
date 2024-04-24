@@ -75,6 +75,7 @@ function Child() {
 						toast.success(message);
 						router.refresh();
 						router.push(`/dashboard/child`);
+						router.refresh();
 					} else {
 						toast.error(message);
 					}
