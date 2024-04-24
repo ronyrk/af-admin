@@ -70,20 +70,26 @@ function DonorCreate() {
 		const amount = values.amount;
 		const about = values.about;
 
-		// Branch Created
-		mutate({ username, email, code, password, name, photoUrl, about, amount, lives, hometown, status }, {
-			onSuccess: ({ message, result }: { message: string, result: BranchIProps }) => {
-				if (result.id) {
-					toast.success(message);
-				} else {
-					throw new Error("Donor Created Failed")
+		// Donor Created
+		if (upload === true) {
+			mutate({ username, email, code, password, name, photoUrl, about, amount, lives, hometown, status }, {
+				onSuccess: ({ message, result }: { message: string, result: BranchIProps }) => {
+					if (result.id) {
+						toast.success(message);
+					} else {
+						throw new Error("Donor Created Failed")
+					}
+					router.push(`/dashboard/donor`);
+					router.refresh();
+				},
+				onError: ({ message }: { message: any }) => {
+					// console.log(message, "comment");
+					toast.error(message);
 				}
-				router.push(`/dashboard/donor`);
-			},
-			onError: (error) => {
-				toast.error("payment Request Created Failed");
-			}
-		});
+			});
+		} else {
+			toast.error("Upload Photo");
+		}
 	};
 	// console.log(state, stateBranch);
 

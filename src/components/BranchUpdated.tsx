@@ -127,6 +127,7 @@ function BranchUpdated({ data }: { data: BranchIProps }) {
 					throw new Error(message)
 				}
 				router.push(`/dashboard`);
+				router.refresh();
 			},
 			onError: ({ message }: { message: any }) => {
 				// console.log(message, "comment");

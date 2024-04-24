@@ -75,6 +75,12 @@ function AdminSidebar() {
 			path: "/dashboard/gallery",
 			active: path === "/dashboard/gallery" || path === "/dashboard/gallery/create"
 		},
+		{
+			name: "Member",
+			path: "/dashboard/member",
+			active: path === "/dashboard/member"
+		},
+
 	];
 
 	useEffect(() => {

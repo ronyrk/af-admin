@@ -107,7 +107,8 @@ function BranchCreate() {
 					} else {
 						throw new Error(message)
 					}
-					// router.push(`/dashboard`);
+					router.push(`/dashboard`);
+					router.refresh();
 				},
 				onError: ({ message }: { message: any }) => {
 					// console.log(message, "comment");
@@ -457,7 +458,7 @@ function BranchCreate() {
 									<FormItem>
 										<FormLabel>Secretary Address</FormLabel>
 										<FormControl>
-											<Input placeholder="name" {...field} />
+											<Input placeholder="Secretary Address" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
