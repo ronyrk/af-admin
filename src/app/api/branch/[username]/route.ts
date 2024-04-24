@@ -58,6 +58,11 @@ export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 				}
 			});
 		};
+		await prisma.loan.deleteMany({
+			where: {
+				branch: username
+			}
+		});
 		await prisma.member.deleteMany({
 			where: {
 				branch: username,
