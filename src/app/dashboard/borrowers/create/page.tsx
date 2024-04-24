@@ -91,7 +91,7 @@ function BorrowerCreate() {
 					if (loan?.id) {
 						toast.success(message);
 					} else {
-						toast.error("Created Failed");
+						toast.error(message);
 					}
 					router.push(`/dashboard/borrowers`);
 					router.refresh();
