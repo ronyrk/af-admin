@@ -117,8 +117,8 @@ model payment {
 model DonorPayment {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   donorUsername String
-  amount        String
-  loanPayment   String
+  amount        String?
+  loanPayment   String?
   type          String
   createAt      DateTime
 }

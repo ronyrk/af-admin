@@ -43,29 +43,34 @@ async function getUserStatus(username: string) {
 
 
 async function DonorPaymentList() {
-	unstable_noStore();
-	let res = await fetch('https://arafatfoundation.vercel.app/api/donor_payment');
-	if (!res.ok) {
-		throw new Error("Failed to fetch data list");
-	};
-	const payment: DonorPaymentIProps[] = await res.json();
+	try {
+		unstable_noStore();
+		let res = await fetch('https://arafatfoundation.vercel.app/api/donor_payment');
+		if (!res.ok) {
+			throw new Error("Failed to fetch data list");
+		};
+		const payment: DonorPaymentIProps[] = await res.json();
+		console.log(payment, "payment");
 
-	return (
-		<TableBody>
-			{
-				payment.map((item, index: number) => (
-					<TableRow key={index}>
-						<TableCell className="font-medium">{`${moment(item.createAt).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
-						<TableCell className="font-medium uppercase">{getUserName(item.donorUsername)}</TableCell>
-						<TableCell className="font-medium uppercase">{item.amount}</TableCell>
-						<TableCell className="font-medium uppercase" >{item.loanPayment}</TableCell>
-						<TableCell className="font-medium uppercase">{item.type}</TableCell>
-						<TableCell className="font-medium uppercase">{getUserStatus(item.donorUsername)}</TableCell>
-					</TableRow>
-				))
-			}
-		</TableBody>
-	)
+		return (
+			<TableBody>
+				{
+					payment.map((item, index: number) => (
+						<TableRow key={index}>
+							<TableCell className="font-medium">{`${moment(item.createAt).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
+							<TableCell className="font-medium uppercase">{getUserName(item.donorUsername)}</TableCell>
+							<TableCell className="font-medium uppercase">{item.amount}</TableCell>
+							<TableCell className="font-medium uppercase" >{item.loanPayment}</TableCell>
+							<TableCell className="font-medium uppercase">{item.type}</TableCell>
+							<TableCell className="font-medium uppercase">{getUserStatus(item.donorUsername)}</TableCell>
+						</TableRow>
+					))
+				}
+			</TableBody>
+		)
+	} catch (error) {
+		console.log(error, "error");
+	}
 };
 
 
