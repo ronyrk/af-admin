@@ -189,6 +189,14 @@ export interface ProjectsIProps {
 	createAt?: Date,
 	username: string,
 }
+export interface ProjectsIUpdatedProps {
+	id?: string,
+	title: string,
+	photoUrl: string,
+	shortDes: string,
+	description: string,
+	createAt?: Date,
+}
 export interface ProjectsProps {
 	id: string,
 	author: string,
