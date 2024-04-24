@@ -265,6 +265,16 @@ export interface ChildIProps {
 	address: string,
 	academy: string
 }
+export interface ChildIUpdatedProps {
+	id?: string,
+	name: string,
+	description: string,
+	photoUrl: string,
+	dream: string,
+	phone: string,
+	address: string,
+	academy: string
+}
 export interface DisbursementIProps {
 	id?: string,
 	date: Date,

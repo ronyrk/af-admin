@@ -17,6 +17,22 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 		throw new Error("Server Error");
 	}
 }
+export const PATCH = async (request: Request, { params }: ParamsIProps) => {
+	try {
+		const { username } = params;
+		const { name, dream, description, photoUrl, address, phone, academy } = await request.json();
+		const result = await prisma.child.update({
+			where: {
+				username
+			}, data: {
+				name, dream, description, photoUrl, address, phone, academy
+			}
+		});
+		return NextResponse.json(result);
+	} catch (error) {
+		throw new Error("Server Error");
+	}
+}
 
 // Deleted branch
 export const DELETE = async (request: Request, { params }: ParamsIProps) => {

@@ -65,8 +65,8 @@ function ProjectCreate() {
 		const shortDes = values.shortDec;
 		const username = values.username;
 
-		{
-			upload === true && mutate({ title, description, author, photoUrl, shortDes, username }, {
+		if (upload === true) {
+			mutate({ title, description, author, photoUrl, shortDes, username }, {
 				onSuccess: (data: ProjectsIProps) => {
 					if (data?.id) {
 						toast.success("Create Successfully Project");
@@ -76,12 +76,15 @@ function ProjectCreate() {
 					router.push(`/dashboard/projects`);
 					router.refresh();
 				},
-				onError: (error) => {
-					toast.error("Created Failed");
+				onError: ({ message }: { message: any }) => {
+					// console.log(message, "comment");
+					toast.error(message);
 				}
 			});
+		} else {
+			toast.error("Upload Photo");
 		}
-		console.log(values.description, "result");
+		// console.log(values.description, "result");
 	}
 	return (
 		<div>

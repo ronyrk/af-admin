@@ -16,13 +16,13 @@ import {
 import { Input } from "@/components/ui/input"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
-import { ChildIProps } from "@/types"
+import { ChildIProps, ChildIUpdatedProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import TailwindEditor from "@/components/editor"
 import { Label } from "@/components/ui/label"
 import { UploadButton } from "@/lib/uploadthing"
 import { useState } from "react"
+import UpdatedEditor from "./UpdatedEditor"
 
 
 
@@ -31,27 +31,33 @@ import { useState } from "react"
 const formSchema = z.object({
 	name: z.string(),
 	description: z.any(),
-	username: z.string(),
 	dream: z.string(),
 	phone: z.string(),
 	address: z.string(),
 	academy: z.string(),
 });
 
-function Child() {
-	const [image, setImage] = useState<string>("");
+function ChildUpdated({ data }: { data: ChildIProps }) {
+	const [image, setImage] = useState<string>(data.photoUrl);
 
 	const upload = image.length >= 1;
 
 	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
+		defaultValues: {
+			name: data.name,
+			dream: data.dream,
+			phone: data.phone,
+			address: data.address,
+			academy: data.academy
+		}
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ name, username, photoUrl, phone, dream, description, address, academy }: ChildIProps) => {
-			const response = await axios.post("/api/child", {
-				name, username, photoUrl, phone, dream, description, address, academy
+		mutationFn: async ({ name, photoUrl, phone, dream, description, address, academy }: ChildIUpdatedProps) => {
+			const response = await axios.patch(`/api/child/${data.username}`, {
+				name, photoUrl, phone, dream, description, address, academy
 			});
 			return response.data;
 		},
@@ -62,22 +68,16 @@ function Child() {
 		const name = values.name;
 		const description = values.description;
 		const photoUrl = image;
-		const username = values.username;
 		const dream = values.dream;
 		const phone = values.phone;
 		const address = values.address;
 		const academy = values.academy;
 
 		if (upload === true) {
-			mutate({ name, username, photoUrl, phone, dream, description, address, academy }, {
+			mutate({ name, photoUrl, phone, dream, description, address, academy }, {
 				onSuccess: ({ message, result }: { message: string, result: ChildIProps }) => {
-					if (result?.id) {
-						toast.success(message);
-						router.refresh();
-						router.push(`/dashboard/child`);
-					} else {
-						toast.error(message);
-					}
+					toast.success(message);
+					router.refresh();
 				},
 				onError: ({ message }: { message: any }) => {
 					// console.log(message, "comment");
@@ -85,7 +85,7 @@ function Child() {
 				}
 			});
 		} else {
-
+			toast.error("Upload pictures");
 		}
 		// console.log(values, "result");
 	}
@@ -98,25 +98,12 @@ function Child() {
 						<div className="grid md:grid-cols-3 grid-cols-1  gap-3 rounded">
 							<FormField
 								control={form.control}
-								name="username"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>UserName</FormLabel>
-										<FormControl>
-											<Input placeholder="username" {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
 								name="name"
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Name</FormLabel>
 										<FormControl>
-											<Input placeholder="name" {...field} />
+											<Input defaultValue={data.name} placeholder="name" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -144,7 +131,7 @@ function Child() {
 									<FormItem>
 										<FormLabel>Address</FormLabel>
 										<FormControl>
-											<Input placeholder="Address" {...field} />
+											<Input defaultValue={data.address} placeholder="Address" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -157,7 +144,7 @@ function Child() {
 									<FormItem>
 										<FormLabel>Dream</FormLabel>
 										<FormControl>
-											<Input placeholder="Dream" {...field} />
+											<Input defaultValue={data.dream} placeholder="Dream" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -170,7 +157,7 @@ function Child() {
 									<FormItem>
 										<FormLabel>Academy</FormLabel>
 										<FormControl>
-											<Input placeholder="academy" {...field} />
+											<Input defaultValue={data.academy} placeholder="academy" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -183,7 +170,7 @@ function Child() {
 									<FormItem>
 										<FormLabel>Phone</FormLabel>
 										<FormControl>
-											<Input placeholder="Phone" {...field} />
+											<Input defaultValue={data.phone} placeholder="Phone" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -197,7 +184,7 @@ function Child() {
 								<FormItem className="">
 									<FormLabel>Description</FormLabel>
 									<FormControl className="">
-										<TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
+										<UpdatedEditor content={data.description} description={field.name} onChange={field.onChange} value={field.value} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -213,4 +200,4 @@ function Child() {
 	)
 }
 
-export default Child
+export default ChildUpdated

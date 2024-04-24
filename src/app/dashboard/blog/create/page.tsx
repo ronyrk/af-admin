@@ -63,26 +63,31 @@ function NewsCreate() {
 		const username = values.username;
 		const shortDes = values.shortDes;
 
-		mutate({ title, description, photoUrl, username, shortDes }, {
-			onSuccess: (data: NewsProps) => {
-				if (data?.id) {
-					toast.success("Create Successfully Project");
-				} else {
-					throw new Error("News Created Failed")
+		if (upload === true) {
+			mutate({ title, description, photoUrl, username, shortDes }, {
+				onSuccess: (data: NewsProps) => {
+					if (data?.id) {
+						toast.success("Create Successfully");
+					} else {
+						throw new Error("Created Failed")
+					}
+					router.push(`/dashboard/blog`);
+					router.refresh();
+				},
+				onError: ({ message }: { message: any }) => {
+					// console.log(message, "comment");
+					toast.error(message);
 				}
-				router.refresh();
-				router.push(`/dashboard/blog`);
-			},
-			onError: (error) => {
-				toast.error("Created Failed");
-			}
-		});
-		console.log(values, "result");
+			});
+		} else {
+			toast.error("Upload Photo");
+		}
+		// console.log(values, "result");
 	}
 	return (
 		<div>
 			<div className="p-2">
-				<h2 className="text-center py-2 text-color-main">Create Project</h2>
+				<h2 className="text-center py-2 text-color-main">Create Blog</h2>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
 						<FormField
