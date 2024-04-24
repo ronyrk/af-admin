@@ -61,7 +61,9 @@ async function ChildsList() {
 
 						</TableCell>
 						<TableCell className="font-medium uppercase">
-							<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' ><PencilIcon color='blue' size={18} /> </Button>
+							<Button asChild className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' >
+								<Link href={`child/${item.username}`}><PencilIcon color='blue' size={18} /></Link>
+							</Button>
 						</TableCell>
 						<TableCell className="font-medium uppercase">
 							<DeleteButton type='child' username={item.username} />
