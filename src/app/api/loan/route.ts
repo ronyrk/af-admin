@@ -15,8 +15,11 @@ export const POST = async (request: Request) => {
 			}
 		});
 		return NextResponse.json({ message: "loan created Successfully", loan });
-	} catch (error) {
-		return NextResponse.json({ error });
+	} catch (error: any) {
+		if (error?.code === 'P2002') {
+			return NextResponse.json({ message: `a new user cannot be created with this ${error?.meta?.target}` });
+		}
+		return NextResponse.json({ message: "Created Failed" });
 	}
 };
 
