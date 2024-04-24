@@ -26,7 +26,7 @@ async function ProjectsList() {
 						<TableCell className="font-medium uppercase">{item.teamMemberName}</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Image
-								alt='payment proved'
+								alt={item.teamMemberName}
 								src={item.teamMemberPhotoUrl}
 								width={80}
 								height={50}
@@ -55,7 +55,6 @@ async function page() {
 			<Table>
 				<TableHeader>
 					<TableRow>
-						<TableHead>DATE</TableHead>
 						<TableHead className='w-[300px] uppercase'>NAME</TableHead>
 						<TableHead className=' uppercase'>Picture</TableHead>
 						<TableHead className=' uppercase'>BRANCH NAME</TableHead>
