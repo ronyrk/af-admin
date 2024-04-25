@@ -11,6 +11,16 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog"
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -59,7 +69,9 @@ function ActionButton({ item }: { item: PaymentApproveIProps }) {
 					</AlertDialogHeader>
 					{isPending ? <Button disabled>Loading...</Button> : <AlertDialogFooter>
 						<AlertDialogCancel className=' bg-color-main hover:bg-color-main'>Cancel</AlertDialogCancel>
-						<AlertDialogCancel className=' bg-color-sub hover:bg-color-sub' onClick={() => handleDeleted(item.id)} >declined</AlertDialogCancel>
+						<AlertDialogCancel asChild  >
+							<Button className=' bg-color-sub hover:bg-color-sub' onClick={() => handleDeleted(item.id)}>Declined</Button>
+						</AlertDialogCancel>
 						<ApproveButton item={item} />
 					</AlertDialogFooter>}
 				</AlertDialogContent>

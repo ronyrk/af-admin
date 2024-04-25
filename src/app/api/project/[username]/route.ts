@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { ParamsIdIProps } from "@/types";
+import { ParamsIProps, ParamsIdIProps } from "@/types";
 import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic'
@@ -18,7 +18,7 @@ export const GET = async (request: Request, { params }: {
 		})
 		return NextResponse.json(result);
 	} catch (error) {
-		throw new Error("Data fetch fail");
+		return NextResponse.json(error);
 	}
 }
 // Deleted branch
@@ -36,23 +36,23 @@ export const DELETE = async (request: Request, { params }: {
 		})
 		return NextResponse.json({ message: "deleted successfully" });
 	} catch (error) {
-		throw new Error("Data fetch fail");
+		return NextResponse.json(error);
 	}
 }
 
-export const PATCH = async (request: Request, { params }: ParamsIdIProps) => {
+export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	try {
-		const { id } = params;
+		const { username } = params;
 		const { title, description, shortDes, photoUrl } = await request.json();
 		const result = await prisma.project.update({
-			where: { id },
+			where: { username },
 			data: {
 				title, shortDes, description, photoUrl
 			}
 		})
-		return NextResponse.json({ message: "FAQ updated" })
+		return NextResponse.json({ message: "Project updated" })
 
 	} catch (error) {
-		throw new Error("Data fetch fail");
+		return NextResponse.json(error);
 	}
 }

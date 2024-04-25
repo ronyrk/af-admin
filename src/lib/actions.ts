@@ -3,16 +3,17 @@
 import { unstable_noStore } from "next/cache";
 import prisma from "./prisma";
 
-export async function deleteRequest(item: any) {
+export async function approvedRequest(id: string, loanusername: string, photoUrl: string, method: string, createAt: Date, amount: string) {
 	try {
 		unstable_noStore();
-		const { id, loanusername, photoUrl, method, createAt, amount } = item;
 		const approved = await prisma.payment.create({
 			data: {
 				loanusername, photoUrl, method, createAt, amount
 			}
 		});
-		const removed = await prisma.donationChild.delete({ where: { id } });
+		const removed = await prisma.request.delete({ where: { id } });
+		console.log(approved, '#', removed)
+		return { message: "successfully" };
 	} catch (error) {
 		console.log(error);
 	}
