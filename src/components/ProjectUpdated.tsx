@@ -121,7 +121,7 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 								<FormItem>
 									<FormLabel>Short Description</FormLabel>
 									<FormControl>
-										<Textarea defaultValue={data.shortDes} placeholder="Short Description" {...field} />
+										<Textarea rows={6} defaultValue={data.shortDes} placeholder="Short Description" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>

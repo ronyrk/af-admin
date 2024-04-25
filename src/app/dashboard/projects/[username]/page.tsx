@@ -1,3 +1,4 @@
+import ProjectUpdated from '@/components/ProjectUpdated';
 import { ProjectsProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import React from 'react'
@@ -14,7 +15,9 @@ async function page({ params }: {
 	};
 	const data: ProjectsProps = await res.json();
 	return (
-		<div>page</div>
+		<div>
+			<ProjectUpdated data={data} />
+		</div>
 	)
 }
 
