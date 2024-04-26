@@ -3,6 +3,13 @@ import Link from 'next/link'
 import { redirect, usePathname } from 'next/navigation';
 import React, { useEffect } from 'react'
 import { useUser } from './ContextProvider';
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion"
+
 
 interface RoutesIProps {
 	name: string,
@@ -14,7 +21,7 @@ function AdminSidebar() {
 	const path = usePathname();
 	const { user, isUserLoading } = useUser();
 	const route = path.split('/');
-	const routes: RoutesIProps[] = [
+	const hasana: RoutesIProps[] = [
 		{
 			name: "Branch",
 			path: "/dashboard",
@@ -39,16 +46,15 @@ function AdminSidebar() {
 			name: "FAQ",
 			path: "/dashboard/question",
 			active: path === "/dashboard/question" || path === "/dashboard/question/create"
-		},
+		}
+	];
+	const child: RoutesIProps[] = [
+
+
 		{
-			name: "Projects",
-			path: "/dashboard/projects",
-			active: path === "/dashboard/projects" || path === "/dashboard/projects/create"
-		},
-		{
-			name: "Blog",
-			path: "/dashboard/blog",
-			active: path === "/dashboard/blog" || path === "/dashboard/blog/create"
+			name: "Child",
+			path: "/dashboard/child",
+			active: path === "/dashboard/child" || path === "/dashboard/child/create" || path === "/dashboard/child/donation" || path === "/dashboard/child/pending"
 		},
 		{
 			name: "Donate",
@@ -56,15 +62,12 @@ function AdminSidebar() {
 			active: path === "/dashboard/donate"
 		},
 		{
-			name: "Child",
-			path: "/dashboard/child",
-			active: path === "/dashboard/child" || path === "/dashboard/child/create" || path === "/dashboard/child/donation" || path === "/dashboard/child/pending"
-		},
-		{
 			name: "Disbursement",
 			path: "/dashboard/disbursement",
 			active: path === "/dashboard/disbursement" || path === "/dashboard/disbursement/create"
-		},
+		}
+	];
+	const gallery: RoutesIProps[] = [
 		{
 			name: "Category",
 			path: "/dashboard/category",
@@ -75,6 +78,22 @@ function AdminSidebar() {
 			path: "/dashboard/gallery",
 			active: path === "/dashboard/gallery" || path === "/dashboard/gallery/create"
 		},
+
+	];
+
+	const others: RoutesIProps[] = [
+
+		{
+			name: "Projects",
+			path: "/dashboard/projects",
+			active: path === "/dashboard/projects" || path === "/dashboard/projects/create"
+		},
+		{
+			name: "Blog",
+			path: "/dashboard/blog",
+			active: path === "/dashboard/blog" || path === "/dashboard/blog/create"
+		},
+
 		{
 			name: "Member",
 			path: "/dashboard/member",
@@ -94,14 +113,58 @@ function AdminSidebar() {
 	}, [user?.email, isUserLoading]);
 
 	return (
-		<div className='h-fit'>
-			<div className="flex flex-col gap-2">
-				{
-					routes.map((item, index) => (
-						<Link key={index} className={`px-8 py-3 rounded ${item.active === true ? " bg-color-main text-white" : "hover:bg-color-main hover:text-white"}`} href={item.path}>{item.name}</Link>
-					))
-				}
-			</div>
+		<div className=' min-h-screen flex flex-col gap-2'>
+			<Accordion type="single" collapsible>
+				<AccordionItem value="item-1">
+					<AccordionTrigger className=' px-2 py-4 text-lg'>কর্যে হাসানা</AccordionTrigger>
+					<AccordionContent>
+						<div className="flex flex-col gap-2">
+							{
+								hasana.map((item, index) => (
+									<Link key={index} className={`px-8 py-3 rounded ${item.active === true ? " bg-color-main text-white" : "hover:bg-color-main hover:text-white"}`} href={item.path}>{item.name}</Link>
+								))
+							}
+						</div>
+					</AccordionContent>
+				</AccordionItem>
+				<AccordionItem value="item-2">
+					<AccordionTrigger className=' px-2 py-4 text-lg'>চাইল্ড</AccordionTrigger>
+					<AccordionContent>
+						<div className="flex flex-col gap-2">
+							{
+								child.map((item, index) => (
+									<Link key={index} className={`px-8 py-3 rounded ${item.active === true ? " bg-color-main text-white" : "hover:bg-color-main hover:text-white"}`} href={item.path}>{item.name}</Link>
+								))
+							}
+						</div>
+					</AccordionContent>
+				</AccordionItem>
+				<AccordionItem value="item-3">
+					<AccordionTrigger className=' px-2 py-4 text-lg'>গ্যালারী</AccordionTrigger>
+					<AccordionContent>
+						<div className="flex flex-col gap-2">
+							{
+								gallery.map((item, index) => (
+									<Link key={index} className={`px-8 py-3 rounded ${item.active === true ? " bg-color-main text-white" : "hover:bg-color-main hover:text-white"}`} href={item.path}>{item.name}</Link>
+								))
+							}
+						</div>
+					</AccordionContent>
+				</AccordionItem>
+				<AccordionItem value="item-3">
+					<AccordionTrigger className=' px-2 py-4 text-lg'>অন্যান্য</AccordionTrigger>
+					<AccordionContent>
+						<div className="flex flex-col gap-2">
+							{
+								others.map((item, index) => (
+									<Link key={index} className={`px-8 py-3 rounded ${item.active === true ? " bg-color-main text-white" : "hover:bg-color-main hover:text-white"}`} href={item.path}>{item.name}</Link>
+								))
+							}
+						</div>
+					</AccordionContent>
+				</AccordionItem>
+			</Accordion>
+
 		</div>
 	)
 }
