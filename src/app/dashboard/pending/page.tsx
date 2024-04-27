@@ -7,21 +7,16 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { LoanIProps, PaymentApproveIProps } from '@/types';
+import { PaymentApproveIProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import { Input } from '@/components/ui/input';
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog"
-
 import Moment from "moment"
 import ActionButton from '@/components/ActionButton';
-import prisma from '@/lib/prisma';
 import Image from 'next/image';
 import { GetBranchDetails } from '@/lib/getBranchList';
 import { GetLoanDetails } from '@/lib/getLoanName';
