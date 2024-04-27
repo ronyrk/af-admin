@@ -48,7 +48,7 @@ async function ChildDonationList() {
 			{
 				data?.map((item, index: number) => (
 					<TableRow key={index}>
-						<TableCell>{`${Moment(item.createAt).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
+						<TableCell>{`${Moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
 						<TableCell className="font-medium uppercase">{item.name}</TableCell>
 						<TableCell className="font-medium uppercase">{getChildName(item.username)}</TableCell>
 						<TableCell className="font-medium uppercase">{item.amount}</TableCell>

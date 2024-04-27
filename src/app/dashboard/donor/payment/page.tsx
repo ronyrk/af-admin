@@ -57,7 +57,7 @@ async function DonorPaymentList() {
 				{
 					payment.map((item, index: number) => (
 						<TableRow key={index}>
-							<TableCell className="font-medium">{`${moment(item.createAt).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
+							<TableCell className="font-medium">{`${Moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
 							<TableCell className="font-medium uppercase">{getUserName(item.donorUsername)}</TableCell>
 							<TableCell className="font-medium uppercase">{item.amount}</TableCell>
 							<TableCell className="font-medium uppercase" >{item.loanPayment}</TableCell>

@@ -44,7 +44,7 @@ async function BorrowersList() {
 			{
 				payments.map((item, index: number) => (
 					<TableRow key={index}>
-						<TableCell>{`${Moment(item.createAt).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
+						<TableCell>{`${Moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
 
 						<TableCell className="font-medium uppercase" >{GetBranchDetails(item.loanusername)}</TableCell>
 						<TableCell className="font-medium uppercase">{GetLoanDetails(item.loanusername)}</TableCell>
