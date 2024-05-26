@@ -217,6 +217,21 @@ model Donate {
   createAt DateTime @default(now())
 }
 
+model Income {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  date        DateTime
+  type        String
+  transaction String
+  amount      String
+}
+
+model Expenses {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  date        DateTime
+  description String
+  amount      String
+}
+
 enum Status {
   PENDING
   RUNNING

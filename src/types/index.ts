@@ -12,6 +12,19 @@ export interface DonorIProps {
 	hometown: string,
 	status: string,
 };
+export interface IncomeIProps {
+	id: string,
+	date: Date,
+	amount: string,
+	transaction: string,
+	type: string,
+};
+export interface ExpensesIProps {
+	id: string,
+	date: Date,
+	amount: string,
+	description: string
+}
 export interface DonorIUpdatedProps {
 	id?: string,
 	password: string,
