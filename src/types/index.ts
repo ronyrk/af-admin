@@ -13,14 +13,14 @@ export interface DonorIProps {
 	status: string,
 };
 export interface IncomeIProps {
-	id: string,
+	id?: string,
 	date: Date,
 	amount: string,
 	transaction: string,
 	type: string,
 };
 export interface ExpensesIProps {
-	id: string,
+	id?: string,
 	date: Date,
 	amount: string,
 	description: string
