@@ -39,7 +39,7 @@ async function ProjectsList() {
 			{
 				project.map((item, index: number) => (
 					<TableRow key={index}>
-						<TableCell className="font-medium">{`${moment(item?.date).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
+						<TableCell className="font-medium">{`${moment(item?.date).format('DD/MM/YYYY')}`}</TableCell>
 						<TableCell className="font-medium uppercase">{getChildName(item.username)}</TableCell>
 						<TableCell className="font-medium uppercase">{item?.amount}</TableCell>
 

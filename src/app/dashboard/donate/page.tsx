@@ -35,7 +35,7 @@ async function NewsList() {
 			{
 				data.map((item, index: number) => (
 					<TableRow key={index}>
-						<TableCell className="font-medium">{`${moment(item?.createAt).subtract(1, "years").format('DD/MM/YYYY')}`}</TableCell>
+						<TableCell className="font-medium">{`${moment(item?.createAt).format('DD/MM/YYYY')}`}</TableCell>
 						<TableCell className="font-medium uppercase">{item.name}</TableCell>
 						<TableCell className="font-medium lowercase">{item.email}</TableCell>
 						<TableCell className="font-medium ">{item.amount}</TableCell>
