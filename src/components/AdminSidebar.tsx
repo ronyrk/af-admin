@@ -99,6 +99,16 @@ function AdminSidebar() {
 			path: "/dashboard/member",
 			active: path === "/dashboard/member"
 		},
+		{
+			name: "Income",
+			path: "/dashboard/income",
+			active: path === "/dashboard/income" || path === "/dashboard/income/create"
+		},
+		{
+			name: "Expenses",
+			path: "/dashboard/expenses",
+			active: path === "/dashboard/expenses" || path === "/dashboard/expenses/create"
+		},
 
 	];
 
