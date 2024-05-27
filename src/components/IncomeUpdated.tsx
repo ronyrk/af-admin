@@ -81,7 +81,7 @@ function IncomeUpdated({ data }: { data: IncomeIProps }) {
 	};
 	return (
 		<div className="flex flex-col  gap-3">
-			<h2 className="text-center text-xl">Income Create</h2>
+			<h2 className="text-center text-xl">Income Updated</h2>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
 					<div className=" grid grid-cols-2 justify-items-stretch gap-3">
