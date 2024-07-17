@@ -319,3 +319,9 @@ export interface MemberIProps {
 	teamMemberOccupation: string,
 	teamMemberPhotoUrl: string,
 }
+export interface SearchIProps {
+	dateFrom?: string,
+	dateTo?: string,
+	transaction?: string,
+	page?: string,
+};

@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { CategoryIProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import DeleteButton from '@/components/DeleteButton';
 import { Button } from '@/components/ui/button';
 import { PencilIcon } from 'lucide-react';
@@ -20,7 +20,7 @@ import Link from 'next/link';
 
 
 async function CategoryList() {
-	unstable_noStore();
+	cookies();
 	const res = await fetch('https://af-admin.vercel.app/api/category');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");

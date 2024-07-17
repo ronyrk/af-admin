@@ -62,7 +62,7 @@ function IncomeUpdated({ data }: { data: IncomeIProps }) {
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		const previous = values.date;
 		const date = new Date(previous);
-		date.setDate(previous.getDate() + 1);
+		date.setDate(previous.getDate());
 		const transaction = values.transaction;
 		const type = values.type;
 		const amount = values.amount;

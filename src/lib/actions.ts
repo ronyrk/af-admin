@@ -1,11 +1,11 @@
 'use server';
 
-import { unstable_noStore } from "next/cache";
+import { cookies } from 'next/headers';
 import prisma from "./prisma";
 
 export async function approvedRequest(id: string, loanusername: string, photoUrl: string, method: string, createAt: Date, amount: string) {
 	try {
-		unstable_noStore();
+		cookies();
 		const approved = await prisma.payment.create({
 			data: {
 				loanusername, photoUrl, method, createAt, amount
@@ -23,7 +23,7 @@ export async function ApproveChildSponsor(item: any) {
 
 	try {
 		// console.log(item, "log");
-		unstable_noStore();
+		cookies();
 		const { id, name, username, email, amount, method, photoUrl, about, createAt } = item;
 		await prisma.donation.create({
 			data: {

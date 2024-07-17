@@ -1,4 +1,4 @@
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import React, { Suspense } from 'react'
 import prisma from '@/lib/prisma';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,7 @@ async function getBranchName(username: string) {
 }
 
 async function ProjectsList() {
-	unstable_noStore();
+	cookies();
 	const data = await prisma.member.findMany();
 	return (
 		<TableBody>

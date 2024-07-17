@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { NewsProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -21,7 +21,7 @@ import DeleteButton from '@/components/DeleteButton';
 
 
 async function NewsList() {
-	unstable_noStore();
+	cookies();
 	let res = await fetch('https://af-admin.vercel.app/api/news');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");

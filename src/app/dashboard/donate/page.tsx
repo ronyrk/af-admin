@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { DonateProps, NewsProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import moment from 'moment';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import Image from 'next/image';
@@ -23,7 +23,7 @@ async function getMethod(method: string) {
 
 
 async function NewsList() {
-	unstable_noStore();
+	cookies();
 	let res = await fetch('https://arafatfoundation.vercel.app/api/donate');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");

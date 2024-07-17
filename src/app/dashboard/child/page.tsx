@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { ChildIProps, LoanIProps, PaymentApproveIProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import { Input } from '@/components/ui/input';
 import {
 	Dialog,
@@ -23,7 +23,7 @@ import { PencilIcon } from 'lucide-react';
 import Link from 'next/link';
 
 async function ChildsList() {
-	unstable_noStore();
+	cookies();
 	const res = await fetch('https://af-admin.vercel.app/api/child');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");

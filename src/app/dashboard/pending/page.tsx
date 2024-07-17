@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { PaymentApproveIProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import { Input } from '@/components/ui/input';
 import {
 	Dialog,
@@ -27,7 +27,7 @@ import { GetLoanDetails } from '@/lib/getLoanName';
 
 
 async function BorrowersList() {
-	unstable_noStore();
+	cookies();
 	const res = await fetch('https://af-admin.vercel.app/api/request');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
