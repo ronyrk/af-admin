@@ -55,7 +55,7 @@ function TableIncome() {
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: async ({ dateTo, dateFrom, transaction, page }: SearchIProps) => {
-			const response = await axios.get(`/api/income-search?from=${dateFrom}&to=${dateTo}&transaction=${transaction}&page=${page}}`);
+			const response = await axios.get(`/api/income-search?from=${dateFrom}&to=${dateTo}&transaction=${transaction}&page=${page}`);
 			return response.data;
 		},
 	});
@@ -74,8 +74,8 @@ function TableIncome() {
 
 	function GetIncome(data: IncomeIProps[]) {
 		const Amount: number[] = [];
-		const income = data.forEach((item) => Amount.push(Number(item.amount)));
-		const sum = Amount.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+		const income = data?.forEach((item) => Amount.push(Number(item.amount)));
+		const sum = Amount?.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
 		return `${sum}`;
 	}
 	return (
@@ -161,12 +161,22 @@ function TableIncome() {
 							<TableCell className="font-bold uppercase">{GetIncome(income)}</TableCell>
 						</TableRow>
 					</TableBody>
-					<TableFooter>
-
-					</TableFooter>
 				</Suspense>
 			</Table>
+			<div className="flex justify-center py-4">
+				<div className=' flex flex-row gap-2'>
+					{
+						Array.from({ length: Math.ceil(income.length / 20) })?.map((i: any, index) => (
+							<Button variant="outline" aria-disabled={Number(page) === index + 1} className={`text-black ${Number(page) === index + 1 ? "bg-color-sub" : ""}`} key={index}
+								onClick={() => setPage(`${index + 1}`)}
+							>
+								{1 + index}
+							</Button>
 
+						))
+					}
+				</div >
+			</div>
 		</div>
 	)
 }
