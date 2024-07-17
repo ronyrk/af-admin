@@ -4,6 +4,7 @@ import {
 	Table,
 	TableBody,
 	TableCell,
+	TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -54,7 +55,7 @@ function TableIncome() {
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: async ({ dateTo, dateFrom, transaction, page }: SearchIProps) => {
-			const response = await axios.get(`/api/income-search?from=${dateFrom}&to=${dateTo}&transaction=${transaction}&page=${page}}`);
+			const response = await axios.get(`/api/income-search?from=${dateFrom}&to=${dateTo}&transaction=${transaction}&page=${page}`);
 			return response.data;
 		},
 	});
@@ -71,9 +72,12 @@ function TableIncome() {
 		});
 	}, [dateFrom, dateTo, mutate, transaction, page]);
 
-	console.log(income, "00")
-
-	// console.log(dateFrom, dateTo);
+	function GetIncome(data: IncomeIProps[]) {
+		const Amount: number[] = [];
+		const income = data?.forEach((item) => Amount.push(Number(item.amount)));
+		const sum = Amount?.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+		return `${sum}`;
+	}
 	return (
 		<div className='flex flex-col'>
 			<h2 className="text-center text-xl">Income List</h2>
@@ -137,9 +141,10 @@ function TableIncome() {
 							income?.map((item: any, index: number) => (
 								<TableRow key={index}>
 									<TableCell className="font-medium">{`${moment(item?.date).format('DD/MM/YYYY')}`}</TableCell>
+									<TableCell className="font-medium uppercase">{item.amount}</TableCell>
 									<TableCell className="font-medium uppercase">{item.type}</TableCell>
 									<TableCell className="font-medium uppercase">{item.transaction}</TableCell>
-									<TableCell className="font-medium uppercase">{item.amount}</TableCell>
+
 
 									<TableCell className="font-medium uppercase">
 										<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' asChild >
@@ -151,10 +156,27 @@ function TableIncome() {
 								</TableRow>
 							))
 						}
+						<TableRow className=''>
+							<TableCell className=" font-bold uppercase">Total</TableCell>
+							<TableCell className="font-bold uppercase">{GetIncome(income)}</TableCell>
+						</TableRow>
 					</TableBody>
 				</Suspense>
 			</Table>
+			<div className="flex justify-center py-4">
+				<div className=' flex flex-row gap-2'>
+					{
+						Array.from({ length: Math.ceil(income.length / 20) })?.map((i: any, index) => (
+							<Button variant="outline" aria-disabled={Number(page) === index + 1} className={`text-black ${Number(page) === index + 1 ? "bg-color-sub" : ""}`} key={index}
+								onClick={() => setPage(`${index + 1}`)}
+							>
+								{1 + index}
+							</Button>
 
+						))
+					}
+				</div >
+			</div>
 		</div>
 	)
 }

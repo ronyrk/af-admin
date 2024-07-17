@@ -9,18 +9,20 @@ export const GET = async (request: Request) => {
     const end = new Date(endString as any)
     const page = url.searchParams.get("page");
     const transaction = url.searchParams.get("transaction") as any;
-    console.log(startString, endString, page, transaction);
+    const pageNumber = Number(page) - 1;
+    const take = 20;
+    const skip = take * pageNumber;
     try {
         if (transaction === "") {
             const result = await prisma.income.findMany({
-                // 	// skip,
-                // 	// take,
                 where: {
                     date: {
                         gte: start,
                         lte: end
                     }
                 },
+                skip,
+                take,
                 orderBy: {
                     date: "desc"
                 }
@@ -33,6 +35,11 @@ export const GET = async (request: Request) => {
                         contains: transaction,
                         mode: "insensitive"
                     }
+                },
+                skip,
+                take,
+                orderBy: {
+                    date: "desc"
                 }
             });
             return NextResponse.json(result);
@@ -41,4 +48,4 @@ export const GET = async (request: Request) => {
         return NextResponse.json("server Error");
     }
 
-}
+};
