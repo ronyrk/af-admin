@@ -29,49 +29,28 @@ import {
 import { DateFormateConvert } from "@/lib/formateDateConvert"
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { SearchIProps } from '@/types';
+import { IncomeIProps, SearchIProps } from '@/types';
 import toast from 'react-hot-toast';
 
-// async function IncomeList() {
-
-
-
-// 	return (
-// 		<TableBody>
-// 			{
-// 				data.map((item, index: number) => (
-// 					<TableRow key={index}>
-// 						<TableCell className="font-medium">{`${moment(item?.date).format('DD/MM/YYYY')}`}</TableCell>
-// 						<TableCell className="font-medium uppercase">{item.type}</TableCell>
-// 						<TableCell className="font-medium uppercase">{item.transaction}</TableCell>
-// 						<TableCell className="font-medium uppercase">{item.amount}</TableCell>
-
-// 						<TableCell className="font-medium uppercase">
-// 							<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' asChild >
-// 								<Link href={`income/${item.id}`}><PencilIcon color='blue' size={18} /></Link></Button>
-// 						</TableCell>
-// 						<TableCell className="font-medium uppercase">
-// 							<DeleteButton type='income' username={item?.id as string} />
-// 						</TableCell>
-// 					</TableRow>
-// 				))
-// 			}
-// 		</TableBody>
-// 	)
-// };
 
 
 
 function TableIncome() {
+
+	const month = new Date();
+	const year = new Date().getFullYear();
 	const [date, setDate] = React.useState<DateRange | undefined>({
-		from: new Date("2024-05-25T18:00:00.000+00:00"),
-		to: new Date("2024-05-29T18:00:00.000+00:00"),
+		from: addDays(new Date(), -46),
+		to: new Date(),
 	});
 	const [transaction, setTransaction] = React.useState("");
 	const [page, setPage] = React.useState<string>("1");
+	const [income, setIncome] = React.useState([]);
 
 	const dateFrom = DateFormateConvert(date?.from as any);
 	const dateTo = DateFormateConvert(date?.to as any);
+
+
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: async ({ dateTo, dateFrom, transaction, page }: SearchIProps) => {
@@ -82,15 +61,17 @@ function TableIncome() {
 
 	React.useEffect(() => {
 		mutate({ dateFrom, dateTo, page, transaction }, {
-			onSuccess: (data: any) => {
+			onSuccess: (data) => {
 				toast.success(" Successfully Updated");
-				console.log({ data });
+				setIncome(data);
 			},
 			onError: (error) => {
 				toast.error("Updated Failed");
 			}
 		});
 	}, [dateFrom, dateTo, mutate, transaction, page]);
+
+	console.log(income, "00")
 
 	// console.log(dateFrom, dateTo);
 	return (
@@ -150,9 +131,28 @@ function TableIncome() {
 						<TableHead className=' uppercase'>Deleted</TableHead>
 					</TableRow>
 				</TableHeader>
-				{/* <Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
-					<IncomeList />
-				</Suspense> */}
+				<Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
+					<TableBody>
+						{
+							income?.map((item: any, index: number) => (
+								<TableRow key={index}>
+									<TableCell className="font-medium">{`${moment(item?.date).format('DD/MM/YYYY')}`}</TableCell>
+									<TableCell className="font-medium uppercase">{item.type}</TableCell>
+									<TableCell className="font-medium uppercase">{item.transaction}</TableCell>
+									<TableCell className="font-medium uppercase">{item.amount}</TableCell>
+
+									<TableCell className="font-medium uppercase">
+										<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' asChild >
+											<Link href={`income/${item.id}`}><PencilIcon color='blue' size={18} /></Link></Button>
+									</TableCell>
+									<TableCell className="font-medium uppercase">
+										<DeleteButton type='income' username={item?.id as string} />
+									</TableCell>
+								</TableRow>
+							))
+						}
+					</TableBody>
+				</Suspense>
 			</Table>
 
 		</div>
