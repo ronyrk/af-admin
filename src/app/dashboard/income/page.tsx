@@ -1,4 +1,5 @@
-import React, { Suspense } from 'react'
+"use client";
+import React, { Suspense, useState } from 'react'
 import {
 	Table,
 	TableBody,
@@ -7,50 +8,91 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { IncomeIProps } from '@/types';
-import { cookies } from 'next/headers';
+
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import moment from 'moment';
 import { PencilIcon } from 'lucide-react';
 import DeleteButton from '@/components/DeleteButton';
+import { addDays, format } from "date-fns"
+import { Calendar as CalendarIcon } from "lucide-react"
+import { DateRange } from "react-day-picker"
 
-async function IncomeList() {
-	cookies();
-	let res = await fetch('https://af-admin.vercel.app/api/income');
-	if (!res.ok) {
-		throw new Error("Failed to fetch data list");
-	};
-	const data: IncomeIProps[] = await res.json();
+import { cn } from "@/lib/utils"
+import { Calendar } from "@/components/ui/calendar"
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover"
+import { DateFormateConvert } from "@/lib/formateDateConvert"
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { SearchIProps } from '@/types';
+import toast from 'react-hot-toast';
 
-	return (
-		<TableBody>
-			{
-				data.map((item, index: number) => (
-					<TableRow key={index}>
-						<TableCell className="font-medium">{`${moment(item?.date).format('DD/MM/YYYY')}`}</TableCell>
-						<TableCell className="font-medium uppercase">{item.type}</TableCell>
-						<TableCell className="font-medium uppercase">{item.transaction}</TableCell>
-						<TableCell className="font-medium uppercase">{item.amount}</TableCell>
+// async function IncomeList() {
 
-						<TableCell className="font-medium uppercase">
-							<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' asChild >
-								<Link href={`income/${item.id}`}><PencilIcon color='blue' size={18} /></Link></Button>
-						</TableCell>
-						<TableCell className="font-medium uppercase">
-							<DeleteButton type='income' username={item?.id as string} />
-						</TableCell>
-					</TableRow>
-				))
+
+
+// 	return (
+// 		<TableBody>
+// 			{
+// 				data.map((item, index: number) => (
+// 					<TableRow key={index}>
+// 						<TableCell className="font-medium">{`${moment(item?.date).format('DD/MM/YYYY')}`}</TableCell>
+// 						<TableCell className="font-medium uppercase">{item.type}</TableCell>
+// 						<TableCell className="font-medium uppercase">{item.transaction}</TableCell>
+// 						<TableCell className="font-medium uppercase">{item.amount}</TableCell>
+
+// 						<TableCell className="font-medium uppercase">
+// 							<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' asChild >
+// 								<Link href={`income/${item.id}`}><PencilIcon color='blue' size={18} /></Link></Button>
+// 						</TableCell>
+// 						<TableCell className="font-medium uppercase">
+// 							<DeleteButton type='income' username={item?.id as string} />
+// 						</TableCell>
+// 					</TableRow>
+// 				))
+// 			}
+// 		</TableBody>
+// 	)
+// };
+
+
+
+function TableIncome() {
+	const [date, setDate] = React.useState<DateRange | undefined>({
+		from: new Date("2024-05-25T18:00:00.000+00:00"),
+		to: new Date("2024-05-29T18:00:00.000+00:00"),
+	});
+	const [transaction, setTransaction] = React.useState("");
+	const [page, setPage] = React.useState<string>("1");
+
+	const dateFrom = DateFormateConvert(date?.from as any);
+	const dateTo = DateFormateConvert(date?.to as any);
+
+	const { mutate, isPending } = useMutation({
+		mutationFn: async ({ dateTo, dateFrom, transaction, page }: SearchIProps) => {
+			const response = await axios.get(`/api/income-search?from=${dateFrom}&to=${dateTo}&transaction=${transaction}&page=${page}}`);
+			return response.data;
+		},
+	});
+
+	React.useEffect(() => {
+		mutate({ dateFrom, dateTo, page, transaction }, {
+			onSuccess: (data: any) => {
+				toast.success(" Successfully Updated");
+				console.log({ data });
+			},
+			onError: (error) => {
+				toast.error("Updated Failed");
 			}
-		</TableBody>
-	)
-};
+		});
+	}, [dateFrom, dateTo, mutate, transaction, page]);
 
-
-
-async function page() {
+	// console.log(dateFrom, dateTo);
 	return (
 		<div className='flex flex-col'>
 			<h2 className="text-center text-xl">Income List</h2>
@@ -58,7 +100,44 @@ async function page() {
 				<Button asChild>
 					<Link className=' bg-color-main hover:bg-color-sub' href={`disbursement/create`}>Create</Link>
 				</Button>
-				<Input className='w-64' type="text" placeholder="Search" />
+				<div className="grid gap-2">
+					<Popover>
+						<PopoverTrigger asChild>
+							<Button
+								id="date"
+								className={cn(
+									"w-[300px] justify-start text-left font-normal",
+									!date && "text-muted-foreground"
+								)}
+							>
+								<CalendarIcon className="mr-2 h-4 w-4" />
+								{date?.from ? (
+									date.to ? (
+										<>
+											{format(date.from, "PPP")} -{" "}
+											{format(date.to, "PPP")}
+										</>
+									) : (
+										format(date.from, "PPP")
+									)
+								) : (
+									<span>Pick a date</span>
+								)}
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className="w-auto p-0" align="start">
+							<Calendar
+								initialFocus
+								mode="range"
+								defaultMonth={date?.from}
+								selected={date}
+								onSelect={setDate}
+								numberOfMonths={2}
+							/>
+						</PopoverContent>
+					</Popover>
+				</div>
+				<Input className='w-64' type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTransaction(e.target.value)} placeholder="Search" />
 			</div>
 			<Table>
 				<TableHeader>
@@ -71,13 +150,13 @@ async function page() {
 						<TableHead className=' uppercase'>Deleted</TableHead>
 					</TableRow>
 				</TableHeader>
-				<Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
+				{/* <Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
 					<IncomeList />
-				</Suspense>
+				</Suspense> */}
 			</Table>
 
 		</div>
 	)
 }
 
-export default page
+export default TableIncome
