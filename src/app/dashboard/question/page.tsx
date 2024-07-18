@@ -1,6 +1,6 @@
 import CreateFAQ from '@/components/CreateFAQ'
 import { FaqProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import React, { Suspense } from 'react'
 import {
   Table,
@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 async function Question() {
-  unstable_noStore();
+  cookies();
   let res = await fetch('https://af-admin.vercel.app/api/faq');
   if (!res.ok) {
     throw new Error("Failed to fetch data list");

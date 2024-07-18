@@ -11,12 +11,12 @@ import {
 import { Button } from "@/components/ui/button"
 import Link from 'next/link';
 import { BranchIProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import { Input } from '@/components/ui/input';
 import DeleteButton from '@/components/DeleteButton';
 
 async function BranchList() {
-	unstable_noStore();
+	cookies();
 	let res = await fetch('https://af-admin.vercel.app/api/branch');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");

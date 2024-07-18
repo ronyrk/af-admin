@@ -1,6 +1,6 @@
 import ProjectUpdated from '@/components/ProjectUpdated';
 import { ProjectsProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import React from 'react'
 
 async function page({ params }: {
@@ -8,7 +8,7 @@ async function page({ params }: {
 		username: string
 	}
 }) {
-	unstable_noStore();
+	cookies();
 	let res = await fetch(`https://af-admin.vercel.app/api/project/${params.username}`);
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");

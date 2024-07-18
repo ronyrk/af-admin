@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { DisbursementIProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -27,7 +27,7 @@ async function getChildName(username: string) {
 }
 
 async function ProjectsList() {
-	unstable_noStore();
+	cookies();
 	let res = await fetch('https://af-admin.vercel.app/api/disbursement');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");

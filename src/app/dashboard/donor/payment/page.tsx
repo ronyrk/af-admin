@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { DonorIProps, DonorPaymentIProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -16,7 +16,7 @@ import moment from 'moment';
 
 
 async function getUserName(username: string) {
-	unstable_noStore();
+	cookies();
 	let res = await fetch(`https://arafatfoundation.vercel.app/api/donor/${username}`);
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
@@ -26,7 +26,7 @@ async function getUserName(username: string) {
 	return name;
 }
 async function getUserStatus(username: string) {
-	unstable_noStore();
+	cookies();
 	let res = await fetch(`https://arafatfoundation.vercel.app/api/donor/${username}`);
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
@@ -44,7 +44,7 @@ async function getUserStatus(username: string) {
 
 async function DonorPaymentList() {
 	try {
-		unstable_noStore();
+		cookies();
 		let res = await fetch('https://arafatfoundation.vercel.app/api/donor_payment');
 		if (!res.ok) {
 			throw new Error("Failed to fetch data list");

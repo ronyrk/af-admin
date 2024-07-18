@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { GalleryIProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
@@ -18,7 +18,7 @@ import DeleteButton from '@/components/DeleteButton';
 
 
 async function GalleryList() {
-	unstable_noStore();
+	cookies();
 	let res = await fetch('https://af-admin.vercel.app/api/gallery');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");

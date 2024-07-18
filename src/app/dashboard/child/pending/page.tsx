@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { LoanIProps, PaymentApproveIProps, SponsorProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import { Input } from '@/components/ui/input';
 import {
 	Dialog,
@@ -24,7 +24,7 @@ import Image from 'next/image';
 import ChildAction from '@/components/ChildAction';
 
 async function getChildName(username: string) {
-	unstable_noStore();
+	cookies();
 	const child = await prisma.child.findUnique({
 		where: {
 			username
@@ -36,7 +36,7 @@ async function getChildName(username: string) {
 
 
 async function ChildDonationList() {
-	unstable_noStore();
+	cookies();
 	let res = await fetch('https://af-admin.vercel.app/api/donation-request');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");

@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { IncomeIProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -17,7 +17,7 @@ import { PencilIcon } from 'lucide-react';
 import DeleteButton from '@/components/DeleteButton';
 
 async function IncomeList() {
-	unstable_noStore();
+	cookies();
 	let res = await fetch('https://af-admin.vercel.app/api/income');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");

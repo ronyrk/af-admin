@@ -9,14 +9,14 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { LoanIProps, PaymentIProps } from '@/types';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 import { Input } from '@/components/ui/input';
 import DeleteButton from '@/components/DeleteButton';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 async function getUser(username: string) {
-	unstable_noStore();
+	cookies();
 	const res = await fetch(`https://arafatfoundation.vercel.app/api/loan/${username}`);
 	if (!res.ok) {
 		throw new Error("Failed to fetch data user");
@@ -25,7 +25,7 @@ async function getUser(username: string) {
 };
 
 async function duePayment(username: string) {
-	unstable_noStore();
+	cookies();
 	const response = await fetch(`https://arafatfoundation.vercel.app/api/loan_list/${username}`);
 	if (!response.ok) {
 		throw new Error("Failed to fetch data due payment");
@@ -40,7 +40,7 @@ async function duePayment(username: string) {
 	return `${Amount}`;
 }
 async function allPayment(username: string) {
-	unstable_noStore();
+	cookies();
 	const response = await fetch(`https://arafatfoundation.vercel.app/api/loan_list/${username}`);
 	if (!response.ok) {
 		throw new Error("Failed to fetch data all payment");
@@ -57,7 +57,7 @@ async function allPayment(username: string) {
 }
 
 async function BorrowersList() {
-	unstable_noStore();
+	cookies();
 	let res = await fetch('https://arafatfoundation.vercel.app/api/loan');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");

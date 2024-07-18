@@ -8,10 +8,10 @@ import {
 import { Button } from "@/components/ui/button"
 import { PaymentApproveIProps } from '@/types';
 import { approvedRequest } from '@/lib/actions';
-import { unstable_noStore } from 'next/cache';
+import { cookies } from 'next/headers';
 
 function ApproveButton({ item }: { item: PaymentApproveIProps }) {
-	unstable_noStore();
+	cookies();
 
 	const router = useRouter();
 	return (
