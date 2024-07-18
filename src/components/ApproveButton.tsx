@@ -8,10 +8,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { PaymentApproveIProps } from '@/types';
 import { approvedRequest } from '@/lib/actions';
-import { cookies } from 'next/headers';
 
 function ApproveButton({ item }: { item: PaymentApproveIProps }) {
-	cookies();
 
 	const router = useRouter();
 	return (
