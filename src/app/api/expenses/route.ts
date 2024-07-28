@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic'
 export const GET = async (request: Request) => {
 	const url = new URL(request.url);
 	const startString = url.searchParams.get("from");
+	const start = new Date(startString as any)?.toJSON()?.split("T")[0];
 	const page = url.searchParams.get("page");
 	const pageNumber = Number(page) - 1;
 	const take = 20;
@@ -24,7 +25,6 @@ export const GET = async (request: Request) => {
 			console.log(result, "con-1");
 			return NextResponse.json(result)
 		} else {
-			const start = new Date(startString as any)?.toJSON()?.split("T")[0];
 			const result = await prisma.expenses.findMany({
 				where: {
 					date: {

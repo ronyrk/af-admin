@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export const GET = async (request: Request, { params }: ParamsIdIProps) => {
 	try {
 		const { id } = params;
-		const result = await prisma.expenses.findMany({
+		const result = await prisma.expenses.findUnique({
 			where: {
 				id
 			}
