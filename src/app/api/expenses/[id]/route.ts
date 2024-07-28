@@ -2,6 +2,21 @@ import prisma from "@/lib/prisma";
 import { ExpensesIProps, IncomeIProps, ParamsIdIProps } from "@/types";
 import { NextResponse } from "next/server";
 
+
+export const GET = async (request: Request, { params }: ParamsIdIProps) => {
+	try {
+		const { id } = params;
+		const result = await prisma.expenses.findMany({
+			where: {
+				id
+			}
+		});
+		return NextResponse.json(result);
+	} catch (error) {
+		throw new Error("Data Updated failed");
+	}
+}
+
 // Update Income 
 export const PATCH = async (request: Request, { params }: ParamsIdIProps) => {
 	try {
