@@ -13,7 +13,18 @@ export const GET = async (request: Request) => {
     const take = 20;
     const skip = take * pageNumber;
     try {
-        if (transaction === "") {
+        if (transaction === "" && startString === "u" && endString === "u") {
+
+            const result = await prisma.income.findMany({
+                skip,
+                take,
+                orderBy: {
+                    date: "desc"
+                }
+            });
+            return NextResponse.json(result);
+        } else if (startString !== "u" && endString !== "u" && transaction === "") {
+
             const result = await prisma.income.findMany({
                 where: {
                     date: {
@@ -27,7 +38,7 @@ export const GET = async (request: Request) => {
                     date: "desc"
                 }
             });
-            return NextResponse.json(result)
+            return NextResponse.json(result);
         } else {
             const result = await prisma.income.findMany({
                 where: {
@@ -43,7 +54,7 @@ export const GET = async (request: Request) => {
                 }
             });
             return NextResponse.json(result);
-        }
+        };
     } catch (error) {
         return NextResponse.json("server Error");
     }
