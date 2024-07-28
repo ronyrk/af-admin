@@ -320,8 +320,8 @@ export interface MemberIProps {
 	teamMemberPhotoUrl: string,
 }
 export interface SearchIProps {
-	dateFrom?: string,
-	dateTo?: string,
+	start?: any,
+	end?: any,
 	date?: any,
 	transaction?: string,
 	page?: string,
