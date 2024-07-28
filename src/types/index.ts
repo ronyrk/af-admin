@@ -21,7 +21,7 @@ export interface IncomeIProps {
 };
 export interface ExpensesIProps {
 	id?: string,
-	date: Date,
+	date: string,
 	amount: string,
 	description: string
 }
@@ -322,6 +322,7 @@ export interface MemberIProps {
 export interface SearchIProps {
 	dateFrom?: string,
 	dateTo?: string,
+	date?: any,
 	transaction?: string,
 	page?: string,
 };
