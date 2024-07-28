@@ -107,7 +107,6 @@ function TableExpenses() {
                         <TableHead>DATE</TableHead>
                         <TableHead className=' uppercase'>Amount</TableHead>
                         <TableHead className=' uppercase'>Details</TableHead>
-                        <TableHead className=' uppercase'>Updated</TableHead>
                         <TableHead className=' uppercase'>Deleted</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -137,10 +136,6 @@ function TableExpenses() {
                                         </Dialog>
                                     </TableCell>
                                     <TableCell className="font-medium uppercase">
-                                        <Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' asChild >
-                                            <Link href={`expenses/${item.id}`}><PencilIcon color='blue' size={18} /></Link></Button>
-                                    </TableCell>
-                                    <TableCell className="font-medium uppercase">
                                         <DeleteButton type='expenses' username={item?.id as string} />
                                     </TableCell>
                                 </TableRow>
@@ -149,7 +144,7 @@ function TableExpenses() {
                     </TableBody>
                 </Suspense>
             </Table>
-            {/* <div className="flex justify-center py-4">
+            <div className="flex justify-center py-4">
                 <div className=' flex flex-row gap-2'>
                     {
                         Array.from({ length: Math.ceil(expenses.length / 20) })?.map((i: any, index) => (
@@ -162,7 +157,7 @@ function TableExpenses() {
                         ))
                     }
                 </div >
-            </div> */}
+            </div>
         </div>
     )
 }
