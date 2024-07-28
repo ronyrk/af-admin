@@ -226,8 +226,8 @@ model Income {
 }
 
 model Expenses {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  date        DateTime
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  date        String
   description String
   amount      String
 }

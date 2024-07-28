@@ -5,13 +5,48 @@ import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic'
 
-export const GET = async () => {
+export const GET = async (request: Request) => {
+	const url = new URL(request.url);
+	const startString = url.searchParams.get("from");
+	const page = url.searchParams.get("page");
+	const pageNumber = Number(page) - 1;
+	const take = 20;
+	const skip = take * pageNumber;
 	try {
-		const result = await prisma.expenses.findMany();
-		return NextResponse.json(result);
+		if (startString === "udd") {
+			const result = await prisma.expenses.findMany({
+				skip,
+				take,
+				orderBy: {
+					date: "desc"
+				}
+			});
+			console.log(result, "con-1");
+			return NextResponse.json(result)
+		} else {
+			const start = new Date(startString as any)?.toJSON()?.split("T")[0];
+			const result = await prisma.expenses.findMany({
+				where: {
+					date: {
+						contains: start,
+						mode: "insensitive"
+					}
+				},
+				skip,
+				take,
+				orderBy: {
+					date: "desc"
+				}
+			});
+			console.log(result, "con-2");
+			return NextResponse.json(result)
+		}
+
 	} catch (error) {
-		throw new Error("Server Error");
+		console.log(error);
+		return NextResponse.json("server Error");
 	}
+
 };
 
 export const POST = async (request: Request) => {

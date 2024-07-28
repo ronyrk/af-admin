@@ -24,6 +24,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import TailwindEditor from "@/components/editor"
+import UpdatedEditor from "@/components/UpdatedEditor"
 
 
 const formSchema = z.object({
@@ -34,8 +35,7 @@ const formSchema = z.object({
     }),
 });
 
-
-function ExpensesCreate() {
+function ExpensesUpdated({ data }: { data: ExpensesIProps }) {
     const router = useRouter();
 
     // 1. Define your form.
@@ -77,11 +77,9 @@ function ExpensesCreate() {
             }
         });
     };
-    // console.log(state, stateBranch);
-
     return (
         <div className="flex flex-col gap-3">
-            <h2 className="text-center text-xl">Donor Payment Create</h2>
+            <h2 className="text-center text-xl">Donor Payment Updated</h2>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
                     <div className=" grid grid-cols-2 items-center gap-3">
@@ -147,7 +145,7 @@ function ExpensesCreate() {
                             <FormItem className="">
                                 <FormLabel>Description</FormLabel>
                                 <FormControl className="">
-                                    <TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
+                                    <UpdatedEditor content={data.description} description={field.name} onChange={field.onChange} value={field.value} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -162,4 +160,4 @@ function ExpensesCreate() {
     )
 }
 
-export default ExpensesCreate;
+export default ExpensesUpdated
