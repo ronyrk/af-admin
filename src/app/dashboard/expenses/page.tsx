@@ -104,44 +104,47 @@ function TableExpenses() {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>DATE</TableHead>
+                        <TableHead className=' uppercase'>DATE</TableHead>
                         <TableHead className=' uppercase'>Amount</TableHead>
                         <TableHead className=' uppercase'>Details</TableHead>
                         <TableHead className=' uppercase'>Deleted</TableHead>
                     </TableRow>
                 </TableHeader>
                 <Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
-                    <TableBody>
-                        {
-                            expenses?.map((item: any, index: number) => (
-                                <TableRow key={index}>
-                                    <TableCell className="font-medium">{`${moment(item?.date).format('DD/MM/YYYY')}`}</TableCell>
-                                    <TableCell className="font-medium uppercase">{item.amount}</TableCell>
-                                    <TableCell className="font-medium uppercase">
-                                        <Dialog>
-                                            <DialogTrigger>
-                                                <Button className='bg-color-sub' size={"sm"}>
-                                                    Details
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className='p-8 bg-white'>
-                                                <DialogHeader>
-                                                    <DialogDescription>
-                                                        {
-                                                            htmlConvert(item.description)
-                                                        }
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                            </DialogContent>
-                                        </Dialog>
-                                    </TableCell>
-                                    <TableCell className="font-medium uppercase">
-                                        <DeleteButton type='expenses' username={item?.id as string} />
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        }
-                    </TableBody>
+                    {
+                        isPending ? <h2>Loading...</h2> :
+                            <TableBody>
+                                {
+                                    expenses?.map((item: any, index: number) => (
+                                        <TableRow key={index}>
+                                            <TableCell className="font-medium">{`${moment(item?.date).format('DD/MM/YYYY')}`}</TableCell>
+                                            <TableCell className="font-medium uppercase">{item.amount}</TableCell>
+                                            <TableCell className="font-medium uppercase">
+                                                <Dialog>
+                                                    <DialogTrigger>
+                                                        <Button className='bg-color-sub' size={"sm"}>
+                                                            Details
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent className='p-8 bg-white'>
+                                                        <DialogHeader>
+                                                            <DialogDescription>
+                                                                {
+                                                                    htmlConvert(item.description)
+                                                                }
+                                                            </DialogDescription>
+                                                        </DialogHeader>
+                                                    </DialogContent>
+                                                </Dialog>
+                                            </TableCell>
+                                            <TableCell className="font-medium uppercase">
+                                                <DeleteButton type='expenses' username={item?.id as string} />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                }
+                            </TableBody>
+                    }
                 </Suspense>
             </Table>
             <div className="flex justify-center py-4">
