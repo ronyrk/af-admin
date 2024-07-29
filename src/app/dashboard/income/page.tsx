@@ -77,8 +77,13 @@ function IncomeDetails() {
 			<div className='flex flex-col my-3 border-2 py-2 px-1 rounded-sm'>
 				<h2 className="text-center text-2xl font-semibold text-color-main">Income List</h2>
 				<div className=" flex flex-row md:gap-3 gap-1  flex-wrap justify-between items-center p-2">
+
+					<Button className='mt-6' asChild>
+						<Link className=' bg-color-main hover:bg-color-sub' href={`income/create`}>Create</Link>
+					</Button>
+
 					<div className=' flex flex-col gap-1'>
-						<h2 className=" text-lg font-bold">From</h2>
+						<h2 className=" text-base font-bold">From</h2>
 						<Popover>
 							<PopoverTrigger asChild>
 								<Button
@@ -102,7 +107,7 @@ function IncomeDetails() {
 						</Popover>
 					</div>
 					<div className=' flex flex-col gap-1'>
-						<h2 className="text-lg font-bold">To</h2>
+						<h2 className="text-base font-bold">To</h2>
 						<Popover>
 							<PopoverTrigger asChild>
 								<Button
@@ -126,7 +131,7 @@ function IncomeDetails() {
 						</Popover>
 					</div>
 					<div className="py-2 flex flex-col justify-center">
-						<h2 className=' flex flex-col justify-center gap-1 font-bold text-lg'>Transaction</h2>
+						<h2 className=' flex flex-col justify-center gap-1 font-bold text-base'>Transaction</h2>
 						<Input className='w-64' type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTransaction(e.target.value)} placeholder="Search" />
 					</div>
 				</div>
