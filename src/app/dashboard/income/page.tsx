@@ -13,9 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import moment from 'moment';
-import { addDays, format } from "date-fns"
+import { format } from "date-fns"
 import { Calendar as CalendarIcon, PencilIcon } from "lucide-react"
-import { DateRange } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
@@ -24,34 +23,16 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover"
-import { DateFormateConvert } from "@/lib/formateDateConvert"
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { IncomeIProps, SearchIProps } from '@/types';
 import toast from 'react-hot-toast';
-import { FormLabel } from '@/components/ui/form';
-import { usePathname } from 'next/navigation';
 import DeleteButton from '@/components/DeleteButton';
 
 
-function getDate(isoDate: string) {
-
-	// Convert to Date object
-	const date = new Date(isoDate);
-
-	// Extract day, month, and year
-	const day = String(date.getUTCDate()).padStart(2, '0');
-	const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-	const year = date.getUTCFullYear();
-
-	// Format the date as 'DD/MM/YYYY'
-	const formattedDate = `${day}/${month}/${year}`;
-	return formattedDate;
-}
 
 
 function IncomeDetails() {
-	const pathname = usePathname();
 	const [start, setStartDate] = React.useState<Date>()
 	const [end, setEndDate] = React.useState<Date>()
 	const [transaction, setTransaction] = React.useState("");
@@ -78,7 +59,6 @@ function IncomeDetails() {
 			}
 		});
 	}, [start, end, mutate, transaction, page]);
-	console.log({ income });
 
 	function GetIncome(data: IncomeIProps[]) {
 		const Amount: number[] = [];
