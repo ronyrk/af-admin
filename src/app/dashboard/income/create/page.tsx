@@ -62,6 +62,7 @@ function IncomeCreate() {
 		const transaction = values.transaction;
 		const type = values.type;
 		const amount = values.amount;
+		console.log({ date })
 		// Donor /Lender Payment Created
 		mutate({ date, amount, type, transaction }, {
 			onSuccess: ({ message, data }: { message: string, data: IncomeIProps }) => {
@@ -114,9 +115,6 @@ function IncomeCreate() {
 												mode="single"
 												selected={field.value}
 												onSelect={field.onChange}
-												disabled={(date) =>
-													date > new Date() || date < new Date("1900-01-01")
-												}
 												initialFocus
 											/>
 										</PopoverContent>

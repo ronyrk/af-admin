@@ -34,6 +34,20 @@ import { usePathname } from 'next/navigation';
 import DeleteButton from '@/components/DeleteButton';
 
 
+function getDate(isoDate: string) {
+
+	// Convert to Date object
+	const date = new Date(isoDate);
+
+	// Extract day, month, and year
+	const day = String(date.getUTCDate()).padStart(2, '0');
+	const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+	const year = date.getUTCFullYear();
+
+	// Format the date as 'DD/MM/YYYY'
+	const formattedDate = `${day}/${month}/${year}`;
+	return formattedDate;
+}
 
 
 function IncomeDetails() {
@@ -64,6 +78,7 @@ function IncomeDetails() {
 			}
 		});
 	}, [start, end, mutate, transaction, page]);
+	console.log({ income });
 
 	function GetIncome(data: IncomeIProps[]) {
 		const Amount: number[] = [];
