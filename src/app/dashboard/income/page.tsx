@@ -57,7 +57,6 @@ function IncomeDetails() {
 	React.useEffect(() => {
 		mutate({ start, end, page, transaction }, {
 			onSuccess: (data) => {
-				toast.success(" Successfully Updated");
 				setIncome(data);
 			},
 			onError: (error) => {
@@ -148,31 +147,34 @@ function IncomeDetails() {
 						</TableRow>
 					</TableHeader>
 					<Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
-						<TableBody>
-							{
-								income?.map((item: any, index: number) => (
-									<TableRow key={index}>
-										<TableCell className="font-medium">{`${moment(item?.date).format('DD/MM/YYYY')}`}</TableCell>
-										<TableCell className="font-medium uppercase">{item.amount}</TableCell>
-										<TableCell className="font-medium uppercase">{item.type}</TableCell>
-										<TableCell className="font-medium uppercase">{item.transaction}</TableCell>
+						{
+							isPending ? <h2>Loading...</h2> :
+								<TableBody>
+									{
+										income?.map((item: any, index: number) => (
+											<TableRow key={index}>
+												<TableCell className="font-medium">{`${moment(item?.date).format('DD/MM/YYYY')}`}</TableCell>
+												<TableCell className="font-medium uppercase">{item.amount}</TableCell>
+												<TableCell className="font-medium uppercase">{item.type}</TableCell>
+												<TableCell className="font-medium uppercase">{item.transaction}</TableCell>
 
 
-										<TableCell className="font-medium uppercase">
-											<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' asChild >
-												<Link href={`income/${item.id}`}><PencilIcon color='blue' size={18} /></Link></Button>
-										</TableCell>
-										<TableCell className="font-medium uppercase">
-											<DeleteButton type='income' username={item?.id as string} />
-										</TableCell>
+												<TableCell className="font-medium uppercase">
+													<Button className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' asChild >
+														<Link href={`income/${item.id}`}><PencilIcon color='blue' size={18} /></Link></Button>
+												</TableCell>
+												<TableCell className="font-medium uppercase">
+													<DeleteButton type='income' username={item?.id as string} />
+												</TableCell>
+											</TableRow>
+										))
+									}
+									<TableRow className=''>
+										<TableCell className=" font-bold uppercase">Total</TableCell>
+										<TableCell className="font-bold uppercase">{GetIncome(income)}</TableCell>
 									</TableRow>
-								))
-							}
-							<TableRow className=''>
-								<TableCell className=" font-bold uppercase">Total</TableCell>
-								<TableCell className="font-bold uppercase">{GetIncome(income)}</TableCell>
-							</TableRow>
-						</TableBody>
+								</TableBody>
+						}
 					</Suspense>
 				</Table>
 				<div className="flex justify-center py-4">
