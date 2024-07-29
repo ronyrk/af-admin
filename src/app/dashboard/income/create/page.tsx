@@ -68,7 +68,7 @@ function IncomeCreate() {
 				if (data?.id) {
 					toast.success(message);
 				}
-				// router.push(`/dashboard/income`);
+				router.push(`/dashboard/income`);
 				router.refresh();
 			},
 			onError: (error) => {
