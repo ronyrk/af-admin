@@ -11,7 +11,7 @@ export interface DonorIProps {
 	lives: string,
 	hometown: string,
 	status: string,
-	paymentDate: Date
+	paymentDate?: Date
 };
 export interface IncomeIProps {
 	id?: string,
