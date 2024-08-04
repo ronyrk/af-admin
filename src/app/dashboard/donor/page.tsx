@@ -14,6 +14,7 @@ import DeleteButton from '@/components/DeleteButton';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import moment from 'moment';
+import { ClipboardPenLine } from 'lucide-react';
 
 
 async function DonorList() {
@@ -78,7 +79,7 @@ async function DonorList() {
 						<TableCell className="font-medium">{`${moment(item.paymentDate).format('DD/MM/YYYY')}`}</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
-								<Link href={`donor/${item.username}`}>Updated</Link>
+								<Link href={`donor/${item.username}`}><ClipboardPenLine /></Link>
 							</Button>
 						</TableCell>
 						<TableCell className="font-medium uppercase">

@@ -16,6 +16,7 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { Trash2 } from 'lucide-react';
 
 
 function DeleteButton({ username, type }: { username: string, type: string }) {
@@ -44,7 +45,7 @@ function DeleteButton({ username, type }: { username: string, type: string }) {
 		<>
 			<AlertDialog>
 				<AlertDialogTrigger><Button className='bg-color-sub' size={"sm"}>
-					Delete
+					<Trash2 />
 				</Button></AlertDialogTrigger>
 				<AlertDialogContent>
 					<AlertDialogHeader>
