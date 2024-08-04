@@ -13,11 +13,12 @@ import { Input } from '@/components/ui/input';
 import DeleteButton from '@/components/DeleteButton';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import moment from 'moment';
 
 
 async function DonorList() {
 	cookies();
-	let res = await fetch('https://arafatfoundation.vercel.app/api/donor');
+	let res = await fetch('https://af-admin.vercel.app/api/donor');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
 	};
@@ -72,10 +73,9 @@ async function DonorList() {
 					<TableRow key={index}>
 						<TableCell className="font-medium">{item.code}</TableCell>
 						<TableCell className="font-medium uppercase">{item.name}</TableCell>
-						<TableCell className="font-medium uppercase" >{TotalAmount(item.status, item.username, item.amount)}</TableCell>
 						<TableCell className="font-medium uppercase">{getStatus(item.status)}</TableCell>
-						<TableCell className="font-medium">{item.email}</TableCell>
-						<TableCell className="font-medium">{item.password}</TableCell>
+						<TableCell className="font-medium uppercase" >{TotalAmount(item.status, item.username, item.amount)}</TableCell>
+						<TableCell className="font-medium">{`${moment(item.paymentDate).format('DD/MM/YYYY')}`}</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
 								<Link href={`donor/${item.username}`}>Updated</Link>
@@ -110,11 +110,11 @@ async function page() {
 				<TableHeader>
 					<TableRow>
 						<TableHead>CODE</TableHead>
-						<TableHead className='w-[300px]'>NAME</TableHead>
-						<TableHead>AMOUNT</TableHead>
+						<TableHead className='w-[200px]'>NAME</TableHead>
 						<TableHead>TYPE</TableHead>
-						<TableHead>EMAIL</TableHead>
-						<TableHead>PASSWORD</TableHead>
+						<TableHead>AMOUNT</TableHead>
+						<TableHead>RETURNED AMOUNT</TableHead>
+						<TableHead>RETURNED DATE</TableHead>
 						<TableHead>UPDATED</TableHead>
 						<TableHead>DELETED</TableHead>
 					</TableRow>

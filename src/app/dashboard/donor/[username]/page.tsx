@@ -1,5 +1,4 @@
 import DonorTable from '@/components/DataTable';
-import DonorUpdated from '@/components/DonorUpdated';
 import ProfileEdit from '@/components/ProfileEdit';
 import { DonorIProps, DonorPaymentIProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
