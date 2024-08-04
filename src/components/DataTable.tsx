@@ -23,6 +23,7 @@ async function TableRowList(params: ParamsIProps) {
         throw new Error("Failed fetch Data");
     };
     const data: DonorPaymentIProps[] = await res.json();
+    console.log({ data });
 
     const loanAmount = async (amount: string, type: string) => {
         if (type === "increase") {

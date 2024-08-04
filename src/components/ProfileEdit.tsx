@@ -77,6 +77,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
     }
 
     const [editMode, setEditMode] = useState<Boolean>(false);
+    const router = useRouter();
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -90,6 +91,15 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
             name: data.name,
         }
     });
+
+    const { mutate, isPending } = useMutation({
+        mutationFn: async ({ password, name, photoUrl, about, lives, hometown, status }: DonorIUpdatedProps) => {
+            const response = await axios.patch(`/api/donor/${data.username}`, {
+                password, name, photoUrl, about, lives, hometown, status
+            });
+            return response.data;
+        },
+    });
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
         const photoUrl = image;
@@ -101,35 +111,35 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
         const about = values.about;
 
         // Branch Created
-        // mutate({ password, name, photoUrl, about, lives, hometown, status }, {
-        //     onSuccess: ({ message, result }: { message: string, result: DonorIProps }) => {
-        //         if (result.id) {
-        //             toast.success(message);
-        //         } else {
-        //             throw new Error("Donor Updated Failed")
-        //         }
-        //         router.push(`/dashboard/donor`);
-        //         router.refresh();
-        //     },
-        //     onError: (error) => {
-        //         toast.error("Donor Updated Failed");
-        //     }
-        // });
+        mutate({ password, name, photoUrl, about, lives, hometown, status }, {
+            onSuccess: ({ message, result }: { message: string, result: DonorIProps }) => {
+                if (result.id) {
+                    toast.success(message);
+                } else {
+                    throw new Error("Donor Updated Failed");
+                }
+                setEditMode(false);
+                router.refresh();
+            },
+            onError: (error) => {
+                toast.error("Donor Updated Failed");
+            }
+        });
     };
     return (
-        <div className='flex flex-col gap-3'>
+        <div className='flex flex-col gap-3 relative'>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-
                     <div className="flex md:flex-row flex-col justify-between gap-3 px-2 relative">
                         <div className=" absolute flex flex-row gap-2 top-2 right-4">
                             {editMode === true && <div>
-                                {editMode === false ? <Button disabled >Loading...</Button> : <Button disabled={upload === false} type="submit">Submit</Button>}
+                                {isPending ? <Button disabled >Loading...</Button> : <Button disabled={upload === false} type="submit">Submit</Button>}
                             </div>}
-                            <Button onClick={() => setEditMode(!editMode)} className=' bg-inherit' variant={"secondary"}>
+                            <Button type="button" onClick={() => setEditMode(!editMode)} className=' cursor-pointer bg-inherit' variant={"secondary"}>
                                 <SquarePen />
                             </Button>
                         </div>
+
                         <div className=" basis-4/12 border-[2px] p-2 flex justify-around relative rounded">
                             <Image sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className=' rounded-md object-cover' src={data.photoUrl} alt={data.name} width={300} height={140} />
                             <span className=" absolute top-3 bg-white left-2 border-[2px] text-[13px] lowercase font-normal p-[1px] rounded">
@@ -188,6 +198,22 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     )}
                                 />
                             </h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[18px]  text-color-main"><span className="font-semibold mr-2">Code:</span>{data.code}</h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[18px]  text-color-main"><span className="font-semibold mr-2">UserName:</span>{data.username}</h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[18px]  text-color-main"><span className="font-semibold mr-2">Email:</span>{data.email}</h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[18px]  text-color-main"><span className="font-semibold mr-2">Password :</span>
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                /></h2>
                             <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Lives in :</span>
                                 <FormField
                                     control={form.control}
@@ -236,7 +262,6 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
 
                 </form>
             </Form>
-            <DonorTable data={data} />
         </div>
     )
 }

@@ -1,3 +1,4 @@
+import DonorTable from '@/components/DataTable';
 import DonorUpdated from '@/components/DonorUpdated';
 import ProfileEdit from '@/components/ProfileEdit';
 import { DonorIProps, DonorPaymentIProps } from '@/types';
@@ -30,7 +31,7 @@ async function page({ params }: {
 			<Suspense fallback={<h2>Loading..</h2>}>
 				<ProfileEdit data={data} paymentList={paymentList} />
 			</Suspense>
-			<DonorUpdated data={data} />
+			<DonorTable data={data} />
 		</div>
 	)
 }
