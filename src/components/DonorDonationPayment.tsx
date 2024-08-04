@@ -33,6 +33,9 @@ const formSchema = z.object({
     type: z.string().optional(),
     date: z.date({
         required_error: "A date is required.",
+    }),
+    PaymentDate: z.date({
+        required_error: "A date is required.",
     })
 });
 
@@ -50,9 +53,9 @@ function DonorDonationPayment({ username }: { username: string }) {
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, paymentDate }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt
+                donorUsername, amount, loanPayment, type, createAt, paymentDate
             });
             return response.data;
         },
@@ -67,10 +70,13 @@ function DonorDonationPayment({ username }: { username: string }) {
         const previous = values.date;
         const createAt = new Date(previous);
         createAt.setDate(previous.getDate() + 1);
-        console.log({ values });
+
+        const previousPayment = values.PaymentDate;
+        const paymentDate = new Date(previousPayment);
+        paymentDate.setDate(previousPayment.getDate() + 1);
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, paymentDate }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
@@ -84,7 +90,6 @@ function DonorDonationPayment({ username }: { username: string }) {
             }
         });
     };
-    // console.log(state, stateBranch);
 
     return (
         <div className="flex flex-col gap-3">
@@ -122,9 +127,44 @@ function DonorDonationPayment({ username }: { username: string }) {
                                                 mode="single"
                                                 selected={field.value}
                                                 onSelect={field.onChange}
-                                                disabled={(date) =>
-                                                    date > new Date() || date < new Date("1900-01-01")
-                                                }
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="date"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel>Return Date</FormLabel>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <FormControl>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "text-color-main pl-3 text-left font-normal",
+                                                        !field.value && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {field.value ? (
+                                                        format(field.value, "PPP")
+                                                    ) : (
+                                                        <span>Pick a date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                </Button>
+                                            </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0" align="start">
+                                            <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={field.onChange}
                                                 initialFocus
                                             />
                                         </PopoverContent>

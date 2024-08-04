@@ -3,6 +3,7 @@ import {
 	Table,
 	TableBody,
 	TableCell,
+	TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -17,6 +18,59 @@ import moment from 'moment';
 import { ClipboardPenLine } from 'lucide-react';
 
 
+
+const Amount = async (status: string, username: string, amount: string) => {
+	cookies();
+	const response = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${username}`);
+	if (!response.ok) {
+		throw new Error("Failed fetch Data");
+	};
+	const payment: DonorPaymentIProps[] = await response.json();
+	if (status === "LEADER") {
+		const returnArray = payment.filter((item) => item.type === "return");
+		let returnStringArray: string[] = [];
+		returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
+		const returnNumberArray = returnStringArray.map(Number);
+		const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+		const increaseArray = payment.filter((item) => item.type === "increase");
+		let increaseStringArray: string[] = [];
+		increaseArray.forEach((item) => increaseStringArray.push(item.amount));
+		const increaseNumberArray = increaseStringArray.map(Number);
+		const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+		return totalIncrease - totalReturn;
+	} else {
+		let amountStringArray: string[] = [];
+		const Create = payment.forEach((item) => amountStringArray.push(item.amount));
+		// Convert String Array to Number Array
+		let AmountArray = amountStringArray.map(Number);
+		const totalAmount = AmountArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+		// console.log(totalAmount, 'number array');
+		return `${totalAmount}`
+	}
+
+}
+const ReturnAmount = async (status: string, username: string, amount: string) => {
+	cookies();
+	const response = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${username}`);
+	if (!response.ok) {
+		throw new Error("Failed fetch Data");
+	};
+	const payment: DonorPaymentIProps[] = await response.json();
+	if (status === "LEADER") {
+		const returnArray = payment.filter((item) => item.type === "return");
+		let returnStringArray: string[] = [];
+		returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
+		const returnNumberArray = returnStringArray.map(Number);
+		const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+		return `${totalReturn}`;
+	} else {
+		return "N/A"
+	}
+
+}
+
+
 async function DonorList() {
 	cookies();
 	let res = await fetch('https://af-admin.vercel.app/api/donor');
@@ -25,38 +79,37 @@ async function DonorList() {
 	};
 	const donors: DonorIProps[] = await res.json();
 
+	const response = await fetch("https://arafatfoundation.vercel.app/api/donor_payment");
+	if (!response.ok) {
+		throw new Error("Failed fetch Data");
+	};
+	const paymentList: DonorPaymentIProps[] = await response.json();
 
-	const TotalAmount = async (status: string, username: string, amount: string) => {
-		cookies();
-		const response = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${username}`);
-		if (!response.ok) {
-			throw new Error("Failed fetch Data");
-		};
-		const paymentList: DonorPaymentIProps[] = await response.json();
-		if (status === "LEADER") {
-			const returnArray = paymentList.filter((item) => item.type === "return");
-			let returnStringArray: string[] = [];
-			returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
-			const returnNumberArray = returnStringArray.map(Number);
-			const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-			const increaseArray = paymentList.filter((item) => item.type === "increase");
-			let increaseStringArray: string[] = [];
-			increaseArray.forEach((item) => increaseStringArray.push(item.amount));
-			const increaseNumberArray = increaseStringArray.map(Number);
-			const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-			return totalIncrease - totalReturn;
-		} else {
-			let amountStringArray: string[] = [];
-			const Create = paymentList.forEach((item) => amountStringArray.push(item.amount));
-			// Convert String Array to Number Array
-			let AmountArray = amountStringArray.map(Number);
-			const totalAmount = AmountArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-			// console.log(totalAmount, 'number array');
-			return `${totalAmount}`
-		}
+	const TotalReturnAmount = async () => {
+		const returnArray = paymentList.filter((item) => item.type === "return");
+		let returnStringArray: string[] = [];
+		returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
+		const returnNumberArray = returnStringArray.map(Number);
+		const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+		return `BDT=${totalReturn}/=`;
 
 	}
+	const TotalAmount = async () => {
+		const returnArray = paymentList.filter((item) => item.type === "return");
+		let returnStringArray: string[] = [];
+		returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
+		const returnNumberArray = returnStringArray.map(Number);
+		const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+		const increaseArray = paymentList.filter((item) => item.type === "increase");
+		let increaseStringArray: string[] = [];
+		increaseArray.forEach((item) => increaseStringArray.push(item.amount));
+		const increaseNumberArray = increaseStringArray.map(Number);
+		const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+		return `BDT=${totalIncrease - totalReturn}/=`;
+
+	}
+
 
 	async function getStatus(status: string) {
 		if (status === "LEADER") {
@@ -68,27 +121,37 @@ async function DonorList() {
 
 
 	return (
-		<TableBody>
-			{
-				donors.map((item, index: number) => (
-					<TableRow key={index}>
-						<TableCell className="font-medium">{item.code}</TableCell>
-						<TableCell className="font-medium uppercase">{item.name}</TableCell>
-						<TableCell className="font-medium uppercase">{getStatus(item.status)}</TableCell>
-						<TableCell className="font-medium uppercase" >{TotalAmount(item.status, item.username, item.amount)}</TableCell>
-						<TableCell className="font-medium">{`${moment(item.paymentDate).format('DD/MM/YYYY')}`}</TableCell>
-						<TableCell className="font-medium uppercase">
-							<Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
-								<Link href={`donor/${item.username}`}><ClipboardPenLine /></Link>
-							</Button>
-						</TableCell>
-						<TableCell className="font-medium uppercase">
-							<DeleteButton type='donor' username={item.username} />
-						</TableCell>
-					</TableRow>
-				))
-			}
-		</TableBody>
+		<>
+			<TableBody>
+				{
+					donors.map((item, index: number) => (
+						<TableRow key={index}>
+							<TableCell className="font-medium">{item.code}</TableCell>
+							<TableCell className="font-medium uppercase">{item.name}</TableCell>
+							<TableCell className="font-medium uppercase">{getStatus(item.status)}</TableCell>
+							<TableCell className="font-medium uppercase" >{Amount(item.status, item.username, item.amount)}</TableCell>
+							<TableCell className="font-medium uppercase" >{ReturnAmount(item.status, item.username, item.amount)}</TableCell>
+							<TableCell className="font-medium">{`${moment(item.paymentDate).format('DD/MM/YYYY')}`}</TableCell>
+							<TableCell className="font-medium uppercase">
+								<Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
+									<Link href={`donor/${item.username}`}><ClipboardPenLine /></Link>
+								</Button>
+							</TableCell>
+							<TableCell className="font-medium uppercase">
+								<DeleteButton type='donor' username={item.username} />
+							</TableCell>
+						</TableRow>
+					))
+				}
+			</TableBody>
+			<TableFooter>
+				<TableRow>
+					<TableCell className=' font-semibold' colSpan={3}>Total</TableCell>
+					<TableCell className=' font-semibold'>{TotalAmount()} </TableCell>
+					<TableCell className=' font-semibold'>{TotalReturnAmount()} </TableCell>
+				</TableRow>
+			</TableFooter>
+		</>
 	)
 };
 
@@ -101,9 +164,6 @@ async function page() {
 			<div className="flex justify-between p-2 ">
 				<Button asChild>
 					<Link className=' bg-color-main hover:bg-color-sub' href={`donor/create`}>Donor Create</Link>
-				</Button>
-				<Button asChild>
-					<Link className=' bg-color-main hover:bg-color-sub' href={`donor/payment`}>Donor Payment List</Link>
 				</Button>
 				<Input className='w-64' type="text" placeholder="Search" />
 			</div>
