@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import DonorDonationCreate from './DonorDonationCreate';
+import DonorDonationPayment from './DonorDonationPayment';
 
 interface ParamsIProps {
     data: DonorIProps
@@ -83,24 +84,14 @@ function DonorTable(params: ParamsIProps) {
                         <DonorDonationCreate username={params.data.username} />
                     </AlertDialogContent>
                 </AlertDialog>
-                <AlertDialog>
+                {params.data.status === "LEADER" && <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button >Pay loan</Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete your
-                                account and remove your data from our servers.
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel className=' text-black'>Cancel</AlertDialogCancel>
-                            <AlertDialogAction>Continue</AlertDialogAction>
-                        </AlertDialogFooter>
+                        <DonorDonationPayment username={params.data.username} />
                     </AlertDialogContent>
-                </AlertDialog>
+                </AlertDialog>}
             </div>
             <Table>
                 <TableHeader>
