@@ -4,6 +4,7 @@ import {
 	TableBody,
 	TableCaption,
 	TableCell,
+	TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -14,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import DeleteButton from '@/components/DeleteButton';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import prisma from '@/lib/prisma';
 
 async function getUser(username: string) {
 	cookies();
@@ -64,29 +66,70 @@ async function BorrowersList() {
 	};
 	const borrowers: LoanIProps[] = await res.json();
 
+	const paymentList = await prisma.payment.findMany();
+
+	async function TotalPayment() {
+		let indexPaymentString: string[] = ["0"];
+		const result = paymentList.forEach((item) => indexPaymentString.push(item.amount));
+		let indexPayment = indexPaymentString.map(Number);
+		const Amount = indexPayment.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+		return `BDT=${Amount}/=`;
+	}
+
+	async function TotalDisbursed() {
+		let indexPaymentString: string[] = ["0"];
+		borrowers.forEach((item) => indexPaymentString.push(item.balance));
+		let indexPayment = indexPaymentString.map(Number);
+		const Amount = indexPayment.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+		return `BDT=${Amount}/=`;
+	}
+	async function TotalBalance() {
+		let indexPaymentString: string[] = ["0"];
+		borrowers.forEach((item) => indexPaymentString.push(item.balance));
+		let indexPayment = indexPaymentString.map(Number);
+		const Amount = indexPayment.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+		let indexPaymentString2: string[] = ["0"];
+		const result = paymentList.forEach((item) => indexPaymentString2.push(item.amount));
+		let indexPayment2 = indexPaymentString2.map(Number);
+		const Amount2 = indexPayment2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+		return `BDT=${Amount - Amount2}/=`;
+
+	}
+
 
 	return (
-		<TableBody>
-			{
-				borrowers.map((item, index: number) => (
-					<TableRow key={index}>
-						<TableCell className="font-medium">{item.code}</TableCell>
-						<TableCell className="font-medium uppercase">{item.name}</TableCell>
-						<TableCell className="font-medium uppercase" >{item.balance}</TableCell>
-						<TableCell className="font-medium uppercase">{allPayment(item?.username)}</TableCell>
-						<TableCell className="font-medium uppercase">{duePayment(item?.username)}</TableCell>
-						<TableCell className="font-medium uppercase">
-							<Button className='bg-color-main' variant={"outline"} size={"sm"} asChild>
-								<Link href={`borrowers/${item.username}`}>Updated</Link>
-							</Button>
-						</TableCell>
-						<TableCell className="font-medium uppercase">
-							<DeleteButton type='loan' username={item.username} />
-						</TableCell>
-					</TableRow>
-				))
-			}
-		</TableBody>
+		<>
+			<TableBody>
+				{
+					borrowers.map((item, index: number) => (
+						<TableRow key={index}>
+							<TableCell className="font-medium">{item.code}</TableCell>
+							<TableCell className="font-medium uppercase">{item.name}</TableCell>
+							<TableCell className="font-medium uppercase" >{item.balance}</TableCell>
+							<TableCell className="font-medium uppercase">{allPayment(item?.username)}</TableCell>
+							<TableCell className="font-medium uppercase">{duePayment(item?.username)}</TableCell>
+							<TableCell className="font-medium uppercase">
+								<Button className='bg-color-main' variant={"outline"} size={"sm"} asChild>
+									<Link href={`borrowers/${item.username}`}>Updated</Link>
+								</Button>
+							</TableCell>
+							<TableCell className="font-medium uppercase">
+								<DeleteButton type='loan' username={item.username} />
+							</TableCell>
+						</TableRow>
+					))
+				}
+			</TableBody>
+			<TableFooter>
+				<TableRow>
+					<TableCell className=" font-semibold" colSpan={2}>Total</TableCell>
+					<TableCell className="font-semibold">{TotalDisbursed()}</TableCell>
+					<TableCell className="font-semibold">{TotalPayment()}</TableCell>
+					<TableCell className="font-semibold">{TotalBalance()}</TableCell>
+				</TableRow>
+			</TableFooter>
+		</>
 	)
 };
 
