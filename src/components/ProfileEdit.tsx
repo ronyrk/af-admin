@@ -116,8 +116,6 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
         //     }
         // });
     };
-
-    console.log({ editMode });
     return (
         <div className='flex flex-col gap-3'>
             <Form {...form}>
@@ -183,7 +181,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -197,7 +195,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -210,7 +208,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -227,7 +225,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        {editMode === true ? <Textarea rows={6} placeholder="Type your message here." {...field} /> : <Textarea rows={6} readOnly placeholder="Type your message here." {...field} />}
+                                        {editMode === true ? <Textarea rows={6} placeholder="Type your message here." {...field} /> : <Textarea rows={6} readOnly className='text-xl w-fit border-none bg-inherit' placeholder="Type your message here." {...field} />}
 
                                     </FormControl>
                                     <FormMessage />
