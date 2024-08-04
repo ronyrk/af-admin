@@ -26,6 +26,7 @@ import { BranchIProps, DonorIUpdatedProps } from "@/types"
 import { UploadButton } from "@/lib/uploadthing"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { SquarePen } from 'lucide-react';
 
 const formSchema = z.object({
     password: z.string(),
@@ -75,6 +76,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
 
     }
 
+    const [editMode, setEditMode] = useState<Boolean>(false);
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -114,13 +116,22 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
         //     }
         // });
     };
-    console.log(data, "   000")
+
+    console.log({ editMode });
     return (
         <div className='flex flex-col gap-3'>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                    <div className="flex md:flex-row flex-col justify-between gap-3 px-2">
+                    <div className="flex md:flex-row flex-col justify-between gap-3 px-2 relative">
+                        <div className=" absolute flex flex-row gap-2 top-2 right-4">
+                            {editMode === true && <div>
+                                {editMode === false ? <Button disabled >Loading...</Button> : <Button disabled={upload === false} type="submit">Submit</Button>}
+                            </div>}
+                            <Button onClick={() => setEditMode(!editMode)} className=' bg-inherit' variant={"secondary"}>
+                                <SquarePen />
+                            </Button>
+                        </div>
                         <div className=" basis-4/12 border-[2px] p-2 flex justify-around relative rounded">
                             <Image sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className=' rounded-md object-cover' src={data.photoUrl} alt={data.name} width={300} height={140} />
                             <span className=" absolute top-3 bg-white left-2 border-[2px] text-[13px] lowercase font-normal p-[1px] rounded">
@@ -132,7 +143,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                             <FormControl>
                                                 <Select onValueChange={field.onChange} defaultValue={data.status}>
                                                     <FormControl>
-                                                        <SelectTrigger>
+                                                        <SelectTrigger disabled={editMode === false}>
                                                             <SelectValue placeholder="Select a verified type" />
                                                         </SelectTrigger>
                                                     </FormControl>
@@ -147,20 +158,22 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     )}
                                 />
                             </span>
-                            <span className=" absolute top-3 bg-white right-0 border-[2px] text-[13px] lowercase font-normal p-[1px] rounded">
-                                <UploadButton
-                                    className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
-                                    endpoint="imageUploader"
-                                    onClientUploadComplete={(res) => {
-                                        setImage(res[0].url)
-                                        toast.success("Image Upload successfully")
-                                    }}
-                                    onUploadError={(error: Error) => {
-                                        // Do something with the error.
-                                        toast.error(error.message);
-                                    }}
-                                />
-                            </span>
+                            {
+                                editMode === true ? <span className=" absolute top-3 bg-white right-0 border-[2px] text-[13px] lowercase font-normal p-[1px] rounded">
+                                    <UploadButton
+                                        className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
+                                        endpoint="imageUploader"
+                                        onClientUploadComplete={(res) => {
+                                            setImage(res[0].url)
+                                            toast.success("Image Upload successfully")
+                                        }}
+                                        onUploadError={(error: Error) => {
+                                            // Do something with the error.
+                                            toast.error(error.message);
+                                        }}
+                                    />
+                                </span> : <span>.</span>
+                            }
                         </div>
                         <div className="basis-8/12 border-[2px] rounded p-1 px-2 flex flex-col justify-around">
                             <h2 className=" font-semibold text-xl py-1  text-color-main">
@@ -170,7 +183,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <Input readOnly className='text-xl w-fit'{...field} />
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -184,7 +197,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <Input readOnly className='text-xl w-fit'  {...field} />
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -197,7 +210,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <Input readOnly className='text-xl w-fit'  {...field} />
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -214,7 +227,8 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Textarea rows={6} placeholder="Type your message here." {...field} />
+                                        {editMode === true ? <Textarea rows={6} placeholder="Type your message here." {...field} /> : <Textarea rows={6} readOnly placeholder="Type your message here." {...field} />}
+
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
