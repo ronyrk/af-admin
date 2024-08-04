@@ -225,7 +225,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        {editMode === true ? <Textarea rows={6} placeholder="Type your message here." {...field} /> : <Textarea rows={6} readOnly className='text-xl w-fit border-none bg-inherit' placeholder="Type your message here." {...field} />}
+                                        {editMode === true ? <Textarea rows={6} placeholder="Type your message here." {...field} /> : <Textarea rows={6} readOnly className='text-xl border-none bg-inherit' placeholder="Type your message here." {...field} />}
 
                                     </FormControl>
                                     <FormMessage />
