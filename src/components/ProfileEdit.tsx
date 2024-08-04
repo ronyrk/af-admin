@@ -1,8 +1,53 @@
+"use client";
+
 import { DonorIProps, DonorPaymentIProps } from '@/types';
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
+import DonorTable from './DataTable';
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { Button } from "@/components/ui/button"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useMutation } from "@tanstack/react-query"
+import axios from "axios"
+import toast from "react-hot-toast"
+import { useRouter } from "next/navigation"
+import { BranchIProps, DonorIUpdatedProps } from "@/types"
+import { UploadButton } from "@/lib/uploadthing"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
 
-async function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: DonorPaymentIProps[] }) {
+const formSchema = z.object({
+    password: z.string(),
+    about: z.string(),
+    lives: z.string(),
+    hometown: z.string(),
+    status: z.string(),
+    name: z.string(),
+});
+async function getStatus(status: string) {
+    if (status === "LEADER") {
+        return "LENDER"
+    } else {
+        return status
+    }
+};
+
+function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: DonorPaymentIProps[] }) {
+
+    const [image, setImage] = useState<string>(data.photoUrl);
+
+    const upload = image.length >= 1;
 
     const TotalAmount = async () => {
         if (data.status === "LEADER") {
@@ -29,25 +74,157 @@ async function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentLi
         }
 
     }
-    async function getStatus(status: string) {
-        if (status === "LEADER") {
-            return "LENDER"
-        } else {
-            return status
+
+
+    // 1. Define your form.
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            password: data.password,
+            about: data.about,
+            lives: data.lives,
+            hometown: data.hometown,
+            status: data.status,
+            name: data.name,
         }
+    });
+    // 2. Define a submit handler.
+    function onSubmit(values: z.infer<typeof formSchema>) {
+        const photoUrl = image;
+        const password = values.password;
+        const name = values.name;
+        const status = values.status;
+        const hometown = values.hometown;
+        const lives = values.lives;
+        const about = values.about;
+
+        // Branch Created
+        // mutate({ password, name, photoUrl, about, lives, hometown, status }, {
+        //     onSuccess: ({ message, result }: { message: string, result: DonorIProps }) => {
+        //         if (result.id) {
+        //             toast.success(message);
+        //         } else {
+        //             throw new Error("Donor Updated Failed")
+        //         }
+        //         router.push(`/dashboard/donor`);
+        //         router.refresh();
+        //     },
+        //     onError: (error) => {
+        //         toast.error("Donor Updated Failed");
+        //     }
+        // });
     };
+    console.log(data, "   000")
     return (
-        <div className="flex md:flex-row flex-col justify-between gap-3 px-2">
-            <div className=" basis-3/12 border-[2px] p-2 flex justify-around relative rounded">
-                <Image sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className=' rounded-md object-cover' src={data.photoUrl} alt={data.name} width={260} height={140} />
-                <span className=" absolute top-3 bg-white left-2 border-[2px] text-[13px] lowercase font-normal p-[2px] rounded">{getStatus(data.status)}</span>
-            </div>
-            <div className="basis-9/12 border-[2px] rounded p-1 px-2 flex flex-col justify-around">
-                <h2 className=" font-semibold text-xl py-1  text-color-main">{data.name}</h2>
-                <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Lives in :</span>{data.lives} </h2>
-                <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Home town:</span>{data.hometown}</h2>
-                <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">{data.status === "LEADER" ? "Total Lending" : "Total Donation"} :- </span>{TotalAmount()}</h2>
-            </div>
+        <div className='flex flex-col gap-3'>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+
+                    <div className="flex md:flex-row flex-col justify-between gap-3 px-2">
+                        <div className=" basis-4/12 border-[2px] p-2 flex justify-around relative rounded">
+                            <Image sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className=' rounded-md object-cover' src={data.photoUrl} alt={data.name} width={300} height={140} />
+                            <span className=" absolute top-3 bg-white left-2 border-[2px] text-[13px] lowercase font-normal p-[1px] rounded">
+                                <FormField
+                                    control={form.control}
+                                    name="status"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Select onValueChange={field.onChange} defaultValue={data.status}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select a verified type" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <SelectItem value="LEADER">lender</SelectItem>
+                                                        <SelectItem value="DONOR">donor</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </span>
+                            <span className=" absolute top-3 bg-white right-0 border-[2px] text-[13px] lowercase font-normal p-[1px] rounded">
+                                <UploadButton
+                                    className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
+                                    endpoint="imageUploader"
+                                    onClientUploadComplete={(res) => {
+                                        setImage(res[0].url)
+                                        toast.success("Image Upload successfully")
+                                    }}
+                                    onUploadError={(error: Error) => {
+                                        // Do something with the error.
+                                        toast.error(error.message);
+                                    }}
+                                />
+                            </span>
+                        </div>
+                        <div className="basis-8/12 border-[2px] rounded p-1 px-2 flex flex-col justify-around">
+                            <h2 className=" font-semibold text-xl py-1  text-color-main">
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Input readOnly className='text-xl w-fit'{...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Lives in :</span>
+                                <FormField
+                                    control={form.control}
+                                    name="lives"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Input readOnly className='text-xl w-fit'  {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                /></h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Home town:</span>
+                                <FormField
+                                    control={form.control}
+                                    name="hometown"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Input readOnly className='text-xl w-fit'  {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </h2>
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">{data.status === "LEADER" ? "Total Lending" : "Total Donation"} :- </span>{TotalAmount()}</h2>
+                        </div>
+                    </div>
+                    <div className="p-2">
+                        <FormField
+                            control={form.control}
+                            name="about"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Textarea rows={6} placeholder="Type your message here." {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                </form>
+            </Form>
+            <DonorTable data={data} />
         </div>
     )
 }

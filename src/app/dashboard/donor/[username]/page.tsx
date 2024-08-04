@@ -1,4 +1,3 @@
-import DonorTable from '@/components/DataTable';
 import DonorUpdated from '@/components/DonorUpdated';
 import ProfileEdit from '@/components/ProfileEdit';
 import { DonorIProps, DonorPaymentIProps } from '@/types';
@@ -28,13 +27,7 @@ async function page({ params }: {
 
 	return (
 		<div>
-			<div className='flex flex-col gap-3'>
-				<ProfileEdit data={data} paymentList={paymentList} />
-				<div className="p-4">
-					<h2 className="text-[16px] font-normal text-color-main">{data.about} </h2>
-				</div>
-				<DonorTable data={data} />
-			</div>
+			<ProfileEdit data={data} paymentList={paymentList} />
 			<DonorUpdated data={data} />
 		</div>
 	)
