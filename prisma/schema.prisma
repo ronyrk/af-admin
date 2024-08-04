@@ -82,18 +82,19 @@ model Admin {
 }
 
 model Donor {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  username String  @unique
-  email    String  @unique
-  code     String  @unique
-  password String
-  name     String
-  photoUrl String
-  about    String
-  amount   String?
-  lives    String
-  hometown String
-  status   String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  username    String   @unique
+  email       String   @unique
+  code        String   @unique
+  password    String
+  name        String
+  photoUrl    String
+  about       String
+  amount      String?
+  lives       String
+  hometown    String
+  status      String
+  paymentDate DateTime @default("2023-12-28T18:00:00.000Z")
 }
 
 model Request {

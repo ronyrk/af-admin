@@ -30,8 +30,8 @@ async function page({ params }: {
 		<div>
 			<Suspense fallback={<h2>Loading..</h2>}>
 				<ProfileEdit data={data} paymentList={paymentList} />
+				<DonorTable data={data} />
 			</Suspense>
-			<DonorTable data={data} />
 		</div>
 	)
 }

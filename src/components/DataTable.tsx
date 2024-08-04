@@ -10,6 +10,19 @@ import {
 import { DonorIProps, DonorPaymentIProps } from '@/types'
 import moment from 'moment';
 import { unstable_noStore } from 'next/cache';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
+import DonorDonationCreate from './DonorDonationCreate';
 
 interface ParamsIProps {
     data: DonorIProps
@@ -61,6 +74,34 @@ function DonorTable(params: ParamsIProps) {
     return (
         <div className=' border-[2px] rounded-sm px-2'>
             <h2 className=" text-center font-semibold text-xl py-2 text-color-main uppercase">Transaction</h2>
+            <div className="flex flex-row items-center py-2 justify-between">
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button >Add loan</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <DonorDonationCreate username={params.data.username} />
+                    </AlertDialogContent>
+                </AlertDialog>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button >Pay loan</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete your
+                                account and remove your data from our servers.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel className=' text-black'>Cancel</AlertDialogCancel>
+                            <AlertDialogAction>Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            </div>
             <Table>
                 <TableHeader>
                     <TableRow>
