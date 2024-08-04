@@ -28,14 +28,10 @@ import { AlertDialogAction, AlertDialogCancel, AlertDialogFooter } from "./ui/al
 
 
 const formSchema = z.object({
-    donorUsername: z.string(),
     amount: z.string().optional(),
     loanPayment: z.string().optional(),
     type: z.string().optional(),
     date: z.date({
-        required_error: "A date is required.",
-    }),
-    PaymentDate: z.date({
         required_error: "A date is required.",
     })
 });
@@ -71,6 +67,7 @@ function DonorDonationPayment({ username }: { username: string }) {
         const previous = values.date;
         const createAt = new Date(previous);
         createAt.setDate(previous.getDate() + 1);
+        console.log({ values });
 
         // Donor /Lender Payment Created
         mutate({ donorUsername, amount, loanPayment, type, createAt }, {
@@ -95,47 +92,6 @@ function DonorDonationPayment({ username }: { username: string }) {
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
                     <div className=" grid grid-cols-3 items-center gap-3">
-                        <FormField
-                            control={form.control}
-                            name="date"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>Date of received</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "text-color-main pl-3 text-left font-normal",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(field.value, "PPP")
-                                                    ) : (
-                                                        <span>Pick a date</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={field.onChange}
-                                                disabled={(date) =>
-                                                    date > new Date() || date < new Date("1900-01-01")
-                                                }
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                         <FormField
                             control={form.control}
                             name="date"
@@ -182,7 +138,7 @@ function DonorDonationPayment({ username }: { username: string }) {
                             control={form.control}
                             name="loanPayment"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className=" mt-[-10px]">
                                     <FormLabel>Loan Payment</FormLabel>
                                     <FormControl>
                                         <Input type="number" placeholder="Loan Amount Payment" {...field} />

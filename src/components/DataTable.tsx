@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button"
 import DonorDonationCreate from './DonorDonationCreate';
 import DonorDonationPayment from './DonorDonationPayment';
+import DeleteButton from './DeleteButton';
 
 interface ParamsIProps {
     data: DonorIProps
@@ -62,6 +63,9 @@ async function TableRowList(params: ParamsIProps) {
                         <TableCell>{`${moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
                         <TableCell>{loanAmount(item.amount, item.type)}</TableCell>
                         <TableCell className='px-4'>{loanPayment(item.loanPayment, item.type)} </TableCell>
+                        <TableCell className='px-4'>
+                            <DeleteButton type='donor/payment' username={item.id as string} />
+                        </TableCell>
                     </TableRow>
                 ))
             }
