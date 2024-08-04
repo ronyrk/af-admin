@@ -6,7 +6,6 @@ import { NextResponse } from "next/server";
 export const DELETE = async (request: Request, { params }: ParamsIdIProps) => {
     try {
         const { id } = params;
-        console.log({ id });
         await prisma.donorPayment.deleteMany({
             where: {
                 id
