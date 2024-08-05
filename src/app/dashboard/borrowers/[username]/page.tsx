@@ -1,5 +1,6 @@
+import BorrowerProfile from '@/components/BorrowerProfile';
 import BorrowerUpdated from '@/components/BorrowersUpdated';
-import { LoanIProps } from '@/types';
+import { LoanIProps, PaymentIProps } from '@/types';
 import { cookies } from 'next/headers';
 import React from 'react'
 
@@ -14,9 +15,15 @@ async function page({ params }: {
 		throw new Error("Failed to fetch data list");
 	};
 	const borrowers: LoanIProps = await res.json();
+
+	const response = await fetch(`https://arafatfoundation.vercel.app/api/loan_list/${params.username}`);
+	if (!res.ok) {
+		throw new Error("Failed to fetch data");
+	}
+	const paymentList: PaymentIProps[] = await response.json();
 	return (
 		<div>
-			<BorrowerUpdated data={borrowers} />
+			<BorrowerProfile data={borrowers} paymentList={paymentList} />
 		</div>
 	)
 }
