@@ -16,6 +16,7 @@ import DeleteButton from '@/components/DeleteButton';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { ClipboardPenLine } from 'lucide-react';
 
 async function getUser(username: string) {
 	cookies();
@@ -101,7 +102,7 @@ async function BorrowersList() {
 							<TableCell className="font-medium uppercase">{duePayment(item?.username, item.balance)}</TableCell>
 							<TableCell className="font-medium uppercase">
 								<Button className='bg-color-main' variant={"outline"} size={"sm"} asChild>
-									<Link href={`borrowers/${item.username}`}>Updated</Link>
+									<Link href={`borrowers/${item.username}`}><ClipboardPenLine /></Link>
 								</Button>
 							</TableCell>
 							<TableCell className="font-medium uppercase">
