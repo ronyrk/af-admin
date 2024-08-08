@@ -4,15 +4,16 @@ import { cookies } from 'next/headers';
 import prisma from "./prisma";
 
 export async function approvedRequest(id: string, loanusername: string, photoUrl: string, method: string, createAt: Date, amount: string) {
+	const loanAmount = "0";
 	try {
 		cookies();
 		const approved = await prisma.payment.create({
 			data: {
-				loanusername, photoUrl, method, createAt, amount
+				loanusername, photoUrl, method, createAt, amount, loanAmount
 			}
 		});
 		const removed = await prisma.request.delete({ where: { id } });
-		console.log(approved, '#', removed)
+		// console.log(approved, '#', removed)
 		return { message: "successfully" };
 	} catch (error) {
 		console.log(error);
