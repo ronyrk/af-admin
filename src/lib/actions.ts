@@ -9,7 +9,7 @@ export async function approvedRequest(id: string, loanusername: string, photoUrl
 		cookies();
 		const approved = await prisma.payment.create({
 			data: {
-				loanusername, photoUrl, method, createAt, amount, loanAmount
+				loanusername, createAt, amount, loanAmount
 			}
 		});
 		const removed = await prisma.request.delete({ where: { id } });
