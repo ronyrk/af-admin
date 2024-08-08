@@ -109,6 +109,11 @@ function AdminSidebar() {
 			path: "/dashboard/expenses",
 			active: path === "/dashboard/expenses" || path === "/dashboard/expenses/create"
 		},
+		{
+			name: "Our links",
+			path: "/dashboard/our-links",
+			active: path === "/dashboard/our-links"
+		}
 
 	];
 
