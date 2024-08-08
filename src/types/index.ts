@@ -153,6 +153,7 @@ export interface LoanIUpdatedProps {
 export interface PaymentIProps {
 	id?: string,
 	loanusername: string,
+	loanAmount: string,
 	photoUrl: string,
 	amount: string,
 	method: string,
