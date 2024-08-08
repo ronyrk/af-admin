@@ -87,7 +87,6 @@ function Child() {
 		} else {
 
 		}
-		// console.log(values, "result");
 	}
 	return (
 		<div>

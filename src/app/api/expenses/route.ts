@@ -22,7 +22,6 @@ export const GET = async (request: Request) => {
 					date: "desc"
 				}
 			});
-			console.log(result, "con-1");
 			return NextResponse.json(result)
 		} else {
 			const result = await prisma.expenses.findMany({
@@ -38,12 +37,10 @@ export const GET = async (request: Request) => {
 					date: "desc"
 				}
 			});
-			console.log(result, "con-2");
 			return NextResponse.json(result)
 		}
 
 	} catch (error) {
-		console.log(error);
 		return NextResponse.json("server Error");
 	}
 

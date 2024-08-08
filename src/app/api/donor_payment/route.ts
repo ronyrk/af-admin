@@ -23,7 +23,6 @@ export const POST = async (request: Request) => {
 		});
 		return NextResponse.json(result);
 	} catch (error) {
-		console.log(error, "server error");
 		return NextResponse.json(error);
 	};
 };

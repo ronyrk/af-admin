@@ -73,7 +73,6 @@ function DonorPaymentCreate() {
 		},
 		refetchInterval: 1000,
 	});
-	// console.log(data, "donor");
 
 	// 2. Define a submit handler.
 	function onSubmit(values: z.infer<typeof formSchema>) {
@@ -100,7 +99,6 @@ function DonorPaymentCreate() {
 			}
 		});
 	};
-	// console.log(state, stateBranch);
 
 	return (
 		<div className="flex flex-col gap-3">

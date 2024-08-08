@@ -7,7 +7,6 @@ export const GET = async (request: Request, { params }: ParamsIdIProps) => {
 	try {
 		const { id } = params;
 		const data = await prisma.faq.findUnique({ where: { id } });
-		console.log(id, "/", data)
 		return NextResponse.json(data);
 	} catch (error) {
 		throw new Error("Data fetch fail");

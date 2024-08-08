@@ -27,7 +27,6 @@ import BorrowersLoanPayment from './BorrowersLoanPayment';
 import DeleteButton from './DeleteButton';
 
 function Zero(data: string) {
-    console.log(data)
     if (Number(data) !== 0) {
         return `BDT=${data}/=`
     } else {
