@@ -46,11 +46,24 @@ function BorrowerProfile({ data, paymentList }: { data: LoanIProps, paymentList:
     const [Form2, setForm2] = useState<string>(data.form2);
     const [editMode, setEditMode] = useState<Boolean>(false);
 
+    const totalBalance = async () => {
+        let indexPaymentString: string[] = ["0"];
+        const result = paymentList.forEach((item) => indexPaymentString.push(item.loanAmount));
+        let indexPayment = indexPaymentString.map(Number);
+        const loanSumAmount = indexPayment.reduce((accumulator, currentValue) => accumulator + currentValue, Number(data.balance));
+        return `${loanSumAmount}`;
+    }
+
     const duePayment = async () => {
+        let indexPaymentString2: string[] = ["0"];
+        paymentList.forEach((item) => indexPaymentString2.push(item.loanAmount));
+        let indexPayment2 = indexPaymentString2.map(Number);
+        const totalBalance = indexPayment2.reduce((accumulator, currentValue) => accumulator + currentValue, Number(data.balance));
+
         let indexPaymentString: string[] = ["0"];
         const result = paymentList.forEach((item) => indexPaymentString.push(item.amount));
         let indexPayment = indexPaymentString.map(Number);
-        const loanSumAmount = indexPayment.reduce((accumulator, currentValue) => accumulator - currentValue, Number(data.balance));
+        const loanSumAmount = indexPayment.reduce((accumulator, currentValue) => accumulator - currentValue, totalBalance);
         return `${loanSumAmount}`;
     }
 
@@ -162,14 +175,14 @@ function BorrowerProfile({ data, paymentList }: { data: LoanIProps, paymentList:
                                     )}
                                 />
                             </h2>
-                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Lives in :</span>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold">Lives in :</span>
                                 <FormField
                                     control={form.control}
                                     name="address"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl '{...field} /> : <Input readOnly className='text-xl  border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-lg '{...field} /> : <Input readOnly className='text-lg  border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -182,7 +195,7 @@ function BorrowerProfile({ data, paymentList }: { data: LoanIProps, paymentList:
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-lg w-fit'{...field} /> : <Input readOnly className='text-lg w-fit border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -207,7 +220,10 @@ function BorrowerProfile({ data, paymentList }: { data: LoanIProps, paymentList:
                             <h2 className=" flex flex-row items-center font-normal text-[18px]  text-color-main"><span className="font-semibold mr-2">UserName:</span>{data.username}</h2>
                             <h2 className=" flex flex-row items-center font-normal text-[18px]  text-color-main"><span className="font-semibold mr-2">Branch:</span>{data.branch}</h2>
 
-                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">মোট ঋণ:</span>{data.balance}</h2>
+
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">মোট ঋণ:</span>{totalBalance()}</h2>
+
+
                             <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">মোট পরিশোধিত ঋণ:</span>{allPayment()}</h2>
                             <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">বকেয়া ঋণ:</span>{duePayment()}</h2>
                         </div>

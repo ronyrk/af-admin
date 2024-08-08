@@ -24,6 +24,7 @@ import Moment from "moment"
 import { Button } from './ui/button';
 import BorrowersLoanCreate from './BorrowersLoanCreate';
 import BorrowersLoanPayment from './BorrowersLoanPayment';
+import DeleteButton from './DeleteButton';
 
 function Zero(data: string) {
     console.log(data)
@@ -70,6 +71,9 @@ async function LoanList({ username }: { username: string }) {
                             <TableCell>{`${Moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
                             <TableCell>{Zero(item.loanAmount)}</TableCell>
                             <TableCell>{Zero(item.amount)}</TableCell>
+                            <TableCell className='px-4'>
+                                <DeleteButton type='payment' username={item.id as string} />
+                            </TableCell>
                         </TableRow>
                     ))
                 }
@@ -109,7 +113,7 @@ function BorrowersTransaction({ username }: { username: string }) {
                         <TableHead>DATE</TableHead>
                         <TableHead>LOAN AMOUNT</TableHead>
                         <TableHead>LOAN PAYMENT</TableHead>
-                        <TableHead>LOAN OUTSTANDING</TableHead>
+                        <TableHead>DELETED</TableHead>
                     </TableRow>
                 </TableHeader>
                 <Suspense fallback={<h2 className='text-center'>Loading...</h2>}>
