@@ -81,7 +81,6 @@ function Child() {
 					}
 				},
 				onError: ({ message }: { message: any }) => {
-					// console.log(message, "comment");
 					toast.error(message);
 				}
 			});
