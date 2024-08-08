@@ -109,10 +109,8 @@ model Request {
 model payment {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   loanusername String
-  photoUrl     String
   amount       String
   loanAmount   String
-  method       String
   createAt     DateTime
 }
 

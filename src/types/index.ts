@@ -154,9 +154,7 @@ export interface PaymentIProps {
 	id?: string,
 	loanusername: string,
 	loanAmount: string,
-	photoUrl: string,
 	amount: string,
-	method: string,
 	createAt: Date
 };
 export interface PaymentApproveIProps {
