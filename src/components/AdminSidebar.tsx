@@ -112,7 +112,7 @@ function AdminSidebar() {
 		{
 			name: "Our links",
 			path: "/dashboard/our-links",
-			active: path === "/dashboard/our-links"
+			active: path === "/dashboard/our-links" || path === "/dashboard/our-links/create"
 		}
 
 	];
