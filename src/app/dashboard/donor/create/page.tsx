@@ -83,7 +83,6 @@ function DonorCreate() {
 					router.refresh();
 				},
 				onError: ({ message }: { message: any }) => {
-					// console.log(message, "comment");
 					toast.error(message);
 				}
 			});
@@ -91,7 +90,6 @@ function DonorCreate() {
 			toast.error("Upload Photo");
 		}
 	};
-	// console.log(state, stateBranch);
 
 	return (
 		<div className="">

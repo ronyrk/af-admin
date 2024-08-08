@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 export const GET = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		console.log(username);
+
 		const result = await prisma.donor.findUnique({
 			where: {
 				username

@@ -77,7 +77,6 @@ function ExpensesCreate() {
             }
         });
     };
-    // console.log(state, stateBranch);
 
     return (
         <div className="flex flex-col gap-3">

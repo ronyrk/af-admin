@@ -75,14 +75,12 @@ function NewsCreate() {
 					router.refresh();
 				},
 				onError: ({ message }: { message: any }) => {
-					// console.log(message, "comment");
 					toast.error(message);
 				}
 			});
 		} else {
 			toast.error("Upload Photo");
 		}
-		// console.log(values, "result");
 	}
 	return (
 		<div>

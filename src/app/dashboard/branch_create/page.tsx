@@ -111,7 +111,6 @@ function BranchCreate() {
 					router.refresh();
 				},
 				onError: ({ message }: { message: any }) => {
-					// console.log(message, "comment");
 					toast.error(message);
 				}
 			});
@@ -119,7 +118,6 @@ function BranchCreate() {
 			toast.error("Upload Photo");
 		}
 	};
-	// console.log(state, stateBranch);
 
 	return (
 		<div className="">

@@ -13,7 +13,6 @@ async function page({ params }: {
         throw new Error("Failed to fetch data list");
     };
     const data = await res.json();
-    console.log(data)
     return (
         <div>
             <ExpensesUpdated data={data} />

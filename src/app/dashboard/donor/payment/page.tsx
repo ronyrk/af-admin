@@ -50,7 +50,6 @@ async function DonorPaymentList() {
 			throw new Error("Failed to fetch data list");
 		};
 		const payment: DonorPaymentIProps[] = await res.json();
-		console.log(payment, "payment");
 
 		return (
 			<TableBody>
@@ -69,7 +68,6 @@ async function DonorPaymentList() {
 			</TableBody>
 		)
 	} catch (error) {
-		console.log(error, "error");
 	}
 };
 
