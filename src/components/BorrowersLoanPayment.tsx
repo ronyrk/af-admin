@@ -64,14 +64,13 @@ function BorrowersLoanPayment({ username }: { username: string }) {
 
         mutate({ amount, loanAmount, createAt, loanusername: username }, {
             onSuccess: (data) => {
-                console.log({ data })
-                // if (data?.id) {
-                //     toast.success("Donor Payment Create Successfully");
-                // } else {
-                //     throw new Error("Donor Payment Created Failed")
-                // }
-                // toast.success("Donor Payment Create Successfully");
-                // router.refresh();
+                if (data?.id) {
+                    toast.success("Borrowers payment Successfully");
+                } else {
+                    throw new Error("Borrowers payment Failed")
+                }
+                toast.success("Borrowers payment Successfully");
+                router.refresh();
             },
             onError: (error) => {
                 console.log({ error })
@@ -81,7 +80,7 @@ function BorrowersLoanPayment({ username }: { username: string }) {
     };
     return (
         <div className="flex flex-col gap-3">
-            <h2 className="text-center text-xl">Donor Payment Create</h2>
+            <h2 className="text-center text-xl">Borrowers Payment Create</h2>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
                     <div className=" grid grid-cols-3 justify-self-stretch gap-3">
