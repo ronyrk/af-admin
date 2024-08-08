@@ -111,6 +111,7 @@ model payment {
   loanusername String
   photoUrl     String
   amount       String
+  loanAmount   String
   method       String
   createAt     DateTime
 }

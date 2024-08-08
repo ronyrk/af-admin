@@ -48,13 +48,11 @@ async function allPayment(username: string) {
 		throw new Error("Failed to fetch data all payment");
 	}
 	const paymentList: PaymentIProps[] = await response.json();
-	const data: LoanIProps = await getUser(username);
 	let indexPaymentString: string[] = ["0"];
 	const result = paymentList.forEach((item) => indexPaymentString.push(item.amount));
 	let indexPayment = indexPaymentString.map(Number);
 	const Amount = indexPayment.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 	return `${Amount}`;
-
 
 }
 
@@ -107,8 +105,8 @@ async function BorrowersList() {
 							<TableCell className="font-medium">{item.code}</TableCell>
 							<TableCell className="font-medium uppercase">{item.name}</TableCell>
 							<TableCell className="font-medium uppercase" >{item.balance}</TableCell>
-							<TableCell className="font-medium uppercase">{allPayment(item?.username)}</TableCell>
-							<TableCell className="font-medium uppercase">{duePayment(item?.username)}</TableCell>
+							{/* <TableCell className="font-medium uppercase">{allPayment(item?.username)}</TableCell>
+							<TableCell className="font-medium uppercase">{duePayment(item?.username)}</TableCell> */}
 							<TableCell className="font-medium uppercase">
 								<Button className='bg-color-main' variant={"outline"} size={"sm"} asChild>
 									<Link href={`borrowers/${item.username}`}>Updated</Link>
@@ -122,12 +120,12 @@ async function BorrowersList() {
 				}
 			</TableBody>
 			<TableFooter>
-				<TableRow>
+				{/* <TableRow>
 					<TableCell className=" font-semibold" colSpan={2}>Total</TableCell>
 					<TableCell className="font-semibold">{TotalDisbursed()}</TableCell>
 					<TableCell className="font-semibold">{TotalPayment()}</TableCell>
 					<TableCell className="font-semibold">{TotalBalance()}</TableCell>
-				</TableRow>
+				</TableRow> */}
 			</TableFooter>
 		</>
 	)
