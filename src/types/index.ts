@@ -328,3 +328,10 @@ export interface SearchIProps {
 	transaction?: string,
 	page?: string,
 };
+
+export interface AllLinkIProps {
+	id?: string,
+	name: string,
+	path: string,
+	type: string,
+}

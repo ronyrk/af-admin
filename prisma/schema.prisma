@@ -237,3 +237,10 @@ enum Status {
   RUNNING
   COMPLETED
 }
+
+model All_links {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  type String
+  name String
+  path String
+}
