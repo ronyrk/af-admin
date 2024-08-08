@@ -66,23 +66,22 @@ function BorrowersLoanCreate({ username }: { username: string }) {
         mutate({ amount, loanAmount, createAt, loanusername: username }, {
             onSuccess: (data) => {
                 console.log({ data })
-                // if (data?.id) {
-                //     toast.success("Donor Payment Create Successfully");
-                // } else {
-                //     throw new Error("Donor Payment Created Failed")
-                // }
-                // toast.success("Donor Payment Create Successfully");
-                // router.refresh();
+                if (data?.id) {
+                    toast.success("Borrowers Another Loan Create Successfully");
+                } else {
+                    throw new Error("Borrowers Another Loan Create Failed")
+                }
+                toast.success("Borrowers Another Loan Create Successfully");
+                router.refresh();
             },
             onError: (error) => {
-                console.log({ error })
-                toast.error("Donor payment Request Created Failed");
+                toast.error("Borrowers Another Loan Create Created Failed");
             }
         });
     };
     return (
         <div className="flex flex-col gap-3">
-            <h2 className="text-center text-xl">Donor Payment Create</h2>
+            <h2 className="text-center text-xl">Borrowers Another Loan Create</h2>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
                     <div className=" grid grid-cols-3 justify-self-stretch gap-3">

@@ -25,6 +25,15 @@ import { Button } from './ui/button';
 import BorrowersLoanCreate from './BorrowersLoanCreate';
 import BorrowersLoanPayment from './BorrowersLoanPayment';
 
+function Zero(data: string) {
+    console.log(data)
+    if (Number(data) !== 0) {
+        return `BDT=${data}/=`
+    } else {
+        return " "
+    }
+};
+
 async function LoanList({ username }: { username: string }) {
     try {
         unstable_noStore();
@@ -59,9 +68,8 @@ async function LoanList({ username }: { username: string }) {
                     data.map((item, index) => (
                         <TableRow key={index}>
                             <TableCell>{`${Moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
-                            {/* <TableCell>BDT ={calculateRemainingLoanAmount(loanAmount, index)}/=</TableCell> */}
-                            <TableCell>BDT ={item.amount}/=</TableCell>
-                            {/* <TableCell>BDT ={calculateRemainingLoanAmountStanding(loanAmount, index, item.amount)}/=</TableCell> */}
+                            <TableCell>{Zero(item.loanAmount)}</TableCell>
+                            <TableCell>{Zero(item.amount)}</TableCell>
                         </TableRow>
                     ))
                 }
