@@ -38,7 +38,7 @@ async function LinkList() {
                         <TableCell className="font-medium uppercase">{item.name}</TableCell>
                         <TableCell className="font-medium uppercase">{item.type}</TableCell>
                         <TableCell className="font-medium uppercase">
-                            <DeleteButton type='our-links' username={item.id as string} />
+                            <DeleteButton type='all-links' username={item.id as string} />
                         </TableCell>
                     </TableRow>
                 ))
