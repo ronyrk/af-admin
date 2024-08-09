@@ -137,7 +137,7 @@ function DonorDonationPayment({ username }: { username: string }) {
                         />
                         <FormField
                             control={form.control}
-                            name="date"
+                            name="PaymentDate"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
                                     <FormLabel>Return Date</FormLabel>
