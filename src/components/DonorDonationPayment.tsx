@@ -140,7 +140,7 @@ function DonorDonationPayment({ username }: { username: string }) {
                             name="PaymentDate"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
-                                    <FormLabel>Return Date</FormLabel>
+                                    <FormLabel>Profile Rank Date</FormLabel>
                                     <Popover>
                                         <PopoverTrigger asChild>
                                             <FormControl>
