@@ -34,7 +34,7 @@ function Zero(data: string) {
     }
 };
 
-async function LoanList({ username }: { username: string }) {
+async function LoanList({ username, paymentList, borrowers }: { username: string, paymentList: PaymentIProps[], borrowers: LoanIProps }) {
     try {
         unstable_noStore();
         const res = await fetch(`https://af-admin.vercel.app/api/loan_list/${username}`);
@@ -42,25 +42,22 @@ async function LoanList({ username }: { username: string }) {
             throw new Error("Failed to fetch data");
         }
         const data: PaymentIProps[] = await res.json();
-        // const calculateRemainingLoanAmount = async (amount: string, index: number) => {
-        //     const sumArray = data.slice(0, index);
-        //     let indexPaymentString: string[] = ["0"];
-        //     sumArray.forEach((item) => indexPaymentString.push(item.amount));
-        //     let indexPayment = indexPaymentString.map(Number)
-        //     const loanSumAmount = indexPayment.reduce((accumulator, currentValue) => accumulator - currentValue, Number(amount));
-        //     return `${loanSumAmount}`;
-        // };
 
-        // const calculateRemainingLoanAmountStanding = async (amount: string, index: number, paymentAmount: string) => {
-        //     const sumArray = data.slice(0, index);
-        //     const payment = Number(paymentAmount);
-        //     let indexPaymentString: string[] = ["0"];
-        //     sumArray.forEach((item) => indexPaymentString.push(item.amount));
-        //     let indexPayment = indexPaymentString.map(Number);
-        //     const loanSumAmount = indexPayment.reduce((accumulator, currentValue) => accumulator - currentValue, Number(amount));
-        //     const result = loanSumAmount - payment;
-        //     return result;
-        // }
+        const LoanOutStanding = async (index: number) => {
+            const loanState = paymentList.slice(0, index + 1);
+
+            let indexPaymentString2: string[] = ["0"];
+            loanState.forEach((item) => indexPaymentString2.push(item.loanAmount));
+            let indexPayment2 = indexPaymentString2.map(Number);
+            const totalBalance = indexPayment2.reduce((accumulator, currentValue) => accumulator + currentValue, Number(borrowers.balance));
+
+            let indexPaymentString: string[] = ["0"];
+            const result = loanState.forEach((item) => indexPaymentString.push(item.amount));
+            let indexPayment = indexPaymentString.map(Number);
+            const loanSumAmount = indexPayment.reduce((accumulator, currentValue) => accumulator - currentValue, totalBalance);
+
+            return `BDT=${loanSumAmount}/=`
+        }
 
         return (
             <TableBody>
@@ -70,6 +67,7 @@ async function LoanList({ username }: { username: string }) {
                             <TableCell>{`${Moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
                             <TableCell>{Zero(item.loanAmount)}</TableCell>
                             <TableCell>{Zero(item.amount)}</TableCell>
+                            <TableCell>{LoanOutStanding(index)}</TableCell>
                             <TableCell className='px-4'>
                                 <DeleteButton type='payment' username={item.id as string} />
                             </TableCell>
@@ -84,7 +82,7 @@ async function LoanList({ username }: { username: string }) {
 }
 
 
-function BorrowersTransaction({ username }: { username: string }) {
+function BorrowersTransaction({ username, paymentList, data }: { username: string, paymentList: PaymentIProps[], data: LoanIProps }) {
     return (
         <div className=' border-[2px] rounded-sm px-2'>
             <h2 className=" text-center font-semibold text-xl py-2 text-color-main uppercase">Transaction</h2>
@@ -112,11 +110,12 @@ function BorrowersTransaction({ username }: { username: string }) {
                         <TableHead>DATE</TableHead>
                         <TableHead>LOAN AMOUNT</TableHead>
                         <TableHead>LOAN PAYMENT</TableHead>
+                        <TableHead>LOAN OUTSTANDING</TableHead>
                         <TableHead>DELETED</TableHead>
                     </TableRow>
                 </TableHeader>
                 <Suspense fallback={<h2 className='text-center'>Loading...</h2>}>
-                    <LoanList username={username} />
+                    <LoanList username={username} paymentList={paymentList} borrowers={data} />
                 </Suspense>
             </Table>
 
