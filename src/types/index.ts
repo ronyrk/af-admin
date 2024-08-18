@@ -203,6 +203,7 @@ export interface ProjectsIProps {
 	description: string,
 	createAt?: Date,
 	username: string,
+	paymentInfo: string,
 }
 export interface ProjectsIUpdatedProps {
 	id?: string,

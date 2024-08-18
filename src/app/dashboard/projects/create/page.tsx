@@ -35,6 +35,7 @@ const formSchema = z.object({
 	shortDec: z.string(),
 	author: z.string(),
 	username: z.string(),
+	paymentInfo: z.string(),
 });
 
 function ProjectCreate() {
@@ -48,9 +49,9 @@ function ProjectCreate() {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ title, description, author, shortDes, photoUrl, username }: ProjectsIProps) => {
+		mutationFn: async ({ title, description, author, shortDes, photoUrl, username, paymentInfo }: ProjectsIProps) => {
 			const response = await axios.post("/api/project", {
-				title, description, author, shortDes, photoUrl, username
+				title, description, author, shortDes, photoUrl, username, paymentInfo
 			});
 			return response.data;
 		},
@@ -64,9 +65,10 @@ function ProjectCreate() {
 		const photoUrl = image;
 		const shortDes = values.shortDec;
 		const username = values.username;
+		const paymentInfo = values.paymentInfo;
 
 		if (upload === true) {
-			mutate({ title, description, author, photoUrl, shortDes, username }, {
+			mutate({ title, description, author, photoUrl, shortDes, username, paymentInfo }, {
 				onSuccess: (data: ProjectsIProps) => {
 					if (data?.id) {
 						toast.success("Create Successfully Project");
@@ -154,6 +156,19 @@ function ProjectCreate() {
 									<FormLabel>Short Description</FormLabel>
 									<FormControl>
 										<Textarea placeholder="Short Description" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="paymentInfo"
+							render={({ field }) => (
+								<FormItem className="">
+									<FormLabel>Payment Description</FormLabel>
+									<FormControl className="">
+										<TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
