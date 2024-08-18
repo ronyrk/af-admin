@@ -108,6 +108,7 @@ const UpdatedEditor = ({ description, value, onChange, content }: { description:
 					</EditorCommand>
 
 					<EditorBubble
+
 						tippyOptions={{
 							placement: "top",
 						}}
