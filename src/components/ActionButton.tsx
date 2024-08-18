@@ -50,7 +50,7 @@ function ActionButton({ item }: { item: PaymentApproveIProps }) {
 			<AlertDialog>
 				<AlertDialogTrigger><Button aria-disabled={pending} className='bg-color-sub' size={"sm"}>
 					{
-						pending ? "Loading..." : "Action"
+						pending ? "Loading...." : "Action"
 					}
 				</Button></AlertDialogTrigger>
 				<AlertDialogContent>
