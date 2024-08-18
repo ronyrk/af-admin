@@ -212,6 +212,7 @@ export interface ProjectsIUpdatedProps {
 	shortDes: string,
 	description: string,
 	createAt?: Date,
+	paymentInfo: string,
 }
 export interface ProjectsProps {
 	id: string,
@@ -222,6 +223,7 @@ export interface ProjectsProps {
 	description: string,
 	createAt: Date,
 	username: string,
+	paymentInfo: string,
 }
 export interface NewsProps {
 	id: string,

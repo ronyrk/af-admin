@@ -20,7 +20,6 @@ import axios from "axios"
 import { FaqIProps, ProjectsIProps, ProjectsIUpdatedProps } from "@/types"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import TailwindEditor from "@/components/editor"
 import { Label } from "@/components/ui/label"
 import { UploadButton } from "@/lib/uploadthing"
 import { useState } from "react"
@@ -34,6 +33,7 @@ const formSchema = z.object({
 	title: z.string(),
 	description: z.any(),
 	shortDec: z.string(),
+	paymentInfo: z.string(),
 
 });
 
@@ -52,9 +52,9 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ title, description, shortDes, photoUrl }: ProjectsIUpdatedProps) => {
+		mutationFn: async ({ title, description, shortDes, photoUrl, paymentInfo }: ProjectsIUpdatedProps) => {
 			const response = await axios.patch(`/api/project/${data.username}`, {
-				title, description, shortDes, photoUrl
+				title, description, shortDes, photoUrl, paymentInfo
 			});
 			return response.data;
 		},
@@ -66,8 +66,9 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 		const description = values.description;
 		const photoUrl = image;
 		const shortDes = values.shortDec;
+		const paymentInfo = values.paymentInfo;
 
-		mutate({ title, description, photoUrl, shortDes }, {
+		mutate({ title, description, photoUrl, shortDes, paymentInfo }, {
 			onSuccess: (data: ProjectsIProps) => {
 				toast.success("Successfully Updated");
 				router.push(`/dashboard/projects`);
@@ -122,6 +123,19 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 									<FormLabel>Short Description</FormLabel>
 									<FormControl>
 										<Textarea rows={6} defaultValue={data.shortDes} placeholder="Short Description" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="paymentInfo"
+							render={({ field }) => (
+								<FormItem className="">
+									<FormLabel>Payment Description</FormLabel>
+									<FormControl className="">
+										<UpdatedEditor content={data.paymentInfo} description={field.name} onChange={field.onChange} value={field.value} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
