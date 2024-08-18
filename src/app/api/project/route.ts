@@ -14,13 +14,13 @@ export const GET = async (request: Request) => {
 
 export const POST = async (request: Request) => {
 	try {
-		const { title, description, author, shortDes, photoUrl, username } = await request.json();
+		const { title, description, author, shortDes, photoUrl, username, paymentInfo } = await request.json();
 		const result = await prisma.project.create({
 			data: {
 				title,
 				description,
 				author,
-				shortDes, photoUrl, username
+				shortDes, photoUrl, username, paymentInfo
 			}
 		})
 		return NextResponse.json(result);

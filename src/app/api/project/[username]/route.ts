@@ -43,11 +43,11 @@ export const DELETE = async (request: Request, { params }: {
 export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		const { title, description, shortDes, photoUrl } = await request.json();
+		const { title, description, shortDes, photoUrl, paymentInfo } = await request.json();
 		const result = await prisma.project.update({
 			where: { username },
 			data: {
-				title, shortDes, description, photoUrl
+				title, shortDes, description, photoUrl, paymentInfo
 			}
 		})
 		return NextResponse.json({ message: "Project updated" })

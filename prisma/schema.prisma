@@ -137,6 +137,7 @@ model Project {
   shortDes    String
   description String
   title       String
+  paymentInfo String
   username    String   @unique
 }
 
