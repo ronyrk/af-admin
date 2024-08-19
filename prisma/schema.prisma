@@ -177,6 +177,21 @@ model Donation {
   createAt DateTime @default(now())
 }
 
+model ChildsDonate {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  childName   String
+  name        String
+  email       String
+  amount      String
+  method      String?
+  photoUrl    String?
+  about       String?
+  transaction String?
+  sendNumber  String?
+  type        String
+  createAt    DateTime @default(now())
+}
+
 model Child {
   id                 String @id @default(auto()) @map("_id") @db.ObjectId
   username           String @unique
