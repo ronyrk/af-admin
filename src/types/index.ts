@@ -263,6 +263,7 @@ export interface DonateProps {
 	sendNumber?: string,
 	transaction?: string,
 	type: string,
+	createAt: Date,
 }
 export interface SponsorProps {
 	id: string,
