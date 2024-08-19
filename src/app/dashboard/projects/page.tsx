@@ -17,6 +17,12 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import Image from 'next/image';
 import { PencilIcon } from 'lucide-react';
 import DeleteButton from '@/components/DeleteButton';
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion"
 
 
 
@@ -34,7 +40,9 @@ async function ProjectsList() {
 				project.map((item, index: number) => (
 					<TableRow key={index}>
 						<TableCell className="font-medium">{`${moment(item?.createAt).format('DD/MM/YYYY')}`}</TableCell>
-						<TableCell className="font-medium uppercase">{item.title}</TableCell>
+						<TableCell className="font-medium uppercase">
+							<Link href={`project/${item.username}`}>{item.title}</Link>
+						</TableCell>
 						<TableCell className="font-medium uppercase">{item.author}</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Dialog>
@@ -59,7 +67,7 @@ async function ProjectsList() {
 						</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Button asChild className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' >
-								<Link href={`projects/${item.username}`}><PencilIcon color='blue' size={18} /></Link>
+								<Link href={`projects/update/${item.username}`}><PencilIcon color='blue' size={18} /></Link>
 							</Button>
 						</TableCell>
 						<TableCell className="font-medium uppercase">

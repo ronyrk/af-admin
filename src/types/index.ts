@@ -252,13 +252,17 @@ export interface NewsIUpdatedProps {
 	shortDes: string,
 }
 export interface DonateProps {
-	id: string,
+	id?: string,
+	projectName: string,
 	name: string,
 	email: string,
 	amount: string,
 	method?: string,
 	photoUrl?: string,
 	about?: string,
+	sendNumber?: string,
+	transaction?: string,
+	type: string,
 	createAt: Date,
 }
 export interface SponsorProps {

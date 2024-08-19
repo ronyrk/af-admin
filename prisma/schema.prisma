@@ -208,14 +208,18 @@ model Category {
 }
 
 model Donate {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String
-  amount   String
-  method   String?
-  photoUrl String?
-  about    String?
-  createAt DateTime @default(now())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectName String
+  name        String
+  email       String
+  amount      String
+  method      String?
+  photoUrl    String?
+  about       String?
+  transaction String?
+  sendNumber  String?
+  type        String
+  createAt    DateTime @default(now())
 }
 
 model Income {
