@@ -29,6 +29,17 @@ export const DELETE = async (request: Request, { params }: {
 }) => {
 	try {
 		const { username } = params;
+		const data = await prisma.project.findUnique({
+			where: {
+				id: username
+			}
+		});
+		const projectName = data?.username;
+		await prisma.donate.deleteMany({
+			where: {
+				projectName
+			}
+		});
 		await prisma.project.delete({
 			where: {
 				id: username
