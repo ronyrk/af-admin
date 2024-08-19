@@ -49,7 +49,11 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			title: data.title,
-			shortDec: data.shortDes
+			shortDec: data.shortDes,
+			link: data.link,
+			outsidePaymentInfo: data.outsidePaymentInfo,
+			paymentInfo: data.paymentInfo,
+			description: data.description,
 		}
 	});
 
@@ -87,7 +91,7 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 	return (
 		<div>
 			<div className="p-2">
-				<h2 className="text-center py-2 text-color-main">Create Project</h2>
+				<h2 className="text-center py-2 text-color-main">Update Project</h2>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
 
@@ -111,7 +115,7 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 								<FormItem>
 									<FormLabel>Outside payment Link</FormLabel>
 									<FormControl>
-										<Input defaultValue={data.link} placeholder="title" {...field} />
+										<Input defaultValue={data.link} placeholder="link" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
