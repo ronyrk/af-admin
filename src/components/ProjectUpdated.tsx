@@ -34,6 +34,8 @@ const formSchema = z.object({
 	description: z.any(),
 	shortDec: z.string(),
 	paymentInfo: z.string(),
+	link: z.string(),
+	outsidePaymentInfo: z.string(),
 
 });
 
@@ -52,9 +54,9 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ title, description, shortDes, photoUrl, paymentInfo }: ProjectsIUpdatedProps) => {
+		mutationFn: async ({ title, description, shortDes, photoUrl, paymentInfo, outsidePaymentInfo, link }: ProjectsIUpdatedProps) => {
 			const response = await axios.patch(`/api/project/${data.username}`, {
-				title, description, shortDes, photoUrl, paymentInfo
+				title, description, shortDes, photoUrl, paymentInfo, outsidePaymentInfo, link
 			});
 			return response.data;
 		},
@@ -67,8 +69,10 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 		const photoUrl = image;
 		const shortDes = values.shortDec;
 		const paymentInfo = values.paymentInfo;
+		const outsidePaymentInfo = values.outsidePaymentInfo;
+		const link = values.link;
 
-		mutate({ title, description, photoUrl, shortDes, paymentInfo }, {
+		mutate({ title, description, photoUrl, shortDes, paymentInfo, outsidePaymentInfo, link }, {
 			onSuccess: (data: ProjectsIProps) => {
 				toast.success("Successfully Updated");
 				router.push(`/dashboard/projects`);
@@ -95,6 +99,19 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 									<FormLabel>Title</FormLabel>
 									<FormControl>
 										<Input defaultValue={data.title} placeholder="title" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="link"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Outside payment Link</FormLabel>
+									<FormControl>
+										<Input defaultValue={data.link} placeholder="title" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -133,9 +150,22 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 							name="paymentInfo"
 							render={({ field }) => (
 								<FormItem className="">
-									<FormLabel>Payment Description</FormLabel>
+									<FormLabel>Bangladesh Payment Description</FormLabel>
 									<FormControl className="">
 										<UpdatedEditor content={data.paymentInfo} description={field.name} onChange={field.onChange} value={field.value} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="outsidePaymentInfo"
+							render={({ field }) => (
+								<FormItem className="">
+									<FormLabel>Outside Payment Description</FormLabel>
+									<FormControl className="">
+										<UpdatedEditor content={data.outsidePaymentInfo} description={field.name} onChange={field.onChange} value={field.value} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>

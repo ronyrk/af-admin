@@ -41,7 +41,7 @@ async function ProjectsList() {
 					<TableRow key={index}>
 						<TableCell className="font-medium">{`${moment(item?.createAt).format('DD/MM/YYYY')}`}</TableCell>
 						<TableCell className="font-medium uppercase">
-							<Link href={`project/${item.username}`}>{item.title}</Link>
+							<Link href={`projects/${item.username}`}>{item.title}</Link>
 						</TableCell>
 						<TableCell className="font-medium uppercase">{item.author}</TableCell>
 						<TableCell className="font-medium uppercase">
