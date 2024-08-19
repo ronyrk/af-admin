@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { ParamsIProps, ParamsIdIProps } from "@/types";
+import { ParamsIProps } from "@/types";
 import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic'
@@ -54,11 +54,11 @@ export const DELETE = async (request: Request, { params }: {
 export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		const { title, description, shortDes, photoUrl, paymentInfo } = await request.json();
+		const { title, description, shortDes, photoUrl, paymentInfo, outsidePaymentInfo, link } = await request.json();
 		const result = await prisma.project.update({
 			where: { username },
 			data: {
-				title, shortDes, description, photoUrl, paymentInfo
+				title, shortDes, description, photoUrl, paymentInfo, outsidePaymentInfo, link
 			}
 		})
 		return NextResponse.json({ message: "Project updated" })

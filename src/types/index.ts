@@ -204,6 +204,8 @@ export interface ProjectsIProps {
 	createAt?: Date,
 	username: string,
 	paymentInfo: string,
+	link: string,
+	outsidePaymentInfo: string,
 }
 export interface ProjectsIUpdatedProps {
 	id?: string,
@@ -213,6 +215,8 @@ export interface ProjectsIUpdatedProps {
 	description: string,
 	createAt?: Date,
 	paymentInfo: string,
+	link: string,
+	outsidePaymentInfo: string,
 }
 export interface ProjectsProps {
 	id: string,
@@ -224,6 +228,8 @@ export interface ProjectsProps {
 	createAt: Date,
 	username: string,
 	paymentInfo: string,
+	link: string,
+	outsidePaymentInfo: string,
 }
 export interface NewsProps {
 	id: string,

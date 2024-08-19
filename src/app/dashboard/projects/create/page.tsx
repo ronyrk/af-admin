@@ -36,6 +36,8 @@ const formSchema = z.object({
 	author: z.string(),
 	username: z.string(),
 	paymentInfo: z.string(),
+	link: z.string(),
+	outsidePaymentInfo: z.string(),
 });
 
 function ProjectCreate() {
@@ -49,9 +51,9 @@ function ProjectCreate() {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ title, description, author, shortDes, photoUrl, username, paymentInfo }: ProjectsIProps) => {
+		mutationFn: async ({ title, description, author, shortDes, photoUrl, username, paymentInfo, outsidePaymentInfo, link }: ProjectsIProps) => {
 			const response = await axios.post("/api/project", {
-				title, description, author, shortDes, photoUrl, username, paymentInfo
+				title, description, author, shortDes, photoUrl, username, paymentInfo, outsidePaymentInfo, link
 			});
 			return response.data;
 		},
@@ -66,9 +68,11 @@ function ProjectCreate() {
 		const shortDes = values.shortDec;
 		const username = values.username;
 		const paymentInfo = values.paymentInfo;
+		const outsidePaymentInfo = values.outsidePaymentInfo;
+		const link = values.link;
 
 		if (upload === true) {
-			mutate({ title, description, author, photoUrl, shortDes, username, paymentInfo }, {
+			mutate({ title, description, author, photoUrl, shortDes, username, paymentInfo, outsidePaymentInfo, link }, {
 				onSuccess: (data: ProjectsIProps) => {
 					if (data?.id) {
 						toast.success("Create Successfully Project");
@@ -133,6 +137,19 @@ function ProjectCreate() {
 								</FormItem>
 							)}
 						/>
+						<FormField
+							control={form.control}
+							name="link"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Outside Payment link</FormLabel>
+									<FormControl>
+										<Input placeholder="link" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<div className="flex flex-col justify-center items-center p-0">
 							<Label className="pb-1">Photos</Label>
 							<UploadButton
@@ -166,7 +183,20 @@ function ProjectCreate() {
 							name="paymentInfo"
 							render={({ field }) => (
 								<FormItem className="">
-									<FormLabel>Payment Description</FormLabel>
+									<FormLabel>Bangladesh Payment Description</FormLabel>
+									<FormControl className="">
+										<TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="outsidePaymentInfo"
+							render={({ field }) => (
+								<FormItem className="">
+									<FormLabel>Outside Payment Description</FormLabel>
 									<FormControl className="">
 										<TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
 									</FormControl>
