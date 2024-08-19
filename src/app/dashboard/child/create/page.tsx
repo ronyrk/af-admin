@@ -36,6 +36,9 @@ const formSchema = z.object({
 	phone: z.string(),
 	address: z.string(),
 	academy: z.string(),
+	link: z.string(),
+	outsidePaymentInfo: z.string(),
+	paymentInfo: z.string(),
 });
 
 function Child() {
@@ -49,9 +52,9 @@ function Child() {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ name, username, photoUrl, phone, dream, description, address, academy }: ChildIProps) => {
+		mutationFn: async ({ name, username, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link }: ChildIProps) => {
 			const response = await axios.post("/api/child", {
-				name, username, photoUrl, phone, dream, description, address, academy
+				name, username, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link
 			});
 			return response.data;
 		},
@@ -67,13 +70,15 @@ function Child() {
 		const phone = values.phone;
 		const address = values.address;
 		const academy = values.academy;
+		const outsidePaymentInfo = values.outsidePaymentInfo;
+		const paymentInfo = values.paymentInfo;
+		const link = values.link;
 
 		if (upload === true) {
-			mutate({ name, username, photoUrl, phone, dream, description, address, academy }, {
+			mutate({ name, username, photoUrl, phone, dream, description, address, academy, outsidePaymentInfo, paymentInfo, link }, {
 				onSuccess: ({ message, result }: { message: string, result: ChildIProps }) => {
 					if (result?.id) {
 						toast.success(message);
-						router.refresh();
 						router.push(`/dashboard/child`);
 						router.refresh();
 					} else {
@@ -188,7 +193,46 @@ function Child() {
 									</FormItem>
 								)}
 							/>
+							<FormField
+								control={form.control}
+								name="link"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Outside Payment Link</FormLabel>
+										<FormControl>
+											<Input placeholder="link" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 						</div>
+						<FormField
+							control={form.control}
+							name="paymentInfo"
+							render={({ field }) => (
+								<FormItem className="">
+									<FormLabel>Bangladeshi Payment Description</FormLabel>
+									<FormControl className="">
+										<TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="outsidePaymentInfo"
+							render={({ field }) => (
+								<FormItem className="">
+									<FormLabel>Outside Payment Description</FormLabel>
+									<FormControl className="">
+										<TailwindEditor description={field.name} onChange={field.onChange} value={field.value} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<FormField
 							control={form.control}
 							name="description"
