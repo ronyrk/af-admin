@@ -36,7 +36,9 @@ async function ChildsList() {
 				payments.map((item, index: number) => (
 					<TableRow key={index}>
 						<TableCell>{item.academy}</TableCell>
-						<TableCell className="font-medium uppercase" >{item.name}</TableCell>
+						<TableCell className="font-medium uppercase text-blue-800">
+							<Link href={`child/${item.username}`}>{item.name}</Link>
+						</TableCell>
 						<TableCell className="font-medium uppercase">{item.phone}</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Dialog>
@@ -62,7 +64,7 @@ async function ChildsList() {
 						</TableCell>
 						<TableCell className="font-medium uppercase">
 							<Button asChild className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' >
-								<Link href={`child/${item.username}`}><PencilIcon color='blue' size={18} /></Link>
+								<Link href={`child/update/${item.username}`}><PencilIcon color='blue' size={18} /></Link>
 							</Button>
 						</TableCell>
 						<TableCell className="font-medium uppercase">
