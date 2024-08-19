@@ -20,12 +20,12 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		const { name, dream, description, photoUrl, address, phone, academy } = await request.json();
+		const { name, dream, description, photoUrl, address, phone, academy, paymentInfo, outsidePaymentInfo, link } = await request.json();
 		const result = await prisma.child.update({
 			where: {
 				username
 			}, data: {
-				name, dream, description, photoUrl, address, phone, academy
+				name, dream, description, photoUrl, address, phone, academy, paymentInfo, outsidePaymentInfo, link
 			}
 		});
 		return NextResponse.json(result);

@@ -35,6 +35,9 @@ const formSchema = z.object({
 	phone: z.string(),
 	address: z.string(),
 	academy: z.string(),
+	link: z.string(),
+	outsidePaymentInfo: z.string(),
+	paymentInfo: z.string(),
 });
 
 function ChildUpdated({ data }: { data: ChildIProps }) {
@@ -50,14 +53,17 @@ function ChildUpdated({ data }: { data: ChildIProps }) {
 			dream: data.dream,
 			phone: data.phone,
 			address: data.address,
-			academy: data.academy
+			academy: data.academy,
+			paymentInfo: data.paymentInfo,
+			outsidePaymentInfo: data.outsidePaymentInfo,
+			link: data.link,
 		}
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ name, photoUrl, phone, dream, description, address, academy }: ChildIUpdatedProps) => {
+		mutationFn: async ({ name, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link }: ChildIUpdatedProps) => {
 			const response = await axios.patch(`/api/child/${data.username}`, {
-				name, photoUrl, phone, dream, description, address, academy
+				name, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link
 			});
 			return response.data;
 		},
@@ -72,9 +78,12 @@ function ChildUpdated({ data }: { data: ChildIProps }) {
 		const phone = values.phone;
 		const address = values.address;
 		const academy = values.academy;
+		const outsidePaymentInfo = values.outsidePaymentInfo;
+		const paymentInfo = values.paymentInfo;
+		const link = values.link;
 
 		if (upload === true) {
-			mutate({ name, photoUrl, phone, dream, description, address, academy }, {
+			mutate({ name, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link }, {
 				onSuccess: ({ message, result }: { message: string, result: ChildIProps }) => {
 					toast.success(message);
 					router.refresh();
@@ -176,7 +185,46 @@ function ChildUpdated({ data }: { data: ChildIProps }) {
 									</FormItem>
 								)}
 							/>
+							<FormField
+								control={form.control}
+								name="link"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Outside Payment Link</FormLabel>
+										<FormControl>
+											<Input defaultValue={data.link} placeholder="link" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 						</div>
+						<FormField
+							control={form.control}
+							name="paymentInfo"
+							render={({ field }) => (
+								<FormItem className="">
+									<FormLabel>Bangladeshi Payment Description</FormLabel>
+									<FormControl className="">
+										<UpdatedEditor content={data.paymentInfo} description={field.name} onChange={field.onChange} value={field.value} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="outsidePaymentInfo"
+							render={({ field }) => (
+								<FormItem className="">
+									<FormLabel>Outside Payment Description</FormLabel>
+									<FormControl className="">
+										<UpdatedEditor content={data.outsidePaymentInfo} description={field.name} onChange={field.onChange} value={field.value} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<FormField
 							control={form.control}
 							name="description"

@@ -291,7 +291,11 @@ export interface ChildIProps {
 	dream: string,
 	phone: string,
 	address: string,
-	academy: string
+	academy: string,
+	paymentInfo: string,
+	link: string,
+	outsidePaymentInfo: string,
+
 }
 export interface ChildIUpdatedProps {
 	id?: string,
@@ -301,7 +305,10 @@ export interface ChildIUpdatedProps {
 	dream: string,
 	phone: string,
 	address: string,
-	academy: string
+	academy: string,
+	paymentInfo: string,
+	link: string,
+	outsidePaymentInfo: string,
 }
 export interface DisbursementIProps {
 	id?: string,
