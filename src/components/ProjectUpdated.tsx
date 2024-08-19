@@ -49,7 +49,11 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			title: data.title,
-			shortDec: data.shortDes
+			shortDec: data.shortDes,
+			link: data.link,
+			outsidePaymentInfo: data.outsidePaymentInfo,
+			paymentInfo: data.paymentInfo,
+			description: data.description,
 		}
 	});
 
@@ -111,7 +115,7 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 								<FormItem>
 									<FormLabel>Outside payment Link</FormLabel>
 									<FormControl>
-										<Input defaultValue={data.link} placeholder="title" {...field} />
+										<Input defaultValue={data.link} placeholder="link" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
