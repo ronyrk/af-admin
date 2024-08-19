@@ -91,7 +91,7 @@ function ProjectUpdated({ data }: { data: ProjectsIProps }) {
 	return (
 		<div>
 			<div className="p-2">
-				<h2 className="text-center py-2 text-color-main">Create Project</h2>
+				<h2 className="text-center py-2 text-color-main">Update Project</h2>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
 
