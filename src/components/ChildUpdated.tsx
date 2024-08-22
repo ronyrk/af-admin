@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label"
 import { UploadButton } from "@/lib/uploadthing"
 import { useState } from "react"
 import UpdatedEditor from "./UpdatedEditor"
+import { Textarea } from "./ui/textarea"
 
 
 
@@ -38,6 +39,7 @@ const formSchema = z.object({
 	link: z.string(),
 	outsidePaymentInfo: z.string(),
 	paymentInfo: z.string(),
+	shortDes: z.string(),
 });
 
 function ChildUpdated({ data }: { data: ChildIProps }) {
@@ -57,13 +59,14 @@ function ChildUpdated({ data }: { data: ChildIProps }) {
 			paymentInfo: data.paymentInfo,
 			outsidePaymentInfo: data.outsidePaymentInfo,
 			link: data.link,
+			shortDes: data.shortDes,
 		}
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ name, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link }: ChildIUpdatedProps) => {
+		mutationFn: async ({ name, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link, shortDes }: ChildIUpdatedProps) => {
 			const response = await axios.patch(`/api/child/${data.username}`, {
-				name, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link
+				name, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link, shortDes
 			});
 			return response.data;
 		},
@@ -81,9 +84,10 @@ function ChildUpdated({ data }: { data: ChildIProps }) {
 		const outsidePaymentInfo = values.outsidePaymentInfo;
 		const paymentInfo = values.paymentInfo;
 		const link = values.link;
+		const shortDes = values.shortDes;
 
 		if (upload === true) {
-			mutate({ name, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link }, {
+			mutate({ name, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link, shortDes }, {
 				onSuccess: ({ message, result }: { message: string, result: ChildIProps }) => {
 					toast.success(message);
 					router.refresh();
@@ -199,6 +203,19 @@ function ChildUpdated({ data }: { data: ChildIProps }) {
 								)}
 							/>
 						</div>
+						<FormField
+							control={form.control}
+							name="shortDes"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Short Description</FormLabel>
+									<FormControl>
+										<Textarea rows={6} defaultValue={data.shortDes} placeholder="Short Description" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<FormField
 							control={form.control}
 							name="paymentInfo"
