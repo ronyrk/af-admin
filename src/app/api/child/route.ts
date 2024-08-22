@@ -5,10 +5,10 @@ export const dynamic = 'force-dynamic'
 
 export const POST = async (request: Request) => {
 	try {
-		const { username, name, dream, description, photoUrl, address, phone, academy, paymentInfo, outsidePaymentInfo, link } = await request.json();
+		const { username, name, dream, description, photoUrl, address, phone, academy, paymentInfo, outsidePaymentInfo, link, shortDes } = await request.json();
 		const result = await prisma.child.create({
 			data: {
-				username, name, dream, description, photoUrl, phone, address, academy, paymentInfo, outsidePaymentInfo, link
+				username, name, dream, description, photoUrl, phone, address, academy, paymentInfo, outsidePaymentInfo, link, shortDes
 			}
 		});
 		return NextResponse.json({ message: "Successfully Child Created", result }, { status: 201 });

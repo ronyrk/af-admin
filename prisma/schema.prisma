@@ -198,6 +198,7 @@ model Child {
   name               String
   photoUrl           String
   description        String
+  shortDes           String
   dream              String
   phone              String
   address            String

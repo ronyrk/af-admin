@@ -23,6 +23,7 @@ import TailwindEditor from "@/components/editor"
 import { Label } from "@/components/ui/label"
 import { UploadButton } from "@/lib/uploadthing"
 import { useState } from "react"
+import { Textarea } from "@/components/ui/textarea"
 
 
 
@@ -39,6 +40,7 @@ const formSchema = z.object({
 	link: z.string(),
 	outsidePaymentInfo: z.string(),
 	paymentInfo: z.string(),
+	shortDes: z.string(),
 });
 
 function Child() {
@@ -52,9 +54,9 @@ function Child() {
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ name, username, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link }: ChildIProps) => {
+		mutationFn: async ({ name, username, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link, shortDes }: ChildIProps) => {
 			const response = await axios.post("/api/child", {
-				name, username, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link
+				name, username, photoUrl, phone, dream, description, address, academy, paymentInfo, outsidePaymentInfo, link, shortDes
 			});
 			return response.data;
 		},
@@ -73,9 +75,10 @@ function Child() {
 		const outsidePaymentInfo = values.outsidePaymentInfo;
 		const paymentInfo = values.paymentInfo;
 		const link = values.link;
+		const shortDes = values.shortDes;
 
 		if (upload === true) {
-			mutate({ name, username, photoUrl, phone, dream, description, address, academy, outsidePaymentInfo, paymentInfo, link }, {
+			mutate({ name, username, photoUrl, phone, dream, description, address, academy, outsidePaymentInfo, paymentInfo, link, shortDes }, {
 				onSuccess: ({ message, result }: { message: string, result: ChildIProps }) => {
 					if (result?.id) {
 						toast.success(message);
@@ -207,6 +210,19 @@ function Child() {
 								)}
 							/>
 						</div>
+						<FormField
+							control={form.control}
+							name="shortDes"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Short Description</FormLabel>
+									<FormControl>
+										<Textarea placeholder="Short Description" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<FormField
 							control={form.control}
 							name="paymentInfo"

@@ -20,12 +20,12 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		const { name, dream, description, photoUrl, address, phone, academy, paymentInfo, outsidePaymentInfo, link } = await request.json();
+		const { name, dream, description, photoUrl, address, phone, academy, paymentInfo, outsidePaymentInfo, link, shortDes } = await request.json();
 		const result = await prisma.child.update({
 			where: {
 				username
 			}, data: {
-				name, dream, description, photoUrl, address, phone, academy, paymentInfo, outsidePaymentInfo, link
+				name, dream, description, photoUrl, address, phone, academy, paymentInfo, outsidePaymentInfo, link, shortDes
 			}
 		});
 		return NextResponse.json(result);
@@ -41,6 +41,7 @@ export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 		await prisma.donationChild.deleteMany({ where: { username } });
 		await prisma.donation.deleteMany({ where: { username } });
 		await prisma.disbursement.deleteMany({ where: { username } });
+		await prisma.childsDonate.deleteMany({ where: { childName: username } });
 		await prisma.child.delete({ where: { username } });
 		return NextResponse.json({ message: "deleted successfully" });
 	} catch (error) {

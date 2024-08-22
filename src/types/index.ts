@@ -295,6 +295,7 @@ export interface ChildIProps {
 	paymentInfo: string,
 	link: string,
 	outsidePaymentInfo: string,
+	shortDes: string,
 
 }
 export interface ChildIUpdatedProps {
@@ -309,6 +310,7 @@ export interface ChildIUpdatedProps {
 	paymentInfo: string,
 	link: string,
 	outsidePaymentInfo: string,
+	shortDes: string,
 }
 export interface DisbursementIProps {
 	id?: string,
