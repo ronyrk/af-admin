@@ -8,9 +8,9 @@ export const dynamic = 'force-dynamic'
 export const GET = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		const result = await prisma.donation.findMany({
+		const result = await prisma.ChildsDonate.findMany({
 			where: {
-				username,
+				ChildName:username,
 			}
 		});
 		return NextResponse.json(result);
