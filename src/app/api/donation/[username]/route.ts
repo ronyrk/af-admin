@@ -10,7 +10,7 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 		const { username } = params;
 		const result = await prisma.childsDonate.findMany({
 			where: {
-				ChildName:username,
+				childName:username,
 			}
 		});
 		return NextResponse.json(result);
