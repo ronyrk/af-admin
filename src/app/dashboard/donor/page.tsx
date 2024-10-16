@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import moment, { now } from 'moment';
 import { ClipboardPenLine } from 'lucide-react';
-import { filterUsers } from '@/lib/donorfillter';
+import { filterUsers } from '@/lib/donorfillterByDate';
 
 
 
@@ -128,7 +128,7 @@ async function DonorList() {
 		<>
 			<TableBody>
 				{
-					donors.map((item, index: number) => (
+					upcoming.map((item, index: number) => (
 						<TableRow key={index}>
 							<TableCell className="font-medium">{item.code}</TableCell>
 							<TableCell className="font-medium uppercase">{item.name}</TableCell>
