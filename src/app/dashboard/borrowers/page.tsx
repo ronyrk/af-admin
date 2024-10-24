@@ -17,6 +17,14 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
 import { ClipboardPenLine } from 'lucide-react';
+import PaginationPart from '@/components/Pagination';
+import { getBorrowers } from '@/lib/getBorrowers';
+import SearchBox from '@/components/SearchBox';
+import { getSearchBorrowers } from '@/lib/SearchBorrowers';
+
+function SearchBarFallback() {
+	return <>placeholder</>
+}
 
 async function getUser(username: string) {
 	cookies();
@@ -79,16 +87,15 @@ const TotalDisbursed = async (username: string, balance: string) => {
 
 
 
-async function BorrowersList() {
-	cookies();
-	let res = await fetch('https://arafatfoundation.vercel.app/api/loan');
-	if (!res.ok) {
-		throw new Error("Failed to fetch data list");
-	};
-	const borrowers: LoanIProps[] = await res.json();
-
-	const paymentList = await prisma.payment.findMany();
-
+async function BorrowersList({ searchParams }: {
+	searchParams?: {
+		search?: string,
+		page?: string,
+	}
+}) {
+	const query = searchParams?.search || "all";
+	const page = searchParams?.page || "1";
+	const borrowers = await getSearchBorrowers(query, page);
 	return (
 		<>
 			<TableBody>
@@ -126,15 +133,27 @@ async function BorrowersList() {
 
 
 
-async function page() {
+async function page(
+	{ searchParams }: {
+		searchParams?: {
+			search?: string,
+			page?: string,
+		}
+	}
+) {
+	const query = searchParams?.search || "all";
+	const pageNumber = await getBorrowers(query);
+	const length = pageNumber?.length;
 	return (
 		<div className='flex flex-col'>
 
-			<div className="flex justify-between p-2 ">
+			<div className="flex flex-row justify-between p-2 ">
 				<Button asChild>
 					<Link className=' bg-color-main hover:bg-color-sub' href={`borrowers/create`}>Borrowers Create</Link>
 				</Button>
-				<Input className='w-64' type="text" placeholder="Search" />
+				<Suspense fallback={<SearchBarFallback />}>
+					<SearchBox />
+				</Suspense>
 			</div>
 			<Table>
 				<TableHeader>
@@ -149,9 +168,12 @@ async function page() {
 					</TableRow>
 				</TableHeader>
 				<Suspense fallback={<h2 className='p-4 text-center '>Loading...</h2>} >
-					<BorrowersList />
+					<BorrowersList searchParams={searchParams} />
 				</Suspense>
 			</Table>
+			<div className="flex justify-center py-2">
+				<PaginationPart item={10} data={length} />
+			</div>
 
 		</div>
 	)
