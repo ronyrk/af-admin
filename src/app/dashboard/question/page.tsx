@@ -30,7 +30,7 @@ async function Question() {
           <TableRow key={index}>
             <TableCell className="font-medium">{item.title}</TableCell>
             <TableCell className="font-medium uppercase">
-              <Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
+              <Button className=' bg-color-main h-6' variant={"outline"} asChild>
                 <Link href={`question/${item.id}`}>Updated</Link>
               </Button>
             </TableCell>

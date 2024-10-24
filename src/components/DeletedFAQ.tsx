@@ -43,7 +43,7 @@ function DeleteButtonFAQ({ id }: { id: string }) {
 	return (
 		<>
 			<AlertDialog>
-				<AlertDialogTrigger><Button className='bg-color-sub' size={"sm"}>
+				<AlertDialogTrigger><Button className='bg-color-sub h-6'>
 					Delete
 				</Button></AlertDialogTrigger>
 				<AlertDialogContent>
