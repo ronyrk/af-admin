@@ -25,13 +25,13 @@ export async function ApproveChildSponsor(item: any) {
 	try {
 		// console.log(item, "log");
 		cookies();
-		const { id, name, username, email, amount, method, photoUrl, about, createAt } = item;
-		await prisma.donation.create({
+		const { id, name, email, amount, photoUrl, about, method, type, transaction, sendNumber, childName } = item;
+		await prisma.childsDonate.create({
 			data: {
-				name, username, email, amount, method, photoUrl, about, createAt
+				name, email, amount, photoUrl, about, method, type, transaction, sendNumber, childName
 			}
 		})
-		const removed = await prisma.donationChild.delete({ where: { id } });
+		const removed = await prisma.childsDonateRequest.delete({ where: { id } });
 	} catch (error) {
 		console.log(error);
 	}

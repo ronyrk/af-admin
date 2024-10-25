@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 export const DELETE = async (request: Request, { params }: ParamsIdIProps) => {
 	try {
 		const { id } = params;
-		await prisma.donationChild.delete({
+		await prisma.childsDonateRequest.delete({
 			where: {
 				id
 			}

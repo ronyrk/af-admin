@@ -15,12 +15,12 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import { DonateProps, SponsorProps } from '@/types';
+import { ChildDonateRequestProps, DonateProps, SponsorProps } from '@/types';
 import { useFormStatus } from 'react-dom';
 import SponsorApprove from './SponsorApprove';
 
 
-function ChildAction({ item }: { item: SponsorProps }) {
+function ChildAction({ item }: { item: ChildDonateRequestProps }) {
 	// console.log(item, "child Action-24");
 	const router = useRouter();
 	const { pending } = useFormStatus()
@@ -60,7 +60,7 @@ function ChildAction({ item }: { item: SponsorProps }) {
 					</AlertDialogHeader>
 					{isPending ? <Button disabled>Loading...</Button> : <AlertDialogFooter>
 						<AlertDialogCancel className=' bg-color-main hover:bg-color-main'>Cancel</AlertDialogCancel>
-						<AlertDialogCancel className=' bg-color-sub hover:bg-color-sub' onClick={() => handleDeleted(item.id)} >declined</AlertDialogCancel>
+						<AlertDialogCancel className=' bg-color-sub hover:bg-color-sub' onClick={() => handleDeleted(item?.id as any)} >declined</AlertDialogCancel>
 						<SponsorApprove item={item} />
 					</AlertDialogFooter>}
 				</AlertDialogContent>
