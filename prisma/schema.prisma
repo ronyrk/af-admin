@@ -243,6 +243,21 @@ model Category {
   path String @unique
 }
 
+model ProjectDonateRequest {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectName String
+  name        String
+  email       String
+  amount      String
+  method      String?
+  photoUrl    String?
+  about       String?
+  transaction String?
+  sendNumber  String?
+  type        String
+  createAt    DateTime @default(now())
+}
+
 model Donate {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   projectName String
