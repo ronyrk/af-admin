@@ -37,7 +37,7 @@ async function getChildName(username: string) {
 
 async function ChildDonationList() {
 	cookies();
-	let res = await fetch('http://localhost:3000/api/donation-request');
+	let res = await fetch('https://af-admin.vercel.app/api/donation-request');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");
 	};
