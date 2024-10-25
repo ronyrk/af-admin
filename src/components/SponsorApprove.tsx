@@ -5,9 +5,9 @@ import {
 	AlertDialogAction,
 } from "@/components/ui/alert-dialog"
 import { ApproveChildSponsor } from '@/lib/actions';
-import { SponsorProps } from '@/types';
+import { ChildDonateRequestProps } from '@/types';
 
-function SponsorApprove({ item }: { item: SponsorProps }) {
+function SponsorApprove({ item }: { item: ChildDonateRequestProps }) {
 	const deletedList = ApproveChildSponsor.bind(null, item);
 	const router = useRouter();
 	return (

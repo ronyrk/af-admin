@@ -120,12 +120,12 @@ async function BorrowersList({ searchParams }: {
 				}
 			</TableBody>
 			<TableFooter>
-				{/* <TableRow>
+				<TableRow>
 					<TableCell className=" font-semibold" colSpan={2}>Total</TableCell>
-					<TableCell className="font-semibold">{TotalDisbursed()}</TableCell>
+					{/* <TableCell className="font-semibold">{TotalDisbursed()}</TableCell>
 					<TableCell className="font-semibold">{TotalPayment()}</TableCell>
-					<TableCell className="font-semibold">{TotalBalance()}</TableCell>
-				</TableRow> */}
+					<TableCell className="font-semibold">{TotalBalance()}</TableCell> */}
+				</TableRow>
 			</TableFooter>
 		</>
 	)

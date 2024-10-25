@@ -7,7 +7,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { LoanIProps, PaymentApproveIProps, SponsorProps } from '@/types';
+import { ChildDonateRequestProps, LoanIProps, PaymentApproveIProps, SponsorProps } from '@/types';
 import { cookies } from 'next/headers';
 import { Input } from '@/components/ui/input';
 import {
@@ -41,7 +41,7 @@ async function ChildDonationList() {
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");
 	};
-	const data: SponsorProps[] = await res.json();
+	const data: ChildDonateRequestProps[] = await res.json();
 
 	return (
 		<TableBody>
@@ -50,7 +50,7 @@ async function ChildDonationList() {
 					<TableRow key={index}>
 						<TableCell>{`${Moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
 						<TableCell className="font-medium uppercase">{item.name}</TableCell>
-						<TableCell className="font-medium uppercase">{getChildName(item.username)}</TableCell>
+						<TableCell className="font-medium uppercase">{getChildName(item.childName)}</TableCell>
 						<TableCell className="font-medium uppercase">{item.amount}</TableCell>
 						<TableCell className="font-medium uppercase">{item?.method}</TableCell>
 						<TableCell className="font-medium uppercase">

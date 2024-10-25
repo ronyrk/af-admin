@@ -282,6 +282,20 @@ export interface SponsorProps {
 	about?: string,
 	createAt: Date,
 }
+export interface ChildDonateRequestProps {
+	id?: string,
+	childName: string,
+	name: string,
+	email: string,
+	amount: string,
+	method?: string,
+	photoUrl?: string,
+	about?: string,
+	sendNumber?: string,
+	transaction?: string,
+	type: string,
+	createAt?: Date,
+}
 export interface ChildIProps {
 	id?: string,
 	name: string,
