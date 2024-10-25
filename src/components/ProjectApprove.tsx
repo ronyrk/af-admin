@@ -4,8 +4,8 @@ import toast from 'react-hot-toast';
 import {
     AlertDialogAction,
 } from "@/components/ui/alert-dialog"
-import { ApproveChildSponsor, ApproveProjectRequest } from '@/lib/actions';
-import { ChildDonateRequestProps, ProjectDonateRequestProps } from '@/types';
+import { ApproveProjectRequest } from '@/lib/actions';
+import { ProjectDonateRequestProps } from '@/types';
 
 function ProjectApprove({ item }: { item: ProjectDonateRequestProps }) {
     const deletedList = ApproveProjectRequest.bind(null, item);
