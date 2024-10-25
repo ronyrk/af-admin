@@ -20,6 +20,23 @@ export async function approvedRequest(id: string, loanusername: string, photoUrl
 	}
 
 }
+export async function ApproveProjectRequest(item: any) {
+
+	try {
+		// console.log(item, "log");
+		cookies();
+		const { id, name, email, amount, photoUrl, about, method, type, sendNumber, transaction, projectName } = item;
+		await prisma.projectDonateRequest.create({
+			data: {
+				name, email, amount, photoUrl, about, method, type, sendNumber, transaction, projectName
+			}
+		})
+		const removed = await prisma.projectDonateRequest.delete({ where: { id } });
+	} catch (error) {
+		console.log(error);
+	}
+
+}
 export async function ApproveChildSponsor(item: any) {
 
 	try {

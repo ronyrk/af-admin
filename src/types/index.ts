@@ -257,6 +257,20 @@ export interface NewsIUpdatedProps {
 	createAt?: Date,
 	shortDes: string,
 }
+export interface ProjectDonateRequestProps {
+	id?: string,
+	projectName: string,
+	name: string,
+	email: string,
+	amount: string,
+	method?: string,
+	photoUrl?: string,
+	about?: string,
+	sendNumber?: string,
+	transaction?: string,
+	type: string,
+	createAt?: Date,
+}
 export interface DonateProps {
 	id?: string,
 	projectName: string,
