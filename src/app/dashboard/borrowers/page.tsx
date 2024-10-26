@@ -84,7 +84,42 @@ const TotalDisbursed = async (username: string, balance: string) => {
 	const loanSumAmount = indexPayment.reduce((accumulator, currentValue) => accumulator + currentValue, Number(balance));
 	return `${loanSumAmount}`;
 }
+const TotalDisbursedAmount = async () => {
+	cookies();
+	const paymentList: PaymentIProps[] = await prisma.payment.findMany();
+	let indexPaymentString: string[] = ["0"];
+	const result = paymentList.forEach((item) => indexPaymentString.push(item.loanAmount));
+	let indexPayment = indexPaymentString.map(Number);
+	const loanSumAmount = indexPayment.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	return `${loanSumAmount}`;
+}
+async function AllPaymentAmount() {
+	cookies();
+	const paymentList: PaymentIProps[] = await prisma.payment.findMany();
+	let indexPaymentString: string[] = ["0"];
+	const result = paymentList.forEach((item) => indexPaymentString.push(item.amount));
+	let indexPayment = indexPaymentString.map(Number);
+	const Amount = indexPayment.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	return `${Amount}`;
 
+}
+async function DuePaymentAmount() {
+	cookies();
+	// Loan Amount
+	const paymentList: PaymentIProps[] = await prisma.payment.findMany();
+	let indexPaymentString: string[] = ["0"];
+	const result = paymentList.forEach((item) => indexPaymentString.push(item.loanAmount));
+	let indexPayment = indexPaymentString.map(Number);
+	const loanSumAmount = indexPayment.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	// Payment Amount
+	let indexPaymentString2: string[] = ["0"];
+	const result2 = paymentList.forEach((item) => indexPaymentString2.push(item.amount));
+	let indexPayment2 = indexPaymentString2.map(Number);
+	const PaymentAmount = indexPayment2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	return `${loanSumAmount - PaymentAmount}`
+}
 
 
 async function BorrowersList({ searchParams }: {
@@ -122,9 +157,9 @@ async function BorrowersList({ searchParams }: {
 			<TableFooter>
 				<TableRow>
 					<TableCell className=" font-semibold" colSpan={2}>Total</TableCell>
-					{/* <TableCell className="font-semibold">{TotalDisbursed()}</TableCell>
-					<TableCell className="font-semibold">{TotalPayment()}</TableCell>
-					<TableCell className="font-semibold">{TotalBalance()}</TableCell> */}
+					<TableCell className="font-semibold">{TotalDisbursedAmount()}</TableCell>
+					<TableCell className="font-semibold">{AllPaymentAmount()}</TableCell>
+					<TableCell className="font-semibold">{DuePaymentAmount()}</TableCell>
 				</TableRow>
 			</TableFooter>
 		</>
