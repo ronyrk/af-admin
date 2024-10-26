@@ -29,9 +29,10 @@ function Navbar() {
 		<div className=" bg-slate-200">
 
 			<div className='md:px-20 px-4 flex flex-row  justify-end items-center py-6'>
-				<div className=" px-2 ">
+				<div className=" px-2  flex flex-row justify-between items-center">
 					{user?.username &&
 						<div className="flex flex-row items-center gap-4">
+
 							<Button className='text-black' variant={"outline"} asChild>
 								<Link href="/dashboard">DashBoard</Link>
 							</Button>
@@ -55,6 +56,14 @@ function Navbar() {
 						</div>
 
 
+					}
+					{
+						user?.username &&
+						<div className="mx-3">
+							<Button className='text-black mx-3' variant={"outline"} asChild>
+								<Link href="/dashboard/password-change">Password Change</Link>
+							</Button>
+						</div>
 					}
 				</div>
 			</div>

@@ -18,3 +18,19 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 		throw new Error("Server Error");
 	}
 };
+export const PATCH = async (request: Request, { params }: ParamsIProps) => {
+	try {
+		const username = "abdullaalmamun";
+		const { password } = await request.json();
+		const result = await prisma.admin.update({
+			where: {
+				username
+			}, data: {
+				password
+			}
+		});
+		return NextResponse.json(result);
+	} catch (error) {
+		throw new Error("Server Error");
+	}
+}

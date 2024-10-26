@@ -90,6 +90,9 @@ async function page() {
 				<Button asChild>
 					<Link className=' bg-color-main hover:bg-color-sub' href={`projects/create`}>Create</Link>
 				</Button>
+				<Button asChild>
+					<Link className=' bg-color-main hover:bg-color-sub' href={`projects/pending`}>Pending</Link>
+				</Button>
 				<Input className='w-64' type="text" placeholder="Search" />
 			</div>
 			<Table>
