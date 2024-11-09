@@ -16,7 +16,8 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import moment, { now } from 'moment';
 import { ClipboardPenLine } from 'lucide-react';
-import { filterUsers } from '@/lib/donorfillterByDate';
+import { filterAndSortDonors } from '@/lib/donorfillterByDate';
+import prisma from '@/lib/prisma';
 
 
 
@@ -73,15 +74,17 @@ const ReturnAmount = async (status: string, username: string, amount: string) =>
 
 async function DonorList() {
 	const skips = 90;
+	const today = new Date();
 
 	cookies();
-	let res = await fetch('https://af-admin.vercel.app/api/donor');
-	if (!res.ok) {
-		throw new Error("Failed to fetch data");
-	};
-	const donors: DonorIProps[] = await res.json();
+	const donors = await prisma.donor.findMany({
+		where: {
+			status: "LEADER"
+		}
+	});
 
-	const { upcoming, later } = filterUsers(donors as any, skips);
+	const donorsWithin30Days = filterAndSortDonors(donors as any, 30, true);
+	console.log({ donorsWithin30Days });
 
 	const response = await fetch("https://arafatfoundation.vercel.app/api/donor_payment");
 	if (!response.ok) {
@@ -128,7 +131,7 @@ async function DonorList() {
 		<>
 			<TableBody>
 				{
-					upcoming.map((item, index: number) => (
+					donorsWithin30Days.map((item, index: number) => (
 						<TableRow key={index}>
 							<TableCell className="font-medium">{item.code}</TableCell>
 							<TableCell className="font-medium uppercase">{item.name}</TableCell>
