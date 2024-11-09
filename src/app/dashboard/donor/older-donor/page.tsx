@@ -16,7 +16,8 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import moment, { now } from 'moment';
 import { ClipboardPenLine } from 'lucide-react';
-import { filterUsers } from '@/lib/donorfillterByDate';
+import { filterAndSortDonors } from '@/lib/donorfillterByDate';
+import prisma from '@/lib/prisma';
 
 
 
@@ -75,13 +76,14 @@ async function DonorList() {
     const skips = 90;
 
     cookies();
-    let res = await fetch('https://af-admin.vercel.app/api/donor');
-    if (!res.ok) {
-        throw new Error("Failed to fetch data");
-    };
-    const donors: DonorIProps[] = await res.json();
+    const donors = await prisma.donor.findMany({
+        where: {
+            status: "LEADER"
+        }
+    });
 
-    const { upcoming, later } = filterUsers(donors as any, skips);
+    const donorsBeyond30Days = filterAndSortDonors(donors as any, 30, false);
+    console.log(donorsBeyond30Days.length)
 
     const response = await fetch("https://arafatfoundation.vercel.app/api/donor_payment");
     if (!response.ok) {
@@ -128,7 +130,7 @@ async function DonorList() {
         <>
             <TableBody>
                 {
-                    later.map((item, index: number) => (
+                    donorsBeyond30Days.map((item, index: number) => (
                         <TableRow key={index}>
                             <TableCell className="font-medium">{item.code}</TableCell>
                             <TableCell className="font-medium uppercase">{item.name}</TableCell>
@@ -138,7 +140,7 @@ async function DonorList() {
                             <TableCell className="font-medium">{`${moment(item.paymentDate).format('DD/MM/YYYY')}`}</TableCell>
                             <TableCell className="font-medium uppercase">
                                 <Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
-                                    <Link href={`donor/${item.username}`}><ClipboardPenLine /></Link>
+                                    <Link href={`/dashboard/donor/${item.username}`}><ClipboardPenLine /></Link>
                                 </Button>
                             </TableCell>
                             <TableCell className="font-medium uppercase">
