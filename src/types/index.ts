@@ -11,6 +11,9 @@ export interface DonorIProps {
 	lives: string,
 	hometown: string,
 	status: string,
+	facebook: string,
+	mobile: string,
+	linkedin: string,
 	paymentDate?: Date
 };
 export interface IncomeIProps {
@@ -31,6 +34,9 @@ export interface DonorIUpdatedProps {
 	password: string,
 	name: string,
 	photoUrl: string,
+	facebook: string,
+	mobile: string,
+	linkedin: string,
 	about: string,
 	lives: string,
 	hometown: string,
