@@ -83,8 +83,10 @@ async function DonorList() {
 		}
 	});
 
+
 	const donorsWithin30Days = filterAndSortDonors(donors as any, 30, true);
-	console.log({ donorsWithin30Days });
+	// console.log({ donorsWithin30Days });
+	console.log({ donors })
 
 	const response = await fetch("https://arafatfoundation.vercel.app/api/donor_payment");
 	if (!response.ok) {
