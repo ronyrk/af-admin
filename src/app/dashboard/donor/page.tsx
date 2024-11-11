@@ -83,8 +83,10 @@ async function DonorList() {
 		}
 	});
 
+
 	const donorsWithin30Days = filterAndSortDonors(donors as any, 30, true);
-	console.log({ donorsWithin30Days });
+	// console.log({ donorsWithin30Days });
+	console.log({ donors })
 
 	const response = await fetch("https://arafatfoundation.vercel.app/api/donor_payment");
 	if (!response.ok) {
@@ -135,7 +137,6 @@ async function DonorList() {
 						<TableRow key={index}>
 							<TableCell className="font-medium">{item.code}</TableCell>
 							<TableCell className="font-medium uppercase">{item.name}</TableCell>
-							<TableCell className="font-medium uppercase">{getStatus(item.status)}</TableCell>
 							<TableCell className="font-medium uppercase" >{Amount(item.status, item.username, item.amount)}</TableCell>
 							<TableCell className="font-medium uppercase" >{ReturnAmount(item.status, item.username, item.amount)}</TableCell>
 							<TableCell className="font-medium">{`${moment(item.paymentDate).format('DD/MM/YYYY')}`}</TableCell>
@@ -179,7 +180,6 @@ async function page() {
 					<TableRow>
 						<TableHead>CODE</TableHead>
 						<TableHead className='w-[200px]'>NAME</TableHead>
-						<TableHead>TYPE</TableHead>
 						<TableHead>AMOUNT</TableHead>
 						<TableHead>RETURNED AMOUNT</TableHead>
 						<TableHead>RETURNED DATE</TableHead>
@@ -193,7 +193,7 @@ async function page() {
 			</Table>
 			<div className=" py-4 text-center">
 				<Button asChild>
-					<Link className=' bg-color-main hover:bg-color-sub' href={`donor/older-donor`}> Older-Donor</Link>
+					<Link className=' bg-color-main hover:bg-color-sub' href={`donor/lists`}>Donor Lists</Link>
 				</Button>
 			</div>
 

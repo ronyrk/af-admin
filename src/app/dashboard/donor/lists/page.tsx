@@ -83,7 +83,7 @@ async function DonorList() {
     });
 
     const donorsBeyond30Days = filterAndSortDonors(donors as any, 30, false);
-    console.log(donorsBeyond30Days.length)
+    // console.log(donorsBeyond30Days.length)
 
     const response = await fetch("https://arafatfoundation.vercel.app/api/donor_payment");
     if (!response.ok) {
@@ -130,14 +130,13 @@ async function DonorList() {
         <>
             <TableBody>
                 {
-                    donorsBeyond30Days.map((item, index: number) => (
+                    donors.map((item, index: number) => (
                         <TableRow key={index}>
                             <TableCell className="font-medium">{item.code}</TableCell>
                             <TableCell className="font-medium uppercase">{item.name}</TableCell>
                             <TableCell className="font-medium uppercase">{getStatus(item.status)}</TableCell>
-                            <TableCell className="font-medium uppercase" >{Amount(item.status, item.username, item.amount)}</TableCell>
-                            <TableCell className="font-medium uppercase" >{ReturnAmount(item.status, item.username, item.amount)}</TableCell>
-                            <TableCell className="font-medium">{`${moment(item.paymentDate).format('DD/MM/YYYY')}`}</TableCell>
+                            <TableCell className="font-medium uppercase" >{Amount(item.status, item.username, item.amount as string)}</TableCell>
+                            <TableCell className="font-medium uppercase" >{ReturnAmount(item.status, item.username, item.amount as string)}</TableCell>
                             <TableCell className="font-medium uppercase">
                                 <Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
                                     <Link href={`/dashboard/donor/${item.username}`}><ClipboardPenLine /></Link>
@@ -181,7 +180,6 @@ async function page() {
                         <TableHead>TYPE</TableHead>
                         <TableHead>AMOUNT</TableHead>
                         <TableHead>RETURNED AMOUNT</TableHead>
-                        <TableHead>RETURNED DATE</TableHead>
                         <TableHead>UPDATED</TableHead>
                         <TableHead>DELETED</TableHead>
                     </TableRow>

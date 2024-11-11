@@ -27,6 +27,7 @@ import { UploadButton } from "@/lib/uploadthing"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { SquarePen } from 'lucide-react';
+import Link from 'next/link';
 
 const formSchema = z.object({
     password: z.string(),
@@ -35,6 +36,9 @@ const formSchema = z.object({
     hometown: z.string(),
     status: z.string(),
     name: z.string(),
+    facebook: z.string(),
+    mobile: z.string(),
+    linkedin: z.string(),
 });
 async function getStatus(status: string) {
     if (status === "LEADER") {
@@ -89,13 +93,16 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
             hometown: data.hometown,
             status: data.status,
             name: data.name,
+            facebook: data.facebook,
+            mobile: data.mobile,
+            linkedin: data.linkedin,
         }
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ password, name, photoUrl, about, lives, hometown, status }: DonorIUpdatedProps) => {
+        mutationFn: async ({ password, name, photoUrl, about, lives, hometown, status, facebook, mobile, linkedin }: DonorIUpdatedProps) => {
             const response = await axios.patch(`/api/donor/${data.username}`, {
-                password, name, photoUrl, about, lives, hometown, status
+                password, name, photoUrl, about, lives, hometown, status, facebook, mobile, linkedin
             });
             return response.data;
         },
@@ -109,9 +116,12 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
         const hometown = values.hometown;
         const lives = values.lives;
         const about = values.about;
+        const facebook = values.facebook;
+        const mobile = values.linkedin;
+        const linkedin = values.linkedin;
 
         // Branch Created
-        mutate({ password, name, photoUrl, about, lives, hometown, status }, {
+        mutate({ password, name, photoUrl, about, lives, hometown, status, facebook, linkedin, mobile }, {
             onSuccess: ({ message, result }: { message: string, result: DonorIProps }) => {
                 if (result.id) {
                     toast.success(message);
@@ -226,7 +236,50 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                             <FormMessage />
                                         </FormItem>
                                     )}
-                                /></h2>
+                                />
+                            </h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Lives in :</span>
+                                <FormField
+                                    control={form.control}
+                                    name="mobile"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Facebook Url :</span>
+                                <FormField
+                                    control={form.control}
+                                    name="facebook"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.facebook}>{data.facebook}</Link>}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Linkedin Url :</span>
+                                <FormField
+                                    control={form.control}
+                                    name="facebook"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.linkedin}>{data.linkedin}</Link>}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </h2>
                             <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Home town:</span>
                                 <FormField
                                     control={form.control}

@@ -94,7 +94,17 @@ model Donor {
   lives       String
   hometown    String
   status      String
+  facebook    String
+  mobile      String
+  linkedin    String
   paymentDate DateTime @default("2023-12-28T18:00:00.000Z")
+}
+
+model DonateAmount {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  username String
+  amount   String
+  date     DateTime
 }
 
 model Request {
@@ -120,6 +130,7 @@ model DonorPayment {
   amount        String
   loanPayment   String
   type          String
+  returnDate    DateTime
   createAt      DateTime
 }
 
