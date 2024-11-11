@@ -130,7 +130,7 @@ model DonorPayment {
   amount        String
   loanPayment   String
   type          String
-  returnDate    String
+  returnDate    DateTime
   createAt      DateTime
 }
 

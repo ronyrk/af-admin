@@ -179,6 +179,7 @@ export interface DonorPaymentIProps {
 	createAt: Date,
 	type: string,
 	paymentDate?: Date
+	returnDate: Date
 };
 export interface DonorPaymentIPropsSend {
 	id?: string,
