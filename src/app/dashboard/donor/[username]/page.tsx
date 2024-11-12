@@ -18,7 +18,7 @@ async function page({ params }: {
 	const data: DonorIProps = await res.json();
 
 	unstable_noStore();
-	const response = await fetch(`https://af-admin.vercel.app/api/donor_payment/donor/${data.username}`);
+	const response = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${data.username}`);
 	if (!response.ok) {
 		throw new Error("Failed fetch Data");
 	};
