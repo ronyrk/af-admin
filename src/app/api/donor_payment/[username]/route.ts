@@ -21,15 +21,27 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 export const PATCH = async (request: Request, { params }: ParamsIProps) => {
     try {
         const { username } = params;
-        const { loanPayment } = await request.json();
-        console.log({ params })
-        const result = await prisma.donorPayment.update({
-            where: { id: username },
-            data: {
-                loanPayment
-            }
-        });
-        return NextResponse.json({ message: "successfully updated", result })
+        const { loanPayment, type, donorUsername } = await request.json();
+
+        if (type === "payment") {
+            const result = await prisma.donorPayment.update({
+                where: { id: username },
+                data: {
+                    loanPayment
+                }
+            });
+            return NextResponse.json({ message: "successfully updated", result })
+
+        } else {
+            const result = await prisma.donateAmount.create({
+                data: {
+                    donorUsername, amount: loanPayment
+                }
+            });
+            return NextResponse.json({ message: "successfully updated", result })
+        }
+
+
     } catch (error) {
         console.log({ error })
         return NextResponse.json({ error });

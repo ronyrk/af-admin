@@ -19,14 +19,23 @@ import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import { DonorPaymentIProps, DonorPaymentIPropsSend } from "@/types"
 import { AlertDialogAction, AlertDialogCancel, AlertDialogFooter } from "./ui/alert-dialog"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+
 
 
 const formSchema = z.object({
     loanPayment: z.string(),
+    type: z.string(),
 });
 
 
-function DonorDonationPayment({ id }: { id: string }) {
+function DonorDonationPayment({ id, username }: { id: string, username: string }) {
     const router = useRouter();
 
     // 1. Define your form.
@@ -38,9 +47,9 @@ function DonorDonationPayment({ id }: { id: string }) {
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ loanPayment }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ loanPayment, type, donorUsername }: DonorPaymentIPropsSend) => {
             const response = await axios.patch(`/api/donor_payment/${id}`, {
-                loanPayment
+                loanPayment, type, donorUsername
             });
             return response.data;
         },
@@ -49,8 +58,11 @@ function DonorDonationPayment({ id }: { id: string }) {
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
         const loanPayment = values.loanPayment;
+        const type = values.type;
+        const donorUsername = username;
+
         // Donor /Lender Payment Created
-        mutate({ loanPayment }, {
+        mutate({ loanPayment, type, donorUsername }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
@@ -70,16 +82,37 @@ function DonorDonationPayment({ id }: { id: string }) {
             <h2 className="text-center text-xl">Donor Payment Create</h2>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-                    <div className=" grid grid-cols-3 items-center gap-3">
+                    <div className=" grid grid-cols-2 items-center gap-3">
                         <FormField
                             control={form.control}
                             name="loanPayment"
                             render={({ field }) => (
-                                <FormItem className=" mt-[-10px]">
+                                <FormItem className="">
                                     <FormLabel>Loan Payment</FormLabel>
                                     <FormControl>
                                         <Input type="number" placeholder="Loan Amount Payment" {...field} />
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="type"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Type Method</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a verified method" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent >
+                                            <SelectItem className=" text-black" defaultChecked value="payment">payment</SelectItem>
+                                            <SelectItem className=" text-black" value="donate">Donate</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}

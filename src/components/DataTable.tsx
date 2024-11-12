@@ -69,7 +69,7 @@ async function TableRowList(params: ParamsIProps) {
                                         <Button size={"sm"} >Pay</Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
-                                        <DonorDonationPayment id={item.id as string} />
+                                        <DonorDonationPayment username={username} id={item.id as string} />
                                     </AlertDialogContent>
                                 </AlertDialog>
                             }

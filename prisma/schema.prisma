@@ -104,7 +104,7 @@ model DonateAmount {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   donorUsername String
   amount        String
-  createAt      DateTime
+  createAt      DateTime @default(now())
 }
 
 model Request {
