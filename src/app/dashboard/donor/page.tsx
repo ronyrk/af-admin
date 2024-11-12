@@ -144,13 +144,6 @@ async function DonorList() {
 					))
 				}
 			</TableBody>
-			<TableFooter>
-				<TableRow>
-					<TableCell className=' font-semibold' colSpan={3}>Total</TableCell>
-					<TableCell className=' font-semibold'>{TotalAmount()} </TableCell>
-					<TableCell className=' font-semibold'>{TotalReturnAmount()} </TableCell>
-				</TableRow>
-			</TableFooter>
 		</>
 	)
 };
