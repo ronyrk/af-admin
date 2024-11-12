@@ -35,7 +35,7 @@ const formSchema = z.object({
     date: z.date({
         required_error: "A date is required.",
     }),
-    PaymentDate: z.date({
+    paymentDate: z.date({
         required_error: "A date is required.",
     })
 });
@@ -60,9 +60,9 @@ function DonorDonation() {
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, paymentDate }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt
+                donorUsername, amount, loanPayment, type, createAt, paymentDate
             });
             return response.data;
         },
@@ -84,11 +84,16 @@ function DonorDonation() {
         const amount = values.amount;
         const loanPayment = values.loanPayment;
         const type = userType;
+
         const previous = values.date;
         const createAt = new Date(previous);
         createAt.setDate(previous.getDate() + 1);
+
+        const upComing = values.paymentDate;
+        const paymentDate = new Date(upComing);
+        paymentDate.setDate(upComing.getDate() + 1);
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, paymentDate }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");

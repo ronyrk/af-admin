@@ -11,7 +11,7 @@ async function page({ params }: {
 	}
 }) {
 	cookies();
-	let res = await fetch(`https://arafatfoundation.vercel.app/api/donor/${params.username}`);
+	let res = await fetch(`https://af-admin.vercel.app/api/donor/${params.username}`);
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
 	};

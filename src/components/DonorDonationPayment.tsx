@@ -23,7 +23,6 @@ import { CalendarIcon } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
-import { useState } from "react"
 import { AlertDialogAction, AlertDialogCancel, AlertDialogFooter } from "./ui/alert-dialog"
 
 
@@ -34,7 +33,7 @@ const formSchema = z.object({
     date: z.date({
         required_error: "A date is required.",
     }),
-    PaymentDate: z.date({
+    paymentDate: z.date({
         required_error: "A date is required.",
     })
 });
@@ -71,7 +70,7 @@ function DonorDonationPayment({ username }: { username: string }) {
         const createAt = new Date(previous);
         createAt.setDate(previous.getDate() + 1);
 
-        const previousPayment = values.PaymentDate;
+        const previousPayment = values.paymentDate;
         const paymentDate = new Date(previousPayment);
         paymentDate.setDate(previousPayment.getDate() + 1);
 
@@ -137,7 +136,7 @@ function DonorDonationPayment({ username }: { username: string }) {
                         />
                         <FormField
                             control={form.control}
-                            name="PaymentDate"
+                            name="paymentDate"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
                                     <FormLabel>Profile Rank Date</FormLabel>

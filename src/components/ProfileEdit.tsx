@@ -238,7 +238,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     )}
                                 />
                             </h2>
-                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Lives in :</span>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Mobile :</span>
                                 <FormField
                                     control={form.control}
                                     name="mobile"
@@ -259,7 +259,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.facebook}>{data.facebook}</Link>}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.facebook as string}>{data.facebook}</Link>}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -273,7 +273,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.linkedin}>{data.linkedin}</Link>}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.linkedin as string}>{data.linkedin}</Link>}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

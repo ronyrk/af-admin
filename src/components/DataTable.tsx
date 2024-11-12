@@ -33,7 +33,7 @@ interface ParamsIProps {
 async function TableRowList(params: ParamsIProps) {
     const { status, username } = params.data;
     unstable_noStore();
-    const res = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${username}`);
+    const res = await fetch(`https://af-admin.vercel.app/api/donor_payment/${username}`);
     if (!res.ok) {
         throw new Error("Failed fetch Data");
     };

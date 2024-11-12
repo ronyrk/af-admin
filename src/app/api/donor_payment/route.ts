@@ -7,14 +7,15 @@ export const dynamic = 'force-dynamic'
 export const POST = async (request: Request) => {
 	try {
 		const body: DonorPaymentIProps = await request.json();
-		const { amount, donorUsername, loanPayment, type, createAt, returnDate } = body;
+		const { amount, donorUsername, loanPayment, type, createAt, paymentDate } = body;
 		const result = await prisma.donorPayment.create({
 			data: {
-				amount, donorUsername, loanPayment, type, createAt, returnDate
+				amount, donorUsername, loanPayment, type, createAt, paymentDate
 			}
 		});
 		return NextResponse.json(result);
 	} catch (error) {
+		console.log({ error });
 		return NextResponse.json(error);
 	};
 };
