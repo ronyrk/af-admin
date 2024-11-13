@@ -39,14 +39,7 @@ import {
 
 
 const formSchema = z.object({
-    amount: z.string().optional(),
-    loanPayment: z.string().optional(),
-    date: z.date({
-        required_error: "A date is required.",
-    }),
-    PaymentDate: z.date({
-        required_error: "A date is required.",
-    })
+    loanPayment: z.string(),
 });
 
 
@@ -57,15 +50,14 @@ function DonorDonationCreate({ username }: { username: string }) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            amount: "0",
             loanPayment: "0"
         }
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, paymentDate }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, loanPayment, type }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt, paymentDate
+                donorUsername, loanPayment, type
             });
             return response.data;
         },
@@ -73,22 +65,13 @@ function DonorDonationCreate({ username }: { username: string }) {
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log({ values })
         const donorUsername = username;
-        const amount = values.amount;
         const loanPayment = values.loanPayment;
         const type = "increase";
 
-        const previous = values.date;
-        const createAt = new Date(previous);
-        createAt.setDate(previous.getDate() + 1);
-
-        const previousPayment = values.PaymentDate;
-        const paymentDate = new Date(previousPayment);
-        paymentDate.setDate(previousPayment.getDate() + 1);
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt, paymentDate }, {
+        mutate({ donorUsername, type, loanPayment }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 console.log({ data })
                 if (data?.id) {
@@ -111,98 +94,6 @@ function DonorDonationCreate({ username }: { username: string }) {
             <h2 className="text-center text-xl">Donor Payment Create</h2>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-                    <div className=" grid grid-cols-3 justify-self-stretch gap-3">
-                        <FormField
-                            control={form.control}
-                            name="date"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>Date of received</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "text-color-main pl-3 text-left font-normal",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(field.value, "PPP")
-                                                    ) : (
-                                                        <span>Pick a date</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={field.onChange}
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="PaymentDate"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>Date of return</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "text-color-main pl-3 text-left font-normal",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(field.value, "PPP")
-                                                    ) : (
-                                                        <span>Pick a date</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={field.onChange}
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="amount"
-                            render={({ field }) => (
-                                <FormItem className=" mt-[-10px]">
-                                    <FormLabel>Amount</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" placeholder="Amount" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-
                     <AlertDialogFooter>
                         <AlertDialogCancel type="button" className=' text-black'>Cancel</AlertDialogCancel>
                         {isPending ? <Button disabled >Loading...</Button> : <AlertDialogAction type="submit">Submit</AlertDialogAction>}

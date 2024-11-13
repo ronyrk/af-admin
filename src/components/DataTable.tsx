@@ -51,7 +51,7 @@ async function TableRowList(params: ParamsIProps) {
         if (type === "return") {
             return `BDT =${amount}/=`
         } else {
-            return 'N/A'
+            return `BDT =${amount}/=`
         }
     };
     return (
@@ -62,6 +62,19 @@ async function TableRowList(params: ParamsIProps) {
                         <TableCell>{`${moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
                         <TableCell>{loanAmount(item.amount, item.type)}</TableCell>
                         <TableCell className='px-4'>{loanPayment(item.loanPayment, item.type)} </TableCell>
+                        <TableCell>
+                            {
+                                item.amount <= item.loanPayment ? " " : <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button size={"sm"} >Pay</Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <DonorDonationPayment username={username} id={item.id as string} />
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            }
+                        </TableCell>
+
                         <TableCell className='px-4'>
                             <DeleteButton type='donor/payment' username={item.id as string} />
                         </TableCell>
@@ -87,14 +100,6 @@ function DonorTable(params: ParamsIProps) {
                         <DonorDonationCreate username={params.data.username} />
                     </AlertDialogContent>
                 </AlertDialog>
-                {params.data.status === "LEADER" && <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button >Pay loan</Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <DonorDonationPayment username={params.data.username} />
-                    </AlertDialogContent>
-                </AlertDialog>}
             </div>
             <Table>
                 <TableHeader>

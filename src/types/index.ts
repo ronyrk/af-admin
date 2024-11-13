@@ -182,12 +182,9 @@ export interface DonorPaymentIProps {
 };
 export interface DonorPaymentIPropsSend {
 	id?: string,
+	loanPayment: string,
 	donorUsername: string,
-	loanPayment?: string,
-	amount?: string,
-	createAt: Date,
 	type: string,
-	paymentDate: Date
 };
 export interface FaqIProps {
 	id?: string,
