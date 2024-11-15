@@ -82,8 +82,6 @@ async function DonorList() {
         }
     });
 
-    const donorsBeyond30Days = filterAndSortDonors(donors as any, 30, false);
-    // console.log(donorsBeyond30Days.length)
 
     const response = await fetch("https://arafatfoundation.vercel.app/api/donor_payment");
     if (!response.ok) {
@@ -139,7 +137,7 @@ async function DonorList() {
                             <TableCell className="font-medium uppercase" >{ReturnAmount(item.status, item.username, item.amount as string)}</TableCell>
                             <TableCell className="font-medium uppercase">
                                 <Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
-                                    <Link href={`/dashboard/donor/${item.username}`}><ClipboardPenLine /></Link>
+                                    <Link prefetch={false} href={`/dashboard/donor/${item.username}`}><ClipboardPenLine /></Link>
                                 </Button>
                             </TableCell>
                             <TableCell className="font-medium uppercase">

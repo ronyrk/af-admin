@@ -1,6 +1,6 @@
 "use client";
 
-import { DonorIProps, DonorPaymentIProps } from '@/types';
+import { DonateAmountIProps, DonorIProps, DonorPaymentIProps } from '@/types';
 import Image from 'next/image'
 import React, { useState } from 'react'
 import DonorTable from './DataTable';
@@ -48,13 +48,50 @@ async function getStatus(status: string) {
     }
 };
 
-function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: DonorPaymentIProps[] }) {
+function ProfileEdit({ data, paymentList, donateList }: { data: DonorIProps, paymentList: DonorPaymentIProps[], donateList: DonateAmountIProps[] }) {
 
     const [image, setImage] = useState<string>(data.photoUrl);
 
     const upload = image.length >= 1;
 
+    const TotalDonate = async () => {
+        let StringArray: string[] = [];
+        donateList.forEach((item) => StringArray.push(item.amount));
+        const NumberArray = StringArray.map(Number);
+        const total = NumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        return total;
+    };
+
+    const TotalLending = async () => {
+        const increaseArray = paymentList.filter((item) => item.type === "increase");
+        let increaseStringArray: string[] = [];
+        increaseArray.forEach((item) => increaseStringArray.push(item.amount));
+        const increaseNumberArray = increaseStringArray.map(Number);
+        const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+        return totalIncrease;
+    }
+
+    const TotalPayment = async () => {
+        let StringArray: string[] = [];
+        donateList.forEach((item) => StringArray.push(item.amount));
+        const NumberArray = StringArray.map(Number);
+        const total = NumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+        const returnArray = paymentList.filter((item) => item.type === "return");
+        let returnStringArray: string[] = [];
+        returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
+        const returnNumberArray = returnStringArray.map(Number);
+        const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        return totalReturn + total;
+    }
+
     const TotalAmount = async () => {
+        let StringArray: string[] = [];
+        donateList.forEach((item) => StringArray.push(item.amount));
+        const NumberArray = StringArray.map(Number);
+        const total = NumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        console.log({ total })
+
         if (data.status === "LEADER") {
             const returnArray = paymentList.filter((item) => item.type === "return");
             let returnStringArray: string[] = [];
@@ -67,14 +104,14 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
             increaseArray.forEach((item) => increaseStringArray.push(item.amount));
             const increaseNumberArray = increaseStringArray.map(Number);
             const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-            return totalIncrease - totalReturn;
+            const subTotal = totalIncrease - totalReturn;
+            return subTotal - total;
         } else {
             let amountStringArray: string[] = [];
-            const Create = paymentList.forEach((item) => amountStringArray.push(item.amount));
+            paymentList.forEach((item) => amountStringArray.push(item.amount));
             // Convert String Array to Number Array
             let AmountArray = amountStringArray.map(Number);
             const totalAmount = AmountArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-            // console.log(totalAmount, 'number array');
             return `${totalAmount}`
         }
 
@@ -218,7 +255,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-base w-fit border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -231,13 +268,23 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-base w-fit border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                             </h2>
+                            {
+                                data.status === "LEADER" && <>
+                                    <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Lending :- </span>{TotalLending()}</h2>
+                                    <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Payment :- </span>{TotalPayment()}</h2>
+                                    <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Donate :- </span>{TotalDonate()}</h2>
+
+                                </>
+                            }
+
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">{data.status === "LEADER" ? "Total Outstanding" : "Total Donation"} :- </span>{TotalAmount()}</h2>
                             <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Mobile :</span>
                                 <FormField
                                     control={form.control}
@@ -245,7 +292,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='  text-base w-fit border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -287,14 +334,13 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-base w-fit border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                             </h2>
-                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">{data.status === "LEADER" ? "Total Lending" : "Total Donation"} :- </span>{TotalAmount()}</h2>
                         </div>
                     </div>
                     <div className="p-2">
