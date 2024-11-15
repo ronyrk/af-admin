@@ -64,11 +64,8 @@ function DonorDonationPayment({ id, username }: { id: string, username: string }
         // Donor /Lender Payment Created
         mutate({ loanPayment, type, donorUsername }, {
             onSuccess: (data: DonorPaymentIProps) => {
-                if (data?.id) {
-                    toast.success("Donor Payment Create Successfully");
-                } else {
-                    throw new Error("Donor Payment Created Failed")
-                }
+                console.log({ data })
+                toast.success("Donor Payment Create Successfully");
                 router.refresh();
             },
             onError: (error) => {
