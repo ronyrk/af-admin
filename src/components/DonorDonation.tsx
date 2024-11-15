@@ -25,22 +25,13 @@ import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { useState } from "react"
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 
 
 const formSchema = z.object({
+    donorUsername: z.string(),
     amount: z.string().optional(),
     loanPayment: z.string().optional(),
+    type: z.string().optional(),
     date: z.date({
         required_error: "A date is required.",
     }),
@@ -50,8 +41,14 @@ const formSchema = z.object({
 });
 
 
-function DonorDonationCreate({ username }: { username: string }) {
+function DonorDonation() {
     const router = useRouter();
+    const [userType, setUserType] = useState<string>("");
+
+    const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = e.target.value;
+        setUserType(selectedValue)
+    };
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -63,55 +60,100 @@ function DonorDonationCreate({ username }: { username: string }) {
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, paymentDate }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt, paymentDate
+                donorUsername, amount, loanPayment, type, createAt
             });
             return response.data;
         },
     });
+    // Branch List
+    const { data, isLoading } = useQuery<DonorIProps[]>({
+        queryKey: ["branch"],
+        queryFn: async () => {
+            const response = await axios.get(`/api/donor-and-lender/${userType}`);
+            return response.data;
+        },
+        refetchInterval: 1000,
+    });
+    // console.log(data, "donor");
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log({ values })
-        const donorUsername = username;
+        const donorUsername = values.donorUsername;
         const amount = values.amount;
         const loanPayment = values.loanPayment;
-        const type = "increase";
-
+        const type = userType;
         const previous = values.date;
         const createAt = new Date(previous);
         createAt.setDate(previous.getDate() + 1);
-
-        const previousPayment = values.PaymentDate;
-        const paymentDate = new Date(previousPayment);
-        paymentDate.setDate(previousPayment.getDate() + 1);
-
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt, paymentDate }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt }, {
             onSuccess: (data: DonorPaymentIProps) => {
-                console.log({ data })
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
                 } else {
                     throw new Error("Donor Payment Created Failed")
                 }
-                toast.success("Donor Payment Create Successfully");
+                router.push(`/dashboard/donor/payment`);
                 router.refresh();
             },
             onError: (error) => {
-                console.log({ error })
                 toast.error("Donor payment Request Created Failed");
             }
         });
     };
+    // console.log(state, stateBranch);
 
     return (
         <div className="flex flex-col gap-3">
             <h2 className="text-center text-xl">Donor Payment Create</h2>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-                    <div className=" grid grid-cols-3 justify-self-stretch gap-3">
+                    <div className=" grid grid-cols-3 items-center gap-3">
+                        <div className="rounded">
+                            <label htmlFor="paymentType" className="block mb-2">
+                                Payment Type:
+                            </label>
+                            <select
+                                id="paymentType"
+                                value={userType}
+                                onChange={handleTypeChange}
+                                className="w-full border rounded px-1 py-[1px] cursor-pointer"
+                            >
+                                <option value="">Select a payment type</option>
+                                <option value="increase">Donor to Company</option>
+                                <option value="return">Company to Donor</option>
+                            </select>
+                        </div>
+                        <FormField
+                            control={form.control}
+                            name="donorUsername"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Donor/Lender</FormLabel>
+                                    <FormControl>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a verified Donor/Lender" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {
+                                                    data?.map((item, index) => (
+
+                                                        <SelectItem key={index} value={item.username}>{item.name}</SelectItem>
+
+                                                    ))
+                                                }
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="date"
@@ -142,6 +184,7 @@ function DonorDonationCreate({ username }: { username: string }) {
                                                 mode="single"
                                                 selected={field.value}
                                                 onSelect={field.onChange}
+
                                                 initialFocus
                                             />
                                         </PopoverContent>
@@ -152,10 +195,10 @@ function DonorDonationCreate({ username }: { username: string }) {
                         />
                         <FormField
                             control={form.control}
-                            name="PaymentDate"
+                            name="date"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
-                                    <FormLabel>Date of return</FormLabel>
+                                    <FormLabel>Date of payment</FormLabel>
                                     <Popover>
                                         <PopoverTrigger asChild>
                                             <FormControl>
@@ -180,6 +223,7 @@ function DonorDonationCreate({ username }: { username: string }) {
                                                 mode="single"
                                                 selected={field.value}
                                                 onSelect={field.onChange}
+
                                                 initialFocus
                                             />
                                         </PopoverContent>
@@ -188,29 +232,43 @@ function DonorDonationCreate({ username }: { username: string }) {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="amount"
-                            render={({ field }) => (
-                                <FormItem className=" mt-[-10px]">
-                                    <FormLabel>Amount</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" placeholder="Amount" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                        {
+                            userType === 'increase' && <FormField
+                                control={form.control}
+                                name="amount"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Amount</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" placeholder="Amount" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        }
+                        {
+                            userType === 'return' && <FormField
+                                control={form.control}
+                                name="loanPayment"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Loan Payment</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" placeholder="Loan Amount Payment" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        }
 
-                    <AlertDialogFooter>
-                        <AlertDialogCancel type="button" className=' text-black'>Cancel</AlertDialogCancel>
-                        {isPending ? <Button disabled >Loading...</Button> : <AlertDialogAction type="submit">Submit</AlertDialogAction>}
-                    </AlertDialogFooter>
+                    </div>
+                    {isPending ? <Button disabled >Loading...</Button> : <Button type="submit">Submit</Button>}
                 </form>
             </Form>
         </div>
     )
 }
 
-export default DonorDonationCreate;
+export default DonorDonation;

@@ -1,5 +1,5 @@
-interface Donor {
-  id?: string;
+interface User {
+  id: string;
   username: string;
   email: string;
   code: string;
@@ -11,22 +11,30 @@ interface Donor {
   lives: string;
   hometown: string;
   status: string;
-  paymentDate: Date; // ISO format date
+  paymentDate: string; // ISO format date
 }
 
-
-export const filterAndSortDonors = (donors: Donor[], days: number, withinRange: boolean) => {
+export const filterUsers = (users: User[],dates:number) => {
   const today = new Date();
+  
+  // Calculate 30 days from today
+  const next30Days = new Date();
+  next30Days.setDate(today.getDate() + dates);
 
-  return donors
-    .filter((donor: Donor) => {
-      const paymentDate = new Date(donor.paymentDate);
-      const diffDays = (paymentDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
-      return withinRange ? diffDays >= 0 && diffDays <= days : diffDays > days;
-    })
-    .sort((a: Donor, b: Donor) => {
-      const diffA = new Date(a.paymentDate).getTime() - today.getTime();
-      const diffB = new Date(b.paymentDate).getTime() - today.getTime();
-      return diffA - diffB; // Sort by difference low to high
-    });
+  const upcoming: User[] = [];
+  const later: User[] = [];
+
+  users.forEach((user) => {
+    const paymentDate = new Date(user.paymentDate);
+
+    // Check if the payment date is within 1 to 30 days
+    if (paymentDate > today && paymentDate <= next30Days) {
+      upcoming.push(user);
+    } else if (paymentDate > next30Days) {
+      later.push(user);
+    }
+  });
+
+  return { upcoming, later };
 };
+

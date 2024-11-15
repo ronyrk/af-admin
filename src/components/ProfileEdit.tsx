@@ -1,6 +1,6 @@
 "use client";
 
-import { DonateAmountIProps, DonorIProps, DonorPaymentIProps } from '@/types';
+import { DonorIProps, DonorPaymentIProps } from '@/types';
 import Image from 'next/image'
 import React, { useState } from 'react'
 import DonorTable from './DataTable';
@@ -27,7 +27,6 @@ import { UploadButton } from "@/lib/uploadthing"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { SquarePen } from 'lucide-react';
-import Link from 'next/link';
 
 const formSchema = z.object({
     password: z.string(),
@@ -36,9 +35,6 @@ const formSchema = z.object({
     hometown: z.string(),
     status: z.string(),
     name: z.string(),
-    facebook: z.string(),
-    mobile: z.string(),
-    linkedin: z.string(),
 });
 async function getStatus(status: string) {
     if (status === "LEADER") {
@@ -48,50 +44,13 @@ async function getStatus(status: string) {
     }
 };
 
-function ProfileEdit({ data, paymentList, donateList }: { data: DonorIProps, paymentList: DonorPaymentIProps[], donateList: DonateAmountIProps[] }) {
+function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: DonorPaymentIProps[] }) {
 
     const [image, setImage] = useState<string>(data.photoUrl);
 
     const upload = image.length >= 1;
 
-    const TotalDonate = async () => {
-        let StringArray: string[] = [];
-        donateList.forEach((item) => StringArray.push(item.amount));
-        const NumberArray = StringArray.map(Number);
-        const total = NumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        return total;
-    };
-
-    const TotalLending = async () => {
-        const increaseArray = paymentList.filter((item) => item.type === "increase");
-        let increaseStringArray: string[] = [];
-        increaseArray.forEach((item) => increaseStringArray.push(item.amount));
-        const increaseNumberArray = increaseStringArray.map(Number);
-        const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-        return totalIncrease;
-    }
-
-    const TotalPayment = async () => {
-        let StringArray: string[] = [];
-        donateList.forEach((item) => StringArray.push(item.amount));
-        const NumberArray = StringArray.map(Number);
-        const total = NumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-        const returnArray = paymentList.filter((item) => item.type === "return");
-        let returnStringArray: string[] = [];
-        returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
-        const returnNumberArray = returnStringArray.map(Number);
-        const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        return totalReturn + total;
-    }
-
     const TotalAmount = async () => {
-        let StringArray: string[] = [];
-        donateList.forEach((item) => StringArray.push(item.amount));
-        const NumberArray = StringArray.map(Number);
-        const total = NumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        console.log({ total })
-
         if (data.status === "LEADER") {
             const returnArray = paymentList.filter((item) => item.type === "return");
             let returnStringArray: string[] = [];
@@ -104,14 +63,14 @@ function ProfileEdit({ data, paymentList, donateList }: { data: DonorIProps, pay
             increaseArray.forEach((item) => increaseStringArray.push(item.amount));
             const increaseNumberArray = increaseStringArray.map(Number);
             const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-            const subTotal = totalIncrease - totalReturn;
-            return subTotal - total;
+            return totalIncrease - totalReturn;
         } else {
             let amountStringArray: string[] = [];
-            paymentList.forEach((item) => amountStringArray.push(item.amount));
+            const Create = paymentList.forEach((item) => amountStringArray.push(item.amount));
             // Convert String Array to Number Array
             let AmountArray = amountStringArray.map(Number);
             const totalAmount = AmountArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+            // console.log(totalAmount, 'number array');
             return `${totalAmount}`
         }
 
@@ -130,16 +89,13 @@ function ProfileEdit({ data, paymentList, donateList }: { data: DonorIProps, pay
             hometown: data.hometown,
             status: data.status,
             name: data.name,
-            facebook: data.facebook,
-            mobile: data.mobile,
-            linkedin: data.linkedin,
         }
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ password, name, photoUrl, about, lives, hometown, status, facebook, mobile, linkedin }: DonorIUpdatedProps) => {
+        mutationFn: async ({ password, name, photoUrl, about, lives, hometown, status }: DonorIUpdatedProps) => {
             const response = await axios.patch(`/api/donor/${data.username}`, {
-                password, name, photoUrl, about, lives, hometown, status, facebook, mobile, linkedin
+                password, name, photoUrl, about, lives, hometown, status
             });
             return response.data;
         },
@@ -153,12 +109,9 @@ function ProfileEdit({ data, paymentList, donateList }: { data: DonorIProps, pay
         const hometown = values.hometown;
         const lives = values.lives;
         const about = values.about;
-        const facebook = values.facebook;
-        const mobile = values.linkedin;
-        const linkedin = values.linkedin;
 
         // Branch Created
-        mutate({ password, name, photoUrl, about, lives, hometown, status, facebook, linkedin, mobile }, {
+        mutate({ password, name, photoUrl, about, lives, hometown, status }, {
             onSuccess: ({ message, result }: { message: string, result: DonorIProps }) => {
                 if (result.id) {
                     toast.success(message);
@@ -255,7 +208,7 @@ function ProfileEdit({ data, paymentList, donateList }: { data: DonorIProps, pay
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-base w-fit border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -268,65 +221,12 @@ function ProfileEdit({ data, paymentList, donateList }: { data: DonorIProps, pay
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-base w-fit border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
-                                />
-                            </h2>
-                            {
-                                data.status === "LEADER" && <>
-                                    <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Lending :- </span>{TotalLending()}</h2>
-                                    <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Payment :- </span>{TotalPayment()}</h2>
-                                    <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Donate :- </span>{TotalDonate()}</h2>
-
-                                </>
-                            }
-
-                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">{data.status === "LEADER" ? "Total Outstanding" : "Total Donation"} :- </span>{TotalAmount()}</h2>
-                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Mobile :</span>
-                                <FormField
-                                    control={form.control}
-                                    name="mobile"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='  text-base w-fit border-none bg-inherit'{...field} />}
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </h2>
-                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Facebook Url :</span>
-                                <FormField
-                                    control={form.control}
-                                    name="facebook"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.facebook as string}>{data.facebook}</Link>}
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </h2>
-                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Linkedin Url :</span>
-                                <FormField
-                                    control={form.control}
-                                    name="facebook"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.linkedin as string}>{data.linkedin}</Link>}
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </h2>
+                                /></h2>
                             <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Home town:</span>
                                 <FormField
                                     control={form.control}
@@ -334,13 +234,14 @@ function ProfileEdit({ data, paymentList, donateList }: { data: DonorIProps, pay
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-base w-fit border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                             </h2>
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">{data.status === "LEADER" ? "Total Lending" : "Total Donation"} :- </span>{TotalAmount()}</h2>
                         </div>
                     </div>
                     <div className="p-2">

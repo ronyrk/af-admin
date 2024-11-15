@@ -10,12 +10,19 @@ export const POST = async (request: Request) => {
 		const { amount, donorUsername, loanPayment, type, createAt, paymentDate } = body;
 		const result = await prisma.donorPayment.create({
 			data: {
-				amount, donorUsername, loanPayment, type, createAt, paymentDate
+				amount, donorUsername, loanPayment, type, createAt
+			}
+		});
+		await prisma.donor.update({
+			where: {
+				username: donorUsername
+			},
+			data: {
+				paymentDate
 			}
 		});
 		return NextResponse.json(result);
 	} catch (error) {
-		console.log({ error });
 		return NextResponse.json(error);
 	};
 };

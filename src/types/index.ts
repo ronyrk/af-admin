@@ -11,9 +11,6 @@ export interface DonorIProps {
 	lives: string,
 	hometown: string,
 	status: string,
-	facebook: string,
-	mobile: string,
-	linkedin: string,
 	paymentDate?: Date
 };
 export interface IncomeIProps {
@@ -34,9 +31,6 @@ export interface DonorIUpdatedProps {
 	password: string,
 	name: string,
 	photoUrl: string,
-	facebook: string,
-	mobile: string,
-	linkedin: string,
 	about: string,
 	lives: string,
 	hometown: string,
@@ -178,13 +172,16 @@ export interface DonorPaymentIProps {
 	amount: string,
 	createAt: Date,
 	type: string,
-	paymentDate: Date
+	paymentDate?: Date
 };
 export interface DonorPaymentIPropsSend {
 	id?: string,
-	loanPayment: string,
 	donorUsername: string,
+	loanPayment?: string,
+	amount?: string,
+	createAt: Date,
 	type: string,
+	paymentDate?: Date
 };
 export interface FaqIProps {
 	id?: string,
@@ -387,20 +384,4 @@ export interface AllLinkIProps {
 	name: string,
 	path: string,
 	type: string,
-}
-export interface DonationIProps {
-	id: string;
-	donorUsername: string;
-	amount: string;
-	loanPayment: string;
-	type: string;
-	paymentDate: string;
-	createAt: string;
-}
-
-export interface DonateAmountIProps {
-	id: string,
-	donorUsername: string,
-	amount: string,
-	createAt: Date,
 }

@@ -1,6 +1,5 @@
 import DonorTable from '@/components/DataTable';
 import ProfileEdit from '@/components/ProfileEdit';
-import { DonateInfo } from '@/lib/donateInfo';
 import { DonorIProps, DonorPaymentIProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import { cookies } from 'next/headers';
@@ -12,7 +11,7 @@ async function page({ params }: {
 	}
 }) {
 	cookies();
-	let res = await fetch(`https://af-admin.vercel.app/api/donor/${params.username}`);
+	let res = await fetch(`https://arafatfoundation.vercel.app/api/donor/${params.username}`);
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
 	};
@@ -25,14 +24,12 @@ async function page({ params }: {
 	};
 	const paymentList: DonorPaymentIProps[] = await response.json();
 
-	const donateList = await DonateInfo(params.username);
-
 
 	return (
 		<div>
 			<Suspense fallback={<h2>Loading..</h2>}>
-				<ProfileEdit donateList={donateList} data={data} paymentList={paymentList} />
-				<DonorTable username={params.username} data={data} />
+				<ProfileEdit data={data} paymentList={paymentList} />
+				<DonorTable data={data} />
 			</Suspense>
 		</div>
 	)

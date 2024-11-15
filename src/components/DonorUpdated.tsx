@@ -31,9 +31,6 @@ const formSchema = z.object({
 	hometown: z.string(),
 	status: z.string(),
 	name: z.string(),
-	facebook: z.string(),
-	mobile: z.string(),
-	linkedin: z.string(),
 });
 
 function DonorUpdated({ data }: { data: DonorIProps }) {
@@ -49,9 +46,6 @@ function DonorUpdated({ data }: { data: DonorIProps }) {
 			hometown: data.hometown,
 			status: data.status,
 			name: data.name,
-			facebook: data.facebook,
-			mobile: data.mobile,
-			linkedin: data.linkedin
 		}
 	});
 
@@ -75,12 +69,9 @@ function DonorUpdated({ data }: { data: DonorIProps }) {
 		const hometown = values.hometown;
 		const lives = values.lives;
 		const about = values.about;
-		const facebook = values.facebook;
-		const mobile = values.mobile;
-		const linkedin = values.linkedin;
 
 		// Branch Created
-		mutate({ password, name, photoUrl, about, lives, hometown, status, facebook, mobile, linkedin }, {
+		mutate({ password, name, photoUrl, about, lives, hometown, status }, {
 			onSuccess: ({ message, result }: { message: string, result: DonorIProps }) => {
 				if (result.id) {
 					toast.success(message);
@@ -142,45 +133,6 @@ function DonorUpdated({ data }: { data: DonorIProps }) {
 							}}
 						/>
 					</div>
-					<FormField
-						control={form.control}
-						name="facebook"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Facebook</FormLabel>
-								<FormControl>
-									<Input type="url" placeholder="Profile link" {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="linkedin"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Linkedin</FormLabel>
-								<FormControl>
-									<Input type="url" placeholder="Profile link" {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="mobile"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Mobile</FormLabel>
-								<FormControl>
-									<Input type="tel" placeholder="Phone Number" {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
 					<FormField
 						control={form.control}
 						name="lives"

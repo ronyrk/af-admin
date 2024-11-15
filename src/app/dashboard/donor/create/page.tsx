@@ -35,9 +35,6 @@ const formSchema = z.object({
 	hometown: z.string(),
 	status: z.string(),
 	name: z.string(),
-	facebook: z.string(),
-	mobile: z.string(),
-	linkedin: z.string(),
 });
 
 function DonorCreate() {
@@ -46,15 +43,12 @@ function DonorCreate() {
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: {
-			amount: "0"
-		},
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ username, email, code, password, name, photoUrl, about, amount, lives, hometown, status, facebook, linkedin, mobile }: DonorIProps) => {
+		mutationFn: async ({ username, email, code, password, name, photoUrl, about, amount, lives, hometown, status }: DonorIProps) => {
 			const response = await axios.post("/api/donor", {
-				username, email, code, password, name, photoUrl, about, amount, lives, hometown, status, facebook, linkedin, mobile
+				username, email, code, password, name, photoUrl, about, amount, lives, hometown, status
 			});
 			return response.data;
 		},
@@ -75,21 +69,18 @@ function DonorCreate() {
 		const lives = values.lives;
 		const amount = values.amount;
 		const about = values.about;
-		const facebook = values.facebook;
-		const mobile = values.mobile;
-		const linkedin = values.linkedin;
 
 		// Donor Created
 		if (upload === true) {
-			mutate({ username, email, code, password, name, photoUrl, about, amount, lives, hometown, status, mobile, linkedin, facebook }, {
+			mutate({ username, email, code, password, name, photoUrl, about, amount, lives, hometown, status }, {
 				onSuccess: ({ message, result }: { message: string, result: BranchIProps }) => {
 					if (result.id) {
 						toast.success(message);
 					} else {
 						throw new Error("Donor Created Failed")
 					}
-					// router.push(`/dashboard/donor`);
-					// router.refresh();
+					router.push(`/dashboard/donor`);
+					router.refresh();
 				},
 				onError: ({ message }: { message: any }) => {
 					toast.error(message);
@@ -188,38 +179,12 @@ function DonorCreate() {
 						</div>
 						<FormField
 							control={form.control}
-							name="facebook"
+							name="amount"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Facebook</FormLabel>
+									<FormLabel>Amount</FormLabel>
 									<FormControl>
-										<Input type="url" placeholder="Profile link" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="linkedin"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Linkedin</FormLabel>
-									<FormControl>
-										<Input type="url" placeholder="Profile link" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="mobile"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Mobile</FormLabel>
-									<FormControl>
-										<Input type="tel" placeholder="Phone Number" {...field} />
+										<Input type="number" placeholder="Amount" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>

@@ -1,4 +1,3 @@
-"use client";
 import React, { Suspense } from 'react'
 import {
     Table,
@@ -26,26 +25,19 @@ import { Button } from "@/components/ui/button"
 import DonorDonationCreate from './DonorDonationCreate';
 import DonorDonationPayment from './DonorDonationPayment';
 import DeleteButton from './DeleteButton';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 
 interface ParamsIProps {
-    data: DonorIProps,
-    username: string
+    data: DonorIProps
 }
 
 async function TableRowList(params: ParamsIProps) {
     const { status, username } = params.data;
-
-
-    const { data, isLoading } = useQuery<DonorPaymentIProps[]>({
-        queryKey: ["payment"],
-        queryFn: async () => {
-            const response = await axios.get(`/api/donor_payment/${username}`);
-            return response.data;
-        },
-        refetchInterval: 1000,
-    });
+    unstable_noStore();
+    const res = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${username}`);
+    if (!res.ok) {
+        throw new Error("Failed fetch Data");
+    };
+    const data: DonorPaymentIProps[] = await res.json();
 
     const loanAmount = async (amount: string, type: string) => {
         if (type === "increase") {
@@ -56,37 +48,20 @@ async function TableRowList(params: ParamsIProps) {
     }
 
     const loanPayment = async (amount: string, type: string) => {
-        if (amount === "0") {
-            return `N/A`
+        if (type === "return") {
+            return `BDT =${amount}/=`
         } else {
-            if (type === "return") {
-                return `BDT =${amount}/=`
-            } else {
-                return `BDT =${amount}/=`
-            }
+            return 'N/A'
         }
     };
     return (
         <TableBody>
             {
-                data?.map((item, index) => (
+                data.map((item, index) => (
                     <TableRow key={index}>
                         <TableCell>{`${moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
                         <TableCell>{loanAmount(item.amount, item.type)}</TableCell>
                         <TableCell className='px-4'>{loanPayment(item.loanPayment, item.type)} </TableCell>
-                        <TableCell>
-                            {
-                                Number(item.amount) <= Number(item.loanPayment) ? " " : <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                        <Button size={"sm"} >Pay</Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <DonorDonationPayment username={username} id={item.id as string} />
-                                    </AlertDialogContent>
-                                </AlertDialog>
-                            }
-                        </TableCell>
-
                         <TableCell className='px-4'>
                             <DeleteButton type='donor/payment' username={item.id as string} />
                         </TableCell>
@@ -112,6 +87,14 @@ function DonorTable(params: ParamsIProps) {
                         <DonorDonationCreate username={params.data.username} />
                     </AlertDialogContent>
                 </AlertDialog>
+                {params.data.status === "LEADER" && <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button >Pay loan</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <DonorDonationPayment username={params.data.username} />
+                    </AlertDialogContent>
+                </AlertDialog>}
             </div>
             <Table>
                 <TableHeader>
@@ -122,7 +105,7 @@ function DonorTable(params: ParamsIProps) {
                     </TableRow>
                 </TableHeader>
                 <Suspense fallback={<h2>Loading...</h2>}>
-                    <TableRowList username={params.username} data={params.data} />
+                    <TableRowList data={params.data} />
                 </Suspense>
             </Table>
 

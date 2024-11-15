@@ -16,8 +16,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import moment, { now } from 'moment';
 import { ClipboardPenLine } from 'lucide-react';
-import { filterAndSortDonors } from '@/lib/donorfillterByDate';
-import prisma from '@/lib/prisma';
+import { filterUsers } from '@/lib/donorfillterByDate';
 
 
 
@@ -76,12 +75,13 @@ async function DonorList() {
     const skips = 90;
 
     cookies();
-    const donors = await prisma.donor.findMany({
-        where: {
-            status: "LEADER"
-        }
-    });
+    let res = await fetch('https://af-admin.vercel.app/api/donor');
+    if (!res.ok) {
+        throw new Error("Failed to fetch data");
+    };
+    const donors: DonorIProps[] = await res.json();
 
+    const { upcoming, later } = filterUsers(donors as any, skips);
 
     const response = await fetch("https://arafatfoundation.vercel.app/api/donor_payment");
     if (!response.ok) {
@@ -128,16 +128,17 @@ async function DonorList() {
         <>
             <TableBody>
                 {
-                    donors.map((item, index: number) => (
+                    later.map((item, index: number) => (
                         <TableRow key={index}>
                             <TableCell className="font-medium">{item.code}</TableCell>
                             <TableCell className="font-medium uppercase">{item.name}</TableCell>
                             <TableCell className="font-medium uppercase">{getStatus(item.status)}</TableCell>
-                            <TableCell className="font-medium uppercase" >{Amount(item.status, item.username, item.amount as string)}</TableCell>
-                            <TableCell className="font-medium uppercase" >{ReturnAmount(item.status, item.username, item.amount as string)}</TableCell>
+                            <TableCell className="font-medium uppercase" >{Amount(item.status, item.username, item.amount)}</TableCell>
+                            <TableCell className="font-medium uppercase" >{ReturnAmount(item.status, item.username, item.amount)}</TableCell>
+                            <TableCell className="font-medium">{`${moment(item.paymentDate).format('DD/MM/YYYY')}`}</TableCell>
                             <TableCell className="font-medium uppercase">
                                 <Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
-                                    <Link prefetch={false} href={`/dashboard/donor/${item.username}`}><ClipboardPenLine /></Link>
+                                    <Link href={`donor/${item.username}`}><ClipboardPenLine /></Link>
                                 </Button>
                             </TableCell>
                             <TableCell className="font-medium uppercase">
@@ -178,6 +179,7 @@ async function page() {
                         <TableHead>TYPE</TableHead>
                         <TableHead>AMOUNT</TableHead>
                         <TableHead>RETURNED AMOUNT</TableHead>
+                        <TableHead>RETURNED DATE</TableHead>
                         <TableHead>UPDATED</TableHead>
                         <TableHead>DELETED</TableHead>
                     </TableRow>
@@ -188,7 +190,7 @@ async function page() {
             </Table>
             <div className=" py-4 text-center">
                 <Button asChild>
-                    <Link className=' bg-color-main hover:bg-color-sub' href={`/dashboard/donor`}>Upcoming Payment</Link>
+                    <Link className=' bg-color-main hover:bg-color-sub' href={`/dashboard/donor`}>Upcoming-Donor</Link>
                 </Button>
             </div>
 
