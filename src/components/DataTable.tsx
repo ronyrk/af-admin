@@ -48,10 +48,14 @@ async function TableRowList(params: ParamsIProps) {
     }
 
     const loanPayment = async (amount: string, type: string) => {
-        if (type === "return") {
-            return `BDT =${amount}/=`
+        if (amount === "0") {
+            return `N/A`
         } else {
-            return `BDT =${amount}/=`
+            if (type === "return") {
+                return `BDT =${amount}/=`
+            } else {
+                return `BDT =${amount}/=`
+            }
         }
     };
     return (
