@@ -397,3 +397,10 @@ export interface DonationIProps {
 	paymentDate: string;
 	createAt: string;
 }
+
+export interface DonateAmountIProps {
+	id: string,
+	donorUsername: string,
+	amount: string,
+	createAt: Date,
+}

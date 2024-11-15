@@ -1,5 +1,6 @@
 import DonorTable from '@/components/DataTable';
 import ProfileEdit from '@/components/ProfileEdit';
+import { DonateInfo } from '@/lib/donateInfo';
 import { DonorIProps, DonorPaymentIProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import { cookies } from 'next/headers';
@@ -24,11 +25,13 @@ async function page({ params }: {
 	};
 	const paymentList: DonorPaymentIProps[] = await response.json();
 
+	const donateList = await DonateInfo(params.username);
+
 
 	return (
 		<div>
 			<Suspense fallback={<h2>Loading..</h2>}>
-				<ProfileEdit data={data} paymentList={paymentList} />
+				<ProfileEdit donateList={donateList} data={data} paymentList={paymentList} />
 				<DonorTable data={data} />
 			</Suspense>
 		</div>
