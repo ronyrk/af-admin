@@ -388,3 +388,12 @@ export interface AllLinkIProps {
 	path: string,
 	type: string,
 }
+export interface DonationIProps {
+	id: string;
+	donorUsername: string;
+	amount: string;
+	loanPayment: string;
+	type: string;
+	paymentDate: string;
+	createAt: string;
+}

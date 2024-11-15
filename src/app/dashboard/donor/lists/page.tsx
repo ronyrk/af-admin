@@ -190,7 +190,7 @@ async function page() {
             </Table>
             <div className=" py-4 text-center">
                 <Button asChild>
-                    <Link className=' bg-color-main hover:bg-color-sub' href={`/dashboard/donor`}>Upcoming-Donor</Link>
+                    <Link className=' bg-color-main hover:bg-color-sub' href={`/dashboard/donor`}>Upcoming Payment</Link>
                 </Button>
             </div>
 
