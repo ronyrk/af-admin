@@ -76,7 +76,7 @@ async function TableRowList(params: ParamsIProps) {
                         <TableCell className='px-4'>{loanPayment(item.loanPayment, item.type)} </TableCell>
                         <TableCell>
                             {
-                                item.amount <= item.loanPayment ? " " : <AlertDialog>
+                                Number(item.amount) <= Number(item.loanPayment) ? " " : <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button size={"sm"} >Pay</Button>
                                     </AlertDialogTrigger>
