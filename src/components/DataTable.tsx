@@ -1,3 +1,4 @@
+"use client";
 import React, { Suspense } from 'react'
 import {
     Table,
@@ -25,19 +26,26 @@ import { Button } from "@/components/ui/button"
 import DonorDonationCreate from './DonorDonationCreate';
 import DonorDonationPayment from './DonorDonationPayment';
 import DeleteButton from './DeleteButton';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 interface ParamsIProps {
-    data: DonorIProps
+    data: DonorIProps,
+    username: string
 }
 
 async function TableRowList(params: ParamsIProps) {
     const { status, username } = params.data;
-    unstable_noStore();
-    const res = await fetch(`https://af-admin.vercel.app/api/donor_payment/${username}`);
-    if (!res.ok) {
-        throw new Error("Failed fetch Data");
-    };
-    const data: DonorPaymentIProps[] = await res.json();
+
+
+    const { data, isLoading } = useQuery<DonorPaymentIProps[]>({
+        queryKey: ["payment"],
+        queryFn: async () => {
+            const response = await axios.get(`/api/donor_payment/${username}`);
+            return response.data;
+        },
+        refetchInterval: 1000,
+    });
 
     const loanAmount = async (amount: string, type: string) => {
         if (type === "increase") {
@@ -61,7 +69,7 @@ async function TableRowList(params: ParamsIProps) {
     return (
         <TableBody>
             {
-                data.map((item, index) => (
+                data?.map((item, index) => (
                     <TableRow key={index}>
                         <TableCell>{`${moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
                         <TableCell>{loanAmount(item.amount, item.type)}</TableCell>
@@ -114,7 +122,7 @@ function DonorTable(params: ParamsIProps) {
                     </TableRow>
                 </TableHeader>
                 <Suspense fallback={<h2>Loading...</h2>}>
-                    <TableRowList data={params.data} />
+                    <TableRowList username={params.username} data={params.data} />
                 </Suspense>
             </Table>
 

@@ -32,7 +32,7 @@ async function page({ params }: {
 		<div>
 			<Suspense fallback={<h2>Loading..</h2>}>
 				<ProfileEdit donateList={donateList} data={data} paymentList={paymentList} />
-				<DonorTable data={data} />
+				<DonorTable username={params.username} data={data} />
 			</Suspense>
 		</div>
 	)
