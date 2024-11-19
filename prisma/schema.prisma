@@ -82,19 +82,21 @@ model Admin {
 }
 
 model Donor {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  username    String   @unique
-  email       String   @unique
-  code        String   @unique
-  password    String
-  name        String
-  photoUrl    String
-  about       String
-  amount      String?
-  lives       String
-  hometown    String
-  status      String
-  paymentDate DateTime @default("2023-12-28T18:00:00.000Z")
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  username     String  @unique
+  email        String  @unique
+  code         String  @unique
+  password     String
+  name         String
+  photoUrl     String
+  about        String
+  amount       String?
+  lives        String
+  hometown     String
+  status       String
+  socailMedia1 String
+  socailMedia2 String
+  mobile       String
 }
 
 model Request {
@@ -121,6 +123,7 @@ model DonorPayment {
   loanPayment   String
   type          String
   createAt      DateTime
+  returnDate    DateTime
 }
 
 model Faq {
@@ -288,15 +291,21 @@ model Expenses {
   amount      String
 }
 
+model All_links {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  type String
+  name String
+  path String
+}
+
 enum Status {
   PENDING
   RUNNING
   COMPLETED
 }
 
-model All_links {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  type String
-  name String
-  path String
+enum PaymentType {
+  LENDING
+  DONATE
+  REFOUND
 }

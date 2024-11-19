@@ -11,7 +11,9 @@ export interface DonorIProps {
 	lives: string,
 	hometown: string,
 	status: string,
-	paymentDate?: Date
+	socailMedia2: string,
+	socailMedia1: string,
+	mobile: string,
 };
 export interface IncomeIProps {
 	id?: string,
@@ -172,7 +174,7 @@ export interface DonorPaymentIProps {
 	amount: string,
 	createAt: Date,
 	type: string,
-	paymentDate?: Date
+	returnDate: Date,
 };
 export interface DonorPaymentIPropsSend {
 	id?: string,
