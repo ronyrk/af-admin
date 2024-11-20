@@ -50,31 +50,31 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
 
     const upload = image.length >= 1;
 
-    const TotalAmount = async () => {
-        if (data.status === "LEADER") {
-            const returnArray = paymentList.filter((item) => item.type === "return");
-            let returnStringArray: string[] = [];
-            returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
-            const returnNumberArray = returnStringArray.map(Number);
-            const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    // const TotalAmount = async () => {
+    //     if (data.status === "LEADER") {
+    //         const returnArray = paymentList.filter((item) => item.type === "return");
+    //         let returnStringArray: string[] = [];
+    //         returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
+    //         const returnNumberArray = returnStringArray.map(Number);
+    //         const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-            const increaseArray = paymentList.filter((item) => item.type === "increase");
-            let increaseStringArray: string[] = [];
-            increaseArray.forEach((item) => increaseStringArray.push(item.amount));
-            const increaseNumberArray = increaseStringArray.map(Number);
-            const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-            return totalIncrease - totalReturn;
-        } else {
-            let amountStringArray: string[] = [];
-            const Create = paymentList.forEach((item) => amountStringArray.push(item.amount));
-            // Convert String Array to Number Array
-            let AmountArray = amountStringArray.map(Number);
-            const totalAmount = AmountArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-            // console.log(totalAmount, 'number array');
-            return `${totalAmount}`
-        }
+    //         const increaseArray = paymentList.filter((item) => item.type === "increase");
+    //         let increaseStringArray: string[] = [];
+    //         increaseArray.forEach((item) => increaseStringArray.push(item.amount));
+    //         const increaseNumberArray = increaseStringArray.map(Number);
+    //         const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+    //         return totalIncrease - totalReturn;
+    //     } else {
+    //         let amountStringArray: string[] = [];
+    //         const Create = paymentList.forEach((item) => amountStringArray.push(item.amount));
+    //         // Convert String Array to Number Array
+    //         let AmountArray = amountStringArray.map(Number);
+    //         const totalAmount = AmountArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    //         // console.log(totalAmount, 'number array');
+    //         return `${totalAmount}`
+    //     }
 
-    }
+    // }
 
     const [editMode, setEditMode] = useState<Boolean>(false);
     const router = useRouter();
@@ -241,7 +241,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     )}
                                 />
                             </h2>
-                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">{data.status === "LEADER" ? "Total Lending" : "Total Donation"} :- </span>{TotalAmount()}</h2>
+                            {/* <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">{data.status === "LEADER" ? "Total Lending" : "Total Donation"} :- </span>{TotalAmount()}</h2> */}
                         </div>
                     </div>
                     <div className="p-2">
