@@ -22,7 +22,7 @@ import { filterUsers } from '@/lib/donorfillterByDate';
 
 // const Amount = async (status: string, username: string, amount: string) => {
 // 	cookies();
-// 	const response = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${username}`);
+// 	const response = await fetch(`https://af-admin.vercel.app/api/donor_payment/donor/${username}`);
 // 	if (!response.ok) {
 // 		throw new Error("Failed fetch Data");
 // 	};
@@ -52,7 +52,7 @@ import { filterUsers } from '@/lib/donorfillterByDate';
 // }
 // const ReturnAmount = async (status: string, username: string, amount: string) => {
 // 	cookies();
-// 	const response = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${username}`);
+// 	const response = await fetch(`https://af-admin.vercel.app/api/donor_payment/donor/${username}`);
 // 	if (!response.ok) {
 // 		throw new Error("Failed fetch Data");
 // 	};
@@ -81,9 +81,9 @@ async function DonorList() {
 	};
 	const donors: DonorIProps[] = await res.json();
 
-	const { upcoming, later } = filterUsers(donors as any, skips);
+	// const { upcoming, later } = filterUsers(donors as any, skips);
 
-	const response = await fetch("https://arafatfoundation.vercel.app/api/donor_payment");
+	const response = await fetch("https://af-admin.vercel.app/api/donor_payment");
 	if (!response.ok) {
 		throw new Error("Failed fetch Data");
 	};
@@ -128,14 +128,14 @@ async function DonorList() {
 		<>
 			<TableBody>
 				{
-					upcoming.map((item, index: number) => (
+					donors.map((item, index: number) => (
 						<TableRow key={index}>
 							<TableCell className="font-medium">{item.code}</TableCell>
 							<TableCell className="font-medium uppercase">{item.name}</TableCell>
 							<TableCell className="font-medium uppercase">{getStatus(item.status)}</TableCell>
 							{/* <TableCell className="font-medium uppercase" >{Amount(item.status, item.username, item.amount)}</TableCell>
 							<TableCell className="font-medium uppercase" >{ReturnAmount(item.status, item.username, item.amount)}</TableCell> */}
-							<TableCell className="font-medium">{`${moment(item.paymentDate).format('DD/MM/YYYY')}`}</TableCell>
+							{/* <TableCell className="font-medium">{`${moment(item.).format('DD/MM/YYYY')}`}</TableCell> */}
 							<TableCell className="font-medium uppercase">
 								<Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
 									<Link href={`donor/${item.username}`}><ClipboardPenLine /></Link>

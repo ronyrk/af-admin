@@ -24,11 +24,11 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		const { password, name, photoUrl, about, lives, hometown, status } = await request.json();
+		const { password, name, photoUrl, about, lives, hometown, status, socailMedia2, socailMedia1, mobile } = await request.json();
 		const result = await prisma.donor.update({
 			where: { username },
 			data: {
-				password, name, photoUrl, about, lives, hometown, status
+				password, name, photoUrl, about, lives, hometown, status, socailMedia2, socailMedia1, mobile
 			}
 		});
 		return NextResponse.json({ message: "successfully updated", result })

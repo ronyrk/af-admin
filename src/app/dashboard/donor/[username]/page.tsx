@@ -4,6 +4,7 @@ import { DonorIProps, DonorPaymentIProps } from '@/types';
 import { unstable_noStore } from 'next/cache';
 import { cookies } from 'next/headers';
 import React, { Suspense } from 'react'
+import prisma from '@/lib/prisma';
 
 async function page({ params }: {
 	params: {
@@ -11,18 +12,22 @@ async function page({ params }: {
 	}
 }) {
 	cookies();
-	let res = await fetch(`https://arafatfoundation.vercel.app/api/donor/${params.username}`);
+	let res = await fetch(`https://af-admin.vercel.app/api/donor/${params.username}`);
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
 	};
 	const data: DonorIProps = await res.json();
+	console.log({ data })
 
-	unstable_noStore();
-	const response = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${data.username}`);
-	if (!response.ok) {
-		throw new Error("Failed fetch Data");
-	};
-	const paymentList: DonorPaymentIProps[] = await response.json();
+	const donorUsername = params.username;
+
+	const paymentList = await prisma.donorPayment.findMany({
+		where: {
+			donorUsername
+		}
+	}) as DonorPaymentIProps[];
+
+	console.log({ paymentList })
 
 
 	return (

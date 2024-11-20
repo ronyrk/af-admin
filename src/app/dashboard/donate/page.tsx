@@ -24,7 +24,7 @@ async function getMethod(method: string) {
 
 async function NewsList() {
 	cookies();
-	let res = await fetch('https://arafatfoundation.vercel.app/api/donate');
+	let res = await fetch('https://af-admin.vercel.app/api/donate');
 	if (!res.ok) {
 		throw new Error("Failed to fetch data list");
 	};

@@ -17,7 +17,7 @@ import moment from 'moment';
 
 async function getUserName(username: string) {
 	cookies();
-	let res = await fetch(`https://arafatfoundation.vercel.app/api/donor/${username}`);
+	let res = await fetch(`https://af-admin.vercel.app/api/donor/${username}`);
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
 	};
@@ -27,7 +27,7 @@ async function getUserName(username: string) {
 }
 async function getUserStatus(username: string) {
 	cookies();
-	let res = await fetch(`https://arafatfoundation.vercel.app/api/donor/${username}`);
+	let res = await fetch(`https://af-admin.vercel.app/api/donor/${username}`);
 	if (!res.ok) {
 		throw new Error("Failed to fetch data");
 	};
@@ -45,7 +45,7 @@ async function getUserStatus(username: string) {
 async function DonorPaymentList() {
 	try {
 		cookies();
-		let res = await fetch('https://arafatfoundation.vercel.app/api/donor_payment');
+		let res = await fetch('https://af-admin.vercel.app/api/donor_payment');
 		if (!res.ok) {
 			throw new Error("Failed to fetch data list");
 		};

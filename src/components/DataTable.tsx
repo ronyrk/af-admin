@@ -33,11 +33,11 @@ interface ParamsIProps {
 async function TableRowList(params: ParamsIProps) {
     const { status, username } = params.data;
     unstable_noStore();
-    const res = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${username}`);
-    if (!res.ok) {
-        throw new Error("Failed fetch Data");
-    };
-    const data: DonorPaymentIProps[] = await res.json();
+    // const res = await fetch(`https://af-admin.vercel.app/api/donor_payment/donor/${username}`);
+    // if (!res.ok) {
+    //     throw new Error("Failed fetch Data");
+    // };
+    // const data: DonorPaymentIProps[] = await res.json();
 
     const loanAmount = async (amount: string, type: string) => {
         if (type === "increase") {
@@ -56,7 +56,7 @@ async function TableRowList(params: ParamsIProps) {
     };
     return (
         <TableBody>
-            {
+            {/* {
                 data.map((item, index) => (
                     <TableRow key={index}>
                         <TableCell>{`${moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
@@ -67,7 +67,7 @@ async function TableRowList(params: ParamsIProps) {
                         </TableCell>
                     </TableRow>
                 ))
-            }
+            } */}
         </TableBody>
     )
 
@@ -87,14 +87,14 @@ function DonorTable(params: ParamsIProps) {
                         <DonorDonationCreate username={params.data.username} />
                     </AlertDialogContent>
                 </AlertDialog>
-                {params.data.status === "LEADER" && <AlertDialog>
+                {/* {params.data.status === "LEADER" && <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button >Pay loan</Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <DonorDonationPayment username={params.data.username} />
                     </AlertDialogContent>
-                </AlertDialog>}
+                </AlertDialog>} */}
             </div>
             <Table>
                 <TableHeader>
