@@ -24,18 +24,9 @@ import { CalendarIcon } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
-import { useState } from "react"
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+import { DialogClose, DialogFooter } from "./ui/dialog"
+
+
 
 
 const formSchema = z.object({
@@ -44,7 +35,7 @@ const formSchema = z.object({
     loanPayment: z.string().optional(),
     date: z.date({
         required_error: "A date is required.",
-    }),
+    }).optional(),
     returnDate: z.date({
         required_error: "return date is required.",
     }).optional(),
@@ -56,26 +47,10 @@ const formSchema = z.object({
 }, {
     message: "return date is required.",
     path: ["returnDate"]
-}).refine((data) => {
-    if (data.type === "DONATE") {
-        return !!data.loanPayment;
-    }
-    return true;
-}, {
-    message: "donate amount is required.",
-    path: ["loanPayment"]
-}).refine((data) => {
-    if (data.type === "REFOUND") {
-        return !!data.loanPayment
-    }
-    return true;
-}, {
-    message: "refound amount is required.",
-    path: ["loanPayment"]
 })
 
 
-function DonorDonationCreate({ username }: { username: string }) {
+function DonorDonationCreate({ username, setOpen }: { username: string, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
     const router = useRouter();
 
     // 1. Define your form.
@@ -106,47 +81,50 @@ function DonorDonationCreate({ username }: { username: string }) {
         const loanPayment = values.loanPayment;
         const type = values.type;
 
-        const previous = values.date;
+        const previous = values?.date as any;
         const createAt = new Date(previous);
-        createAt.setDate(previous.getDate() + 1);
+        createAt?.setDate(previous?.getDate() + 1);
 
-        const previousPayment = values.returnDate as any;
+        const previousPayment = values?.returnDate as any;
         const returnDate = new Date(previousPayment);
-        returnDate.setDate(previousPayment.getDate() + 1);
+        returnDate?.setDate(previousPayment?.getDate() + 1);
 
-        console.log({ values });
+
 
         // Donor /Lender Payment Created
-        // mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate }, {
-        //     onSuccess: (data: DonorPaymentIProps) => {
-        //         console.log({ data })
-        //         if (data?.id) {
-        //             toast.success("Donor Payment Create Successfully");
-        //         } else {
-        //             throw new Error("Donor Payment Created Failed")
-        //         }
-        //         toast.success("Donor Payment Create Successfully");
-        //         router.refresh();
-        //     },
-        //     onError: (error) => {
-        //         console.log({ error })
-        //         toast.error("Donor payment Request Created Failed");
-        //     }
-        // });
+        mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate }, {
+            onSuccess: (data: DonorPaymentIProps) => {
+                console.log({ data })
+                if (data?.id) {
+                    toast.success("Donor Payment Create Successfully");
+                } else {
+                    throw new Error("Donor Payment Created Failed")
+                }
+                toast.success("Donor Payment Create Successfully");
+                router.refresh();
+                setTimeout(() => {
+                    setOpen(false);
+                }, 2000);
+            },
+            onError: (error) => {
+                console.log({ error })
+                toast.error("Donor payment Request Created Failed");
+            }
+        });
     };
 
     return (
         <div className="flex flex-col gap-3">
-            <h2 className="text-center text-xl">Donor Payment Create</h2>
+            <h2 className="text-center text-xl">Donor</h2>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-                    <div className=" grid grid-cols-3 justify-self-stretch gap-3">
+                    <div className=" grid grid-cols-3  gap-3">
                         <FormField
                             control={form.control}
                             name="type"
                             render={({ field }) => {
                                 return (
-                                    <FormItem>
+                                    <FormItem className=" mt-[-10px]">
                                         <FormLabel>Payment type</FormLabel>
                                         <Select onValueChange={field.onChange}>
                                             <FormControl>
@@ -165,44 +143,99 @@ function DonorDonationCreate({ username }: { username: string }) {
                                 );
                             }}
                         />
-                        <FormField
-                            control={form.control}
-                            name="date"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>Date of received</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
+                        {
+                            Type && (
+                                <FormField
+                                    control={form.control}
+                                    name="date"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>Date of received</FormLabel>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant={"outline"}
+                                                            className={cn(
+                                                                "text-color-main pl-3 text-left font-normal",
+                                                                !field.value && "text-muted-foreground"
+                                                            )}
+                                                        >
+                                                            {field.value ? (
+                                                                format(field.value, "PPP")
+                                                            ) : (
+                                                                <span>Pick a date</span>
+                                                            )}
+                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0" align="start">
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={field.value}
+                                                        onSelect={field.onChange}
+                                                        initialFocus
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )
+                        }
+                        {
+                            Type === "LENDING" && (
+                                <FormField
+                                    control={form.control}
+                                    name="amount"
+                                    render={({ field }) => (
+                                        <FormItem className=" mt-[-10px]">
+                                            <FormLabel>Amount</FormLabel>
                                             <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "text-color-main pl-3 text-left font-normal",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(field.value, "PPP")
-                                                    ) : (
-                                                        <span>Pick a date</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
+                                                <Input type="number" placeholder="Amount" {...field} />
                                             </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={field.onChange}
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )
+                        }
+                        {
+                            Type === "DONATE" && (
+                                <FormField
+                                    control={form.control}
+                                    name="loanPayment"
+                                    render={({ field }) => (
+                                        <FormItem className=" mt-[-10px]">
+                                            <FormLabel>Donate Amount</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="Donate Amount" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )
+                        }
+                        {
+                            Type === "REFOUND" && (
+                                <FormField
+                                    control={form.control}
+                                    name="loanPayment"
+                                    render={({ field }) => (
+                                        <FormItem className=" mt-[-10px]">
+                                            <FormLabel>Refound Amount</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="Refound Amount" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )
+                        }
                         {
                             Type === "LENDING" && (
                                 <FormField
@@ -248,10 +281,14 @@ function DonorDonationCreate({ username }: { username: string }) {
 
                     </div>
 
-                    <AlertDialogFooter>
-                        <AlertDialogCancel type="button" className=' text-black'>Cancel</AlertDialogCancel>
-                        {isPending ? <Button disabled >Loading...</Button> : <AlertDialogAction type="submit">Submit</AlertDialogAction>}
-                    </AlertDialogFooter>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button type="button">
+                                Cancel
+                            </Button>
+                        </DialogClose>
+                        {isPending ? <Button disabled >Loading...</Button> : <Button type="submit">Submit</Button>}
+                    </DialogFooter>
                 </form>
             </Form>
         </div>
