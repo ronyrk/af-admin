@@ -37,6 +37,9 @@ export interface DonorIUpdatedProps {
 	lives: string,
 	hometown: string,
 	status: string,
+	socailMedia2: string,
+	socailMedia1: string,
+	mobile: string,
 };
 export interface BranchIUpdatedProps {
 	id?: string,

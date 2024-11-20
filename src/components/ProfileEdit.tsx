@@ -27,6 +27,7 @@ import { UploadButton } from "@/lib/uploadthing"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { SquarePen } from 'lucide-react';
+import Link from 'next/link';
 
 const formSchema = z.object({
     password: z.string(),
@@ -35,6 +36,10 @@ const formSchema = z.object({
     hometown: z.string(),
     status: z.string(),
     name: z.string(),
+    mobile: z.string(),
+    socailMedia2: z.string(),
+    socailMedia1: z.string(),
+
 });
 async function getStatus(status: string) {
     if (status === "LEADER") {
@@ -50,31 +55,45 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
 
     const upload = image.length >= 1;
 
-    // const TotalAmount = async () => {
-    //     if (data.status === "LEADER") {
-    //         const returnArray = paymentList.filter((item) => item.type === "return");
-    //         let returnStringArray: string[] = [];
-    //         returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
-    //         const returnNumberArray = returnStringArray.map(Number);
-    //         const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    const TotalLending = async () => {
+        const returnArray = paymentList.filter((item) => item.type === "LENDING");
+        let returnStringArray: string[] = [];
+        returnArray.forEach((item) => returnStringArray.push(item.amount as string));
+        const returnNumberArray = returnStringArray.map(Number);
+        const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        return `${total}`;
+    }
 
-    //         const increaseArray = paymentList.filter((item) => item.type === "increase");
-    //         let increaseStringArray: string[] = [];
-    //         increaseArray.forEach((item) => increaseStringArray.push(item.amount));
-    //         const increaseNumberArray = increaseStringArray.map(Number);
-    //         const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-    //         return totalIncrease - totalReturn;
-    //     } else {
-    //         let amountStringArray: string[] = [];
-    //         const Create = paymentList.forEach((item) => amountStringArray.push(item.amount));
-    //         // Convert String Array to Number Array
-    //         let AmountArray = amountStringArray.map(Number);
-    //         const totalAmount = AmountArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-    //         // console.log(totalAmount, 'number array');
-    //         return `${totalAmount}`
-    //     }
+    const TotalDonate = async () => {
+        const returnArray = paymentList.filter((item) => item.type === "DONATE");
+        let returnStringArray: string[] = [];
+        returnArray.forEach((item) => returnStringArray.push(item.loanPayment as string));
+        const returnNumberArray = returnStringArray.map(Number);
+        const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        return `${total}`;
+    }
+    const TotalRefound = async () => {
+        let returnStringArray: string[] = [];
+        paymentList.forEach((item) => returnStringArray.push(item.loanPayment as string));
+        const returnNumberArray = returnStringArray.map(Number);
+        const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        return `${total}`;
+    }
 
-    // }
+    const Outstanding = async () => {
+        const returnArray = paymentList.filter((item) => item.type === "LENDING");
+        let returnStringArray: string[] = [];
+        returnArray.forEach((item) => returnStringArray.push(item.amount as string));
+        const returnNumberArray = returnStringArray.map(Number);
+        const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+        let returnStringArray2: string[] = [];
+        paymentList.forEach((item) => returnStringArray2.push(item.loanPayment as string));
+        const returnNumberArray2 = returnStringArray2.map(Number);
+        const payment = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+        return `${total - payment}`;
+    }
 
     const [editMode, setEditMode] = useState<Boolean>(false);
     const router = useRouter();
@@ -89,13 +108,17 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
             hometown: data.hometown,
             status: data.status,
             name: data.name,
+            mobile: data.mobile,
+            socailMedia1: data.socailMedia1,
+            socailMedia2: data.socailMedia2,
+
         }
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ password, name, photoUrl, about, lives, hometown, status }: DonorIUpdatedProps) => {
+        mutationFn: async ({ password, name, photoUrl, about, lives, hometown, status, socailMedia2, socailMedia1, mobile }: DonorIUpdatedProps) => {
             const response = await axios.patch(`/api/donor/${data.username}`, {
-                password, name, photoUrl, about, lives, hometown, status
+                password, name, photoUrl, about, lives, hometown, status, socailMedia2, socailMedia1, mobile
             });
             return response.data;
         },
@@ -109,9 +132,12 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
         const hometown = values.hometown;
         const lives = values.lives;
         const about = values.about;
+        const socailMedia2 = values.socailMedia2;
+        const socailMedia1 = values.socailMedia1;
+        const mobile = values.mobile;
 
         // Branch Created
-        mutate({ password, name, photoUrl, about, lives, hometown, status }, {
+        mutate({ password, name, photoUrl, about, lives, hometown, status, socailMedia2, socailMedia1, mobile }, {
             onSuccess: ({ message, result }: { message: string, result: DonorIProps }) => {
                 if (result.id) {
                     toast.success(message);
@@ -241,7 +267,52 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     )}
                                 />
                             </h2>
-                            {/* <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">{data.status === "LEADER" ? "Total Lending" : "Total Donation"} :- </span>{TotalAmount()}</h2> */}
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Mobile :</span>
+                                <FormField
+                                    control={form.control}
+                                    name="mobile"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Social media Url :</span>
+                                <FormField
+                                    control={form.control}
+                                    name="socailMedia2"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.socailMedia2 as string}>{data.socailMedia2}</Link>}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Social media Url :</span>
+                                <FormField
+                                    control={form.control}
+                                    name="socailMedia1"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.socailMedia1 as string}>{data.socailMedia1}</Link>}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </h2>
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Lending :- </span>{TotalLending()}</h2>
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Donate :- </span>{TotalDonate()}</h2>
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Refound :- </span>{TotalRefound()}</h2>
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Outstanding :- </span>{Outstanding()}</h2>
                         </div>
                     </div>
                     <div className="p-2">

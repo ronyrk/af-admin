@@ -124,6 +124,7 @@ model DonorPayment {
   type          String
   createAt      DateTime
   returnDate    DateTime?
+  upComing      Boolean   @default(true)
 }
 
 model Faq {
