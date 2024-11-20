@@ -35,6 +35,9 @@ const formSchema = z.object({
 	hometown: z.string(),
 	status: z.string(),
 	name: z.string(),
+	socailMedia1: z.string(),
+	socailMedia2: z.string(),
+	mobile: z.string(),
 });
 
 function DonorCreate() {
@@ -43,12 +46,15 @@ function DonorCreate() {
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
+		defaultValues: {
+			amount: "0"
+		},
 	});
 
 	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ username, email, code, password, name, photoUrl, about, amount, lives, hometown, status }: DonorIProps) => {
+		mutationFn: async ({ username, email, code, password, name, photoUrl, about, amount, lives, hometown, status, socailMedia1, socailMedia2, mobile }: DonorIProps) => {
 			const response = await axios.post("/api/donor", {
-				username, email, code, password, name, photoUrl, about, amount, lives, hometown, status
+				username, email, code, password, name, photoUrl, about, amount, lives, hometown, status, socailMedia1, socailMedia2, mobile
 			});
 			return response.data;
 		},
@@ -69,12 +75,15 @@ function DonorCreate() {
 		const lives = values.lives;
 		const amount = values.amount;
 		const about = values.about;
+		const socailMedia1 = values.socailMedia1;
+		const socailMedia2 = values.socailMedia2;
+		const mobile = values.mobile;
 
 		// Donor Created
 		if (upload === true) {
-			mutate({ username, email, code, password, name, photoUrl, about, amount, lives, hometown, status }, {
+			mutate({ username, email, code, password, name, photoUrl, about, amount, lives, hometown, status, socailMedia1, socailMedia2, mobile }, {
 				onSuccess: ({ message, result }: { message: string, result: BranchIProps }) => {
-					if (result.id) {
+					if (result?.id) {
 						toast.success(message);
 					} else {
 						throw new Error("Donor Created Failed")
@@ -179,12 +188,38 @@ function DonorCreate() {
 						</div>
 						<FormField
 							control={form.control}
-							name="amount"
+							name="socailMedia2"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Amount</FormLabel>
+									<FormLabel>Facebook</FormLabel>
 									<FormControl>
-										<Input type="number" placeholder="Amount" {...field} />
+										<Input type="url" placeholder="Profile link" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="socailMedia1"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Linkedin</FormLabel>
+									<FormControl>
+										<Input type="url" placeholder="Profile link" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="mobile"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Mobile</FormLabel>
+									<FormControl>
+										<Input type="tel" placeholder="Phone Number" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
