@@ -52,14 +52,14 @@ function DonorDonationPayment({ username }: { username: string }) {
         }
     });
 
-    const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, paymentDate }: DonorPaymentIPropsSend) => {
-            const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt, paymentDate
-            });
-            return response.data;
-        },
-    });
+    // const { mutate, isPending } = useMutation({
+    //     mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, paymentDate }: DonorPaymentIPropsSend) => {
+    //         const response = await axios.post("/api/donor_payment", {
+    //             donorUsername, amount, loanPayment, type, createAt, paymentDate
+    //         });
+    //         return response.data;
+    //     },
+    // });
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
@@ -76,19 +76,19 @@ function DonorDonationPayment({ username }: { username: string }) {
         paymentDate.setDate(previousPayment.getDate() + 1);
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt, paymentDate }, {
-            onSuccess: (data: DonorPaymentIProps) => {
-                if (data?.id) {
-                    toast.success("Donor Payment Create Successfully");
-                } else {
-                    throw new Error("Donor Payment Created Failed")
-                }
-                router.refresh();
-            },
-            onError: (error) => {
-                toast.error("Donor payment Request Created Failed");
-            }
-        });
+        // mutate({ donorUsername, amount, loanPayment, type, createAt, paymentDate }, {
+        //     onSuccess: (data: DonorPaymentIProps) => {
+        //         if (data?.id) {
+        //             toast.success("Donor Payment Create Successfully");
+        //         } else {
+        //             throw new Error("Donor Payment Created Failed")
+        //         }
+        //         router.refresh();
+        //     },
+        //     onError: (error) => {
+        //         toast.error("Donor payment Request Created Failed");
+        //     }
+        // });
     };
 
     return (
@@ -188,10 +188,10 @@ function DonorDonationPayment({ username }: { username: string }) {
                             )}
                         />
                     </div>
-                    <AlertDialogFooter>
+                    {/* <AlertDialogFooter>
                         <AlertDialogCancel type="button" className=' text-black'>Cancel</AlertDialogCancel>
                         {isPending ? <Button disabled >Loading...</Button> : <AlertDialogAction type="submit">Submit</AlertDialogAction>}
-                    </AlertDialogFooter>
+                    </AlertDialogFooter> */}
                 </form>
             </Form>
         </div>

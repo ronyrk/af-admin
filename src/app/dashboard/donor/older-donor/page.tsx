@@ -22,7 +22,7 @@ import { filterUsers } from '@/lib/donorfillterByDate';
 
 const Amount = async (status: string, username: string, amount: string) => {
     cookies();
-    const response = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${username}`);
+    const response = await fetch(`https://af-admin.vercel.app/api/donor_payment/donor/${username}`);
     if (!response.ok) {
         throw new Error("Failed fetch Data");
     };
@@ -30,19 +30,19 @@ const Amount = async (status: string, username: string, amount: string) => {
     if (status === "LEADER") {
         const returnArray = payment.filter((item) => item.type === "return");
         let returnStringArray: string[] = [];
-        returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
+        returnArray.forEach((item) => returnStringArray.push(item.loanPayment as string));
         const returnNumberArray = returnStringArray.map(Number);
         const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
         const increaseArray = payment.filter((item) => item.type === "increase");
         let increaseStringArray: string[] = [];
-        increaseArray.forEach((item) => increaseStringArray.push(item.amount));
+        increaseArray.forEach((item) => increaseStringArray.push(item.amount as string));
         const increaseNumberArray = increaseStringArray.map(Number);
         const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
         return totalIncrease - totalReturn;
     } else {
         let amountStringArray: string[] = [];
-        const Create = payment.forEach((item) => amountStringArray.push(item.amount));
+        const Create = payment.forEach((item) => amountStringArray.push(item.amount as string));
         // Convert String Array to Number Array
         let AmountArray = amountStringArray.map(Number);
         const totalAmount = AmountArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
@@ -52,7 +52,7 @@ const Amount = async (status: string, username: string, amount: string) => {
 }
 const ReturnAmount = async (status: string, username: string, amount: string) => {
     cookies();
-    const response = await fetch(`https://arafatfoundation.vercel.app/api/donor_payment/donor/${username}`);
+    const response = await fetch(`https://af-admin.vercel.app/api/donor_payment/donor/${username}`);
     if (!response.ok) {
         throw new Error("Failed fetch Data");
     };
@@ -60,7 +60,7 @@ const ReturnAmount = async (status: string, username: string, amount: string) =>
     if (status === "LEADER") {
         const returnArray = payment.filter((item) => item.type === "return");
         let returnStringArray: string[] = [];
-        returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
+        returnArray.forEach((item) => returnStringArray.push(item.loanPayment as string));
         const returnNumberArray = returnStringArray.map(Number);
         const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
         return `${totalReturn}`;
@@ -83,7 +83,7 @@ async function DonorList() {
 
     const { upcoming, later } = filterUsers(donors as any, skips);
 
-    const response = await fetch("https://arafatfoundation.vercel.app/api/donor_payment");
+    const response = await fetch("https://af-admin.vercel.app/api/donor_payment");
     if (!response.ok) {
         throw new Error("Failed fetch Data");
     };
@@ -92,7 +92,7 @@ async function DonorList() {
     const TotalReturnAmount = async () => {
         const returnArray = paymentList.filter((item) => item.type === "return");
         let returnStringArray: string[] = [];
-        returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
+        returnArray.forEach((item) => returnStringArray.push(item.loanPayment as string));
         const returnNumberArray = returnStringArray.map(Number);
         const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
         return `BDT=${totalReturn}/=`;
@@ -101,13 +101,13 @@ async function DonorList() {
     const TotalAmount = async () => {
         const returnArray = paymentList.filter((item) => item.type === "return");
         let returnStringArray: string[] = [];
-        returnArray.forEach((item) => returnStringArray.push(item.loanPayment));
+        returnArray.forEach((item) => returnStringArray.push(item.loanPayment as string));
         const returnNumberArray = returnStringArray.map(Number);
         const totalReturn = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
         const increaseArray = paymentList.filter((item) => item.type === "increase");
         let increaseStringArray: string[] = [];
-        increaseArray.forEach((item) => increaseStringArray.push(item.amount));
+        increaseArray.forEach((item) => increaseStringArray.push(item.amount as string));
         const increaseNumberArray = increaseStringArray.map(Number);
         const totalIncrease = increaseNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
         return `BDT=${totalIncrease - totalReturn}/=`;
