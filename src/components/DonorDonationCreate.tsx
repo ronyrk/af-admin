@@ -30,7 +30,7 @@ import { DialogClose, DialogFooter } from "./ui/dialog"
 
 
 const formSchema = z.object({
-    type: z.enum(["LENDING", "DONATE", "REFOUND"]),
+    type: z.enum(["LENDING"]),
     amount: z.string().optional(),
     loanPayment: z.string().optional(),
     date: z.date({
@@ -115,7 +115,7 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
 
     return (
         <div className="flex flex-col gap-3">
-            <h2 className="text-center text-xl">Donor</h2>
+            <h2 className="text-center text-xl">Donor Deposit</h2>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
                     <div className=" grid grid-cols-3  gap-3">
@@ -134,8 +134,6 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value="LENDING">LENDING</SelectItem>
-                                                <SelectItem value="DONATE">DONATE</SelectItem>
-                                                <SelectItem value="REFOUND">REFOUND</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
@@ -202,40 +200,7 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
                                 />
                             )
                         }
-                        {
-                            Type === "DONATE" && (
-                                <FormField
-                                    control={form.control}
-                                    name="loanPayment"
-                                    render={({ field }) => (
-                                        <FormItem className=" mt-[-10px]">
-                                            <FormLabel>Donate Amount</FormLabel>
-                                            <FormControl>
-                                                <Input type="number" placeholder="Donate Amount" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )
-                        }
-                        {
-                            Type === "REFOUND" && (
-                                <FormField
-                                    control={form.control}
-                                    name="loanPayment"
-                                    render={({ field }) => (
-                                        <FormItem className=" mt-[-10px]">
-                                            <FormLabel>Refound Amount</FormLabel>
-                                            <FormControl>
-                                                <Input type="number" placeholder="Refound Amount" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )
-                        }
+
                         {
                             Type === "LENDING" && (
                                 <FormField

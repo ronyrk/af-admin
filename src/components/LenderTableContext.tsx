@@ -9,18 +9,16 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button"
-import DonorDonationCreate from './DonorDonationCreate';
+import DonorDonationPayment from './DonorDonationPayment';
 
-
-
-function DonorTableContext({ username }: { username: string }) {
+function LenderTableContext({ username }: { username: string }) {
     const [open, setOpen] = useState(false);
     return (
         <>
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger><Button >Deposit</Button></DialogTrigger>
+                <DialogTrigger><Button >Payment</Button></DialogTrigger>
                 <DialogContent>
-                    <DonorDonationCreate setOpen={setOpen} username={username} />
+                    <DonorDonationPayment setOpen={setOpen} username={username} />
                 </DialogContent>
             </Dialog>
 
@@ -28,4 +26,4 @@ function DonorTableContext({ username }: { username: string }) {
     )
 }
 
-export default DonorTableContext
+export default LenderTableContext

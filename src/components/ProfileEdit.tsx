@@ -281,6 +281,10 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     )}
                                 />
                             </h2>
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Lending :- </span>{TotalLending()}</h2>
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Donate :- </span>{TotalDonate()}</h2>
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Refound :- </span>{TotalRefound()}</h2>
+                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Outstanding :- </span>{Outstanding()}</h2>
                             <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Social media Url :</span>
                                 <FormField
                                     control={form.control}
@@ -309,10 +313,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
                                     )}
                                 />
                             </h2>
-                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Lending :- </span>{TotalLending()}</h2>
-                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Donate :- </span>{TotalDonate()}</h2>
-                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Total Refound :- </span>{TotalRefound()}</h2>
-                            <h2 className=" font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Outstanding :- </span>{Outstanding()}</h2>
+
                         </div>
                     </div>
                     <div className="p-2">
