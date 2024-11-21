@@ -12,7 +12,6 @@ interface DonorPaymentIProps {
 
 export const filterAndSortDonors = (donors: DonorPaymentIProps[], days: number, withinRange: boolean) => {
   const today = new Date();
-  console.log({ donors })
 
   return donors
     .filter((donor: DonorPaymentIProps) => {

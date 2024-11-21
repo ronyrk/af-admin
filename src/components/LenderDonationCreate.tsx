@@ -36,10 +36,21 @@ const formSchema = z.object({
     date: z.date({
         required_error: "A date is required.",
     }).optional(),
+    returnDate: z.date({
+        required_error: "return date is required.",
+    }).optional(),
+}).refine((data) => {
+    if (data.type === "LENDING") {
+        return !!data.returnDate
+    }
+    return true;
+}, {
+    message: "return date is required.",
+    path: ["returnDate"]
 })
 
 
-function DonorDonationCreate({ username, setOpen }: { username: string, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+function LenderDonationCreate({ username, setOpen }: { username: string, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
     const router = useRouter();
 
     // 1. Define your form.
@@ -52,9 +63,9 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt
+                donorUsername, amount, loanPayment, type, createAt, returnDate
             });
             return response.data;
         },
@@ -69,15 +80,18 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
         const loanPayment = values.loanPayment;
         const type = values.type;
 
-        console.log({ values });
-
         const previous = values?.date as any;
         const createAt = new Date(previous);
         createAt?.setDate(previous?.getDate() + 1);
 
+        const previousPayment = values?.returnDate as any;
+        const returnDate = new Date(previousPayment);
+        returnDate?.setDate(previousPayment?.getDate() + 1);
+
+
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
@@ -185,6 +199,50 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
                                 />
                             )
                         }
+
+                        {
+                            Type === "LENDING" && (
+                                <FormField
+                                    control={form.control}
+                                    name="returnDate"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>Date of return</FormLabel>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant={"outline"}
+                                                            className={cn(
+                                                                "text-color-main pl-3 text-left font-normal",
+                                                                !field.value && "text-muted-foreground"
+                                                            )}
+                                                        >
+                                                            {field.value ? (
+                                                                format(field.value, "PPP")
+                                                            ) : (
+                                                                <span>Pick a date</span>
+                                                            )}
+                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0" align="start">
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={field.value}
+                                                        onSelect={field.onChange}
+                                                        initialFocus
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )
+                        }
+
                     </div>
 
                     <DialogFooter>
@@ -201,4 +259,4 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
     )
 }
 
-export default DonorDonationCreate;
+export default LenderDonationCreate;

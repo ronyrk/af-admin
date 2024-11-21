@@ -10,17 +10,20 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button"
 import DonorDonationCreate from './DonorDonationCreate';
+import LenderDonationCreate from './LenderDonationCreate';
 
 
 
-function DonorTableContext({ username }: { username: string }) {
+function DonorTableContext({ username, status }: { username: string, status: string }) {
     const [open, setOpen] = useState(false);
     return (
         <>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger><Button >Deposit</Button></DialogTrigger>
                 <DialogContent>
-                    <DonorDonationCreate setOpen={setOpen} username={username} />
+                    {
+                        status === "LEADER" ? <LenderDonationCreate setOpen={setOpen} username={username} /> : <DonorDonationCreate setOpen={setOpen} username={username} />
+                    }
                 </DialogContent>
             </Dialog>
 
