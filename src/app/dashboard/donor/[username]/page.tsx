@@ -16,7 +16,6 @@ async function page({ params }: {
 		throw new Error("Failed to fetch data");
 	};
 	const data: DonorIProps = await res.json();
-	console.log({ data })
 
 	const donorUsername = params.username;
 

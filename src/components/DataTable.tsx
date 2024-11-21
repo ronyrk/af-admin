@@ -13,6 +13,8 @@ import { unstable_noStore } from 'next/cache';
 import DonorTableContext from './DonorTableContext';
 import prisma from '@/lib/prisma';
 import DeleteButton from './DeleteButton';
+import LenderTableContext from './LenderTableContext';
+import LenderDonationCreate from './LenderDonationCreate';
 
 interface ParamsIProps {
     data: DonorIProps
@@ -68,7 +70,12 @@ function DonorTable(params: ParamsIProps) {
         <div className=' border-[2px] rounded-sm px-2'>
             <h2 className=" text-center font-semibold text-xl py-2 text-color-main uppercase">Transaction</h2>
             <div className="flex flex-row items-center py-2 justify-between">
-                <DonorTableContext username={params.data.username} />
+                <DonorTableContext status={params.data.status} username={params.data.username} />
+                {
+                    params.data.status === "LEADER" && (
+                        <LenderTableContext username={params.data.username} />
+                    )
+                }
             </div>
             <Table>
                 <TableHeader>

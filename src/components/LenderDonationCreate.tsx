@@ -13,7 +13,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
@@ -30,16 +30,27 @@ import { DialogClose, DialogFooter } from "./ui/dialog"
 
 
 const formSchema = z.object({
-    type: z.enum(["DONATE", "REFOUND"]),
+    type: z.enum(["LENDING"]),
     amount: z.string().optional(),
     loanPayment: z.string().optional(),
     date: z.date({
         required_error: "A date is required.",
     }).optional(),
-});
+    returnDate: z.date({
+        required_error: "return date is required.",
+    }).optional(),
+}).refine((data) => {
+    if (data.type === "LENDING") {
+        return !!data.returnDate
+    }
+    return true;
+}, {
+    message: "return date is required.",
+    path: ["returnDate"]
+})
 
 
-function DonorDonationPayment({ username, setOpen }: { username: string, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+function LenderDonationCreate({ username, setOpen }: { username: string, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
     const router = useRouter();
 
     // 1. Define your form.
@@ -64,7 +75,6 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log({ values })
         const donorUsername = username;
         const amount = values.amount;
         const loanPayment = values.loanPayment;
@@ -74,22 +84,26 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
         const createAt = new Date(previous);
         createAt?.setDate(previous?.getDate() + 1);
 
+        const previousPayment = values?.returnDate as any;
+        const returnDate = new Date(previousPayment);
+        returnDate?.setDate(previousPayment?.getDate() + 1);
+
 
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate }, {
             onSuccess: (data: DonorPaymentIProps) => {
-                console.log({ data })
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
                 } else {
                     throw new Error("Donor Payment Created Failed")
                 }
                 toast.success("Donor Payment Create Successfully");
-                router.refresh();
+
                 setTimeout(() => {
                     setOpen(false);
-                }, 2000);
+                }, 1000);
+                router.refresh();
             },
             onError: (error) => {
                 console.log({ error })
@@ -100,7 +114,7 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
 
     return (
         <div className="flex flex-col gap-3">
-            <h2 className="text-center text-xl">Lender Payment</h2>
+            <h2 className="text-center text-xl">Donor Deposit</h2>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
                     <div className=" grid grid-cols-3  gap-3">
@@ -118,8 +132,7 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="DONATE">DONATE</SelectItem>
-                                                <SelectItem value="REFOUND">REFOUND</SelectItem>
+                                                <SelectItem value="LENDING">LENDING</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
@@ -170,32 +183,15 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
                             )
                         }
                         {
-                            Type === "DONATE" && (
+                            Type === "LENDING" && (
                                 <FormField
                                     control={form.control}
-                                    name="loanPayment"
+                                    name="amount"
                                     render={({ field }) => (
                                         <FormItem className=" mt-[-10px]">
-                                            <FormLabel>Donate Amount</FormLabel>
+                                            <FormLabel>Amount</FormLabel>
                                             <FormControl>
-                                                <Input type="number" placeholder="Donate Amount" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )
-                        }
-                        {
-                            Type === "REFOUND" && (
-                                <FormField
-                                    control={form.control}
-                                    name="loanPayment"
-                                    render={({ field }) => (
-                                        <FormItem className=" mt-[-10px]">
-                                            <FormLabel>Refound Amount</FormLabel>
-                                            <FormControl>
-                                                <Input type="number" placeholder="Refound Amount" {...field} />
+                                                <Input type="number" placeholder="Amount" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -204,6 +200,48 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
                             )
                         }
 
+                        {
+                            Type === "LENDING" && (
+                                <FormField
+                                    control={form.control}
+                                    name="returnDate"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>Date of return</FormLabel>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant={"outline"}
+                                                            className={cn(
+                                                                "text-color-main pl-3 text-left font-normal",
+                                                                !field.value && "text-muted-foreground"
+                                                            )}
+                                                        >
+                                                            {field.value ? (
+                                                                format(field.value, "PPP")
+                                                            ) : (
+                                                                <span>Pick a date</span>
+                                                            )}
+                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0" align="start">
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={field.value}
+                                                        onSelect={field.onChange}
+                                                        initialFocus
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )
+                        }
 
                     </div>
 
@@ -221,4 +259,4 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
     )
 }
 
-export default DonorDonationPayment;
+export default LenderDonationCreate;

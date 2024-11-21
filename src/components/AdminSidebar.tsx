@@ -43,6 +43,11 @@ function AdminSidebar() {
 			active: path === '/dashboard/pending'
 		},
 		{
+			name: "Upcoming money refund",
+			path: "/dashboard/up-coming",
+			active: path === '/dashboard/up-coming'
+		},
+		{
 			name: "FAQ",
 			path: "/dashboard/question",
 			active: path === "/dashboard/question" || path === "/dashboard/question/create"
