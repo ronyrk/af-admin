@@ -40,14 +40,13 @@ async function DonorList() {
 
     const upComing = filterAndSortDonors(list, skips, true);
 
-    async function getStatus(status: string) {
-        if (status === "LEADER") {
-            return "LENDER"
-        } else {
-            return status
-        }
-    };
-
+    const TotalAmount = async () => {
+        let returnStringArray: string[] = [];
+        upComing.forEach((item) => returnStringArray.push(item.amount as string));
+        const returnNumberArray = returnStringArray.map(Number);
+        const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        return `${total}`;
+    }
 
     return (
         <>
@@ -71,6 +70,12 @@ async function DonorList() {
                     ))
                 }
             </TableBody>
+            <TableFooter>
+                <TableRow>
+                    <TableCell className=' text-xl' colSpan={2}>Total</TableCell>
+                    <TableCell className=' text-xl'>{TotalAmount()}</TableCell>
+                </TableRow>
+            </TableFooter>
         </>
     )
 };
