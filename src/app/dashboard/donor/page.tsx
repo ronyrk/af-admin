@@ -3,7 +3,6 @@ import {
 	Table,
 	TableBody,
 	TableCell,
-	TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -18,8 +17,59 @@ import { ClipboardPenLine } from 'lucide-react';
 import prisma from '@/lib/prisma';
 
 
-async function DonorList() {
 
+const TotalLending = async (username: string) => {
+	cookies();
+	const paymentList = await prisma.donorPayment.findMany({
+		where: {
+			donorUsername: username
+		}
+	});
+	const returnArray = paymentList.filter((item) => item.type === "LENDING");
+	let returnStringArray: string[] = [];
+	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
+	const returnNumberArray = returnStringArray.map(Number);
+	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	return `${total}`;
+}
+
+const TotalRefound = async (username: string) => {
+	cookies();
+	const paymentList = await prisma.donorPayment.findMany({
+		where: {
+			donorUsername: username
+		}
+	});
+	let returnStringArray: string[] = [];
+	paymentList.forEach((item) => returnStringArray.push(item.loanPayment as string));
+	const returnNumberArray = returnStringArray.map(Number);
+	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	return `${total}`;
+}
+
+const Outstanding = async (username: string) => {
+	cookies();
+	const paymentList = await prisma.donorPayment.findMany({
+		where: {
+			donorUsername: username
+		}
+	});
+	const returnArray = paymentList.filter((item) => item.type === "LENDING");
+	let returnStringArray: string[] = [];
+	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
+	const returnNumberArray = returnStringArray.map(Number);
+	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	let returnStringArray2: string[] = [];
+	paymentList.forEach((item) => returnStringArray2.push(item.loanPayment as string));
+	const returnNumberArray2 = returnStringArray2.map(Number);
+	const payment = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	return `${total - payment}`;
+}
+
+
+async function DonorList() {
 	cookies();
 
 	const donors: DonorIProps[] = await prisma.donor.findMany({
@@ -55,6 +105,9 @@ async function DonorList() {
 							<TableCell className="font-medium">{item.code}</TableCell>
 							<TableCell className="font-medium uppercase">{item.name}</TableCell>
 							<TableCell className="font-medium uppercase">{getStatus(item.status)}</TableCell>
+							<TableCell className="font-medium uppercase">{TotalLending(item.username)}</TableCell>
+							<TableCell className="font-medium uppercase">{TotalRefound(item.username)}</TableCell>
+							<TableCell className="font-medium uppercase">{Outstanding(item.username)}</TableCell>
 							<TableCell className="font-medium uppercase">
 								<Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
 									<Link href={`donor/${item.username}`}><ClipboardPenLine /></Link>
@@ -89,6 +142,9 @@ async function page() {
 						<TableHead>CODE</TableHead>
 						<TableHead className='w-[200px]'>NAME</TableHead>
 						<TableHead>TYPE</TableHead>
+						<TableHead className=' uppercase'>Total Lending </TableHead>
+						<TableHead className=' uppercase'>Total Refound</TableHead>
+						<TableHead className=' uppercase' >Outstanding</TableHead>
 						<TableHead>UPDATED</TableHead>
 						<TableHead>DELETED</TableHead>
 					</TableRow>
