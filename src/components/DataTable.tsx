@@ -15,6 +15,7 @@ import prisma from '@/lib/prisma';
 import DeleteButton from './DeleteButton';
 import LenderTableContext from './LenderTableContext';
 import LenderDonationCreate from './LenderDonationCreate';
+import { string } from 'zod';
 
 interface ParamsIProps {
     data: DonorIProps
@@ -37,11 +38,11 @@ async function TableRowList(params: ParamsIProps) {
         }
     }
 
-    const loanPayment = async (amount: string, type: string) => {
-        if (type === "REFOUND" || type === "DONATE") {
-            return `BDT =${amount}/=`
+    const loanPayment = async (payment: string, donate: string, type: string) => {
+        if (payment === "0") {
+            return `BDT =${donate}/=`
         } else {
-            return 'N/A'
+            return `BDT =${payment}/=`
         }
     };
     return (
@@ -51,7 +52,7 @@ async function TableRowList(params: ParamsIProps) {
                     <TableRow key={index}>
                         <TableCell>{`${moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
                         <TableCell>{loanAmount(item.amount as string, item.type)}</TableCell>
-                        <TableCell className='px-4'>{loanPayment(item.loanPayment as string, item.type)} </TableCell>
+                        <TableCell className='px-4'>{loanPayment(item.loanPayment as string, item.donate as string, item.type)} </TableCell>
                         <TableCell className='px-4'>{item.type} </TableCell>
                         <TableCell className='px-4'>
                             <DeleteButton type='donor/payment' username={item.id as string} />
