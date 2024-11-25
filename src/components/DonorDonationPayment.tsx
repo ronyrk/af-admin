@@ -33,6 +33,7 @@ const formSchema = z.object({
     type: z.enum(["DONATE", "REFOUND"]),
     amount: z.string().optional(),
     loanPayment: z.string().optional(),
+    donate: z.string().optional(),
     date: z.date({
         required_error: "A date is required.",
     }).optional(),
@@ -47,14 +48,15 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
         resolver: zodResolver(formSchema),
         defaultValues: {
             amount: "0",
-            loanPayment: "0"
+            loanPayment: "0",
+            donate: "0"
         }
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt, returnDate
+                donorUsername, amount, loanPayment, type, createAt, returnDate, donate
             });
             return response.data;
         },
@@ -173,7 +175,7 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
                             Type === "DONATE" && (
                                 <FormField
                                     control={form.control}
-                                    name="loanPayment"
+                                    name="donate"
                                     render={({ field }) => (
                                         <FormItem className=" mt-[-10px]">
                                             <FormLabel>Donate Amount</FormLabel>

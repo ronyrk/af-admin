@@ -73,8 +73,9 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
         return `${total}`;
     }
     const TotalRefound = async () => {
+        const returnArray = paymentList.filter((item) => item.type === "REFOUND");
         let returnStringArray: string[] = [];
-        paymentList.forEach((item) => returnStringArray.push(item.loanPayment as string));
+        returnArray.forEach((item) => returnStringArray.push(item.loanPayment as string));
         const returnNumberArray = returnStringArray.map(Number);
         const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
         return `${total}`;

@@ -121,6 +121,7 @@ model DonorPayment {
   donorUsername String
   amount        String?
   loanPayment   String?
+  donate        String?
   type          String
   createAt      DateTime
   returnDate    DateTime?
