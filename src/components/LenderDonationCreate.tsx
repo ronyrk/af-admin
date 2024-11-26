@@ -58,7 +58,7 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
         resolver: zodResolver(formSchema),
         defaultValues: {
             amount: "0",
-            loanPayment: "0"
+            loanPayment: "0",
         }
     });
 
@@ -99,10 +99,7 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
                     throw new Error("Donor Payment Created Failed")
                 }
                 toast.success("Donor Payment Create Successfully");
-
-                setTimeout(() => {
-                    setOpen(false);
-                }, 1000);
+                setOpen(false);
                 router.refresh();
             },
             onError: (error) => {
@@ -186,24 +183,6 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
                             Type === "LENDING" && (
                                 <FormField
                                     control={form.control}
-                                    name="amount"
-                                    render={({ field }) => (
-                                        <FormItem className=" mt-[-10px]">
-                                            <FormLabel>Amount</FormLabel>
-                                            <FormControl>
-                                                <Input type="number" placeholder="Amount" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )
-                        }
-
-                        {
-                            Type === "LENDING" && (
-                                <FormField
-                                    control={form.control}
                                     name="returnDate"
                                     render={({ field }) => (
                                         <FormItem className="flex flex-col">
@@ -236,6 +215,23 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
                                                     />
                                                 </PopoverContent>
                                             </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )
+                        }
+                        {
+                            Type === "LENDING" && (
+                                <FormField
+                                    control={form.control}
+                                    name="amount"
+                                    render={({ field }) => (
+                                        <FormItem className=" mt-[-10px]">
+                                            <FormLabel>Amount</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="Amount" {...field} />
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}

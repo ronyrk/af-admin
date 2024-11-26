@@ -30,11 +30,15 @@ import { DialogClose, DialogFooter } from "./ui/dialog"
 
 
 const formSchema = z.object({
-    type: z.enum(["LENDING"]),
+    type: z.enum(["LENDING", "DONATE"]),
     amount: z.string().optional(),
+    donate: z.string().optional(),
     loanPayment: z.string().optional(),
     date: z.date({
         required_error: "A date is required.",
+    }).optional(),
+    returnDate: z.date({
+        required_error: "return date is required.",
     }).optional(),
 })
 
@@ -47,14 +51,15 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
         resolver: zodResolver(formSchema),
         defaultValues: {
             amount: "0",
-            loanPayment: "0"
+            loanPayment: "0",
+            donate: "0"
         }
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, donate, returnDate }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt
+                donorUsername, amount, loanPayment, type, createAt, donate, returnDate
             });
             return response.data;
         },
@@ -68,16 +73,19 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
         const amount = values.amount;
         const loanPayment = values.loanPayment;
         const type = values.type;
-
-        console.log({ values });
+        const donate = values.donate;
 
         const previous = values?.date as any;
         const createAt = new Date(previous);
         createAt?.setDate(previous?.getDate() + 1);
 
+        const previousPayment = values?.returnDate as any;
+        const returnDate = new Date(previousPayment);
+        returnDate?.setDate(previousPayment?.getDate() + 1);
+
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, donate, returnDate }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
@@ -119,6 +127,7 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value="LENDING">LENDING</SelectItem>
+                                                <SelectItem value="DONATE">DONATE</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
@@ -176,6 +185,23 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
                                     render={({ field }) => (
                                         <FormItem className=" mt-[-10px]">
                                             <FormLabel>Amount</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="Amount" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )
+                        }
+                        {
+                            Type === "DONATE" && (
+                                <FormField
+                                    control={form.control}
+                                    name="donate"
+                                    render={({ field }) => (
+                                        <FormItem className=" mt-[-10px]">
+                                            <FormLabel>Donate</FormLabel>
                                             <FormControl>
                                                 <Input type="number" placeholder="Amount" {...field} />
                                             </FormControl>

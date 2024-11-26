@@ -25,7 +25,7 @@ async function page({ params }: {
 		}
 	}) as DonorPaymentIProps[];
 
-
+	console.log({ data });
 
 
 	return (

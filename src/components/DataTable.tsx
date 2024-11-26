@@ -39,7 +39,9 @@ async function TableRowList(params: ParamsIProps) {
     }
 
     const loanPayment = async (payment: string, donate: string, type: string) => {
-        if (payment === "0") {
+        if (payment === "0" && donate === "0") {
+            return ` N/A`
+        } else if (payment === "0") {
             return `BDT =${donate}/=`
         } else {
             return `BDT =${payment}/=`

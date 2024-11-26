@@ -15,10 +15,11 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ClipboardPenLine } from 'lucide-react';
 import prisma from '@/lib/prisma';
+import { string } from 'zod';
 
 
 
-const TotalLending = async (username: string) => {
+const TotalLending = async (username: string, status: string) => {
 	cookies();
 	const paymentList = await prisma.donorPayment.findMany({
 		where: {
@@ -30,10 +31,19 @@ const TotalLending = async (username: string) => {
 	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
 	const returnNumberArray = returnStringArray.map(Number);
 	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-	return `${total}`;
+
+	const returnArray2 = paymentList.filter((item) => item.type === "DONATE");
+	let returnStringArray2: string[] = [];
+	returnArray2.forEach((item) => returnStringArray2.push(item.donate as string));
+	const returnNumberArray2 = returnStringArray2.map(Number);
+	const donate = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	const result = status === "LEADER" ? total : total + donate;
+
+	return result;
 }
 
-const TotalRefound = async (username: string) => {
+const TotalRefound = async (username: string, status: string) => {
 	cookies();
 	const paymentList = await prisma.donorPayment.findMany({
 		where: {
@@ -44,10 +54,13 @@ const TotalRefound = async (username: string) => {
 	paymentList.forEach((item) => returnStringArray.push(item.loanPayment as string));
 	const returnNumberArray = returnStringArray.map(Number);
 	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-	return `${total}`;
+
+	const result = status === "LEADER" ? total : 0;
+
+	return result;
 }
 
-const Outstanding = async (username: string) => {
+const Outstanding = async (username: string, status: string) => {
 	cookies();
 	const paymentList = await prisma.donorPayment.findMany({
 		where: {
@@ -65,7 +78,36 @@ const Outstanding = async (username: string) => {
 	const returnNumberArray2 = returnStringArray2.map(Number);
 	const payment = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-	return `${total - payment}`;
+	const returnArray3 = paymentList.filter((item) => item.type === "DONATE");
+	let returnStringArray3: string[] = [];
+	returnArray3.forEach((item) => returnStringArray3.push(item.donate as string));
+	const returnNumberArray3 = returnStringArray3.map(Number);
+	const donate = returnNumberArray3.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	const result = status === "LEADER" ? (total - payment) - donate : 0;
+
+	return result;
+}
+const DonorTotalAmount = async (username: string) => {
+	cookies();
+	const paymentList = await prisma.donorPayment.findMany({
+		where: {
+			donorUsername: username
+		}
+	});
+	const returnArray = paymentList.filter((item) => item.type === "LENDING");
+	let returnStringArray: string[] = [];
+	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
+	const returnNumberArray = returnStringArray.map(Number);
+	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	const returnArray3 = paymentList.filter((item) => item.type === "DONATE");
+	let returnStringArray3: string[] = [];
+	returnArray3.forEach((item) => returnStringArray3.push(item.donate as string));
+	const returnNumberArray3 = returnStringArray3.map(Number);
+	const donate = returnNumberArray3.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	return total + donate;
 }
 
 
@@ -105,9 +147,9 @@ async function DonorList() {
 							<TableCell className="font-medium">{item.code}</TableCell>
 							<TableCell className="font-medium uppercase">{item.name}</TableCell>
 							<TableCell className="font-medium uppercase">{getStatus(item.status)}</TableCell>
-							<TableCell className="font-medium uppercase">{TotalLending(item.username)}</TableCell>
-							<TableCell className="font-medium uppercase">{TotalRefound(item.username)}</TableCell>
-							<TableCell className="font-medium uppercase">{Outstanding(item.username)}</TableCell>
+							<TableCell className="font-medium uppercase">{TotalLending(item.username, item.status)}</TableCell>
+							<TableCell className="font-medium uppercase">{TotalRefound(item.username, item.status)}</TableCell>
+							<TableCell className="font-medium uppercase">{Outstanding(item.username, item.status)}</TableCell>
 							<TableCell className="font-medium uppercase">
 								<Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
 									<Link href={`donor/${item.username}`}><ClipboardPenLine /></Link>
