@@ -24,10 +24,7 @@ async function page({ params }: {
 			donorUsername
 		}
 	}) as DonorPaymentIProps[];
-
-	console.log({ data });
-
-
+	console.log({ paymentList });
 	return (
 		<div>
 			<Suspense fallback={<h2>Loading..</h2>}>
