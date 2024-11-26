@@ -33,6 +33,7 @@ const formSchema = z.object({
     type: z.enum(["LENDING"]),
     amount: z.string().optional(),
     loanPayment: z.string().optional(),
+    donate: z.string().optional(),
     date: z.date({
         required_error: "A date is required.",
     }).optional(),
@@ -59,13 +60,15 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
         defaultValues: {
             amount: "0",
             loanPayment: "0",
+            donate: "0",
+
         }
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt, returnDate
+                donorUsername, amount, loanPayment, type, createAt, returnDate, donate
             });
             return response.data;
         },
@@ -79,6 +82,7 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
         const amount = values.amount;
         const loanPayment = values.loanPayment;
         const type = values.type;
+        const donate = values.donate;
 
         const previous = values?.date as any;
         const createAt = new Date(previous);
@@ -91,7 +95,7 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
 
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
