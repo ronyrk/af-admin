@@ -32,6 +32,7 @@ import { DialogClose, DialogFooter } from "./ui/dialog"
 const formSchema = z.object({
     type: z.enum(["LENDING"]),
     amount: z.string().optional(),
+    donate: z.string().optional(),
     loanPayment: z.string().optional(),
     date: z.date({
         required_error: "A date is required.",
@@ -58,14 +59,15 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
         resolver: zodResolver(formSchema),
         defaultValues: {
             amount: "0",
-            loanPayment: "0"
+            loanPayment: "0",
+            donate: "0"
         }
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt, returnDate
+                donorUsername, amount, loanPayment, type, createAt, returnDate, donate
             });
             return response.data;
         },
@@ -79,6 +81,7 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
         const amount = values.amount;
         const loanPayment = values.loanPayment;
         const type = values.type;
+        const donate = values.donate;
 
         const previous = values?.date as any;
         const createAt = new Date(previous);
@@ -91,7 +94,7 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
 
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
@@ -99,10 +102,7 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
                     throw new Error("Donor Payment Created Failed")
                 }
                 toast.success("Donor Payment Create Successfully");
-
-                setTimeout(() => {
-                    setOpen(false);
-                }, 1000);
+                setOpen(false);
                 router.refresh();
             },
             onError: (error) => {
@@ -133,6 +133,7 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value="LENDING">LENDING</SelectItem>
+                                                <SelectItem value="DONATE">DONATE</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
@@ -190,6 +191,23 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
                                     render={({ field }) => (
                                         <FormItem className=" mt-[-10px]">
                                             <FormLabel>Amount</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="Amount" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )
+                        }
+                        {
+                            Type === "LENDING" && (
+                                <FormField
+                                    control={form.control}
+                                    name="donate"
+                                    render={({ field }) => (
+                                        <FormItem className=" mt-[-10px]">
+                                            <FormLabel>Donate</FormLabel>
                                             <FormControl>
                                                 <Input type="number" placeholder="Amount" {...field} />
                                             </FormControl>

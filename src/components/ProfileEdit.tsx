@@ -67,7 +67,7 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
     const TotalDonate = async () => {
         const returnArray = paymentList.filter((item) => item.type === "DONATE");
         let returnStringArray: string[] = [];
-        returnArray.forEach((item) => returnStringArray.push(item.loanPayment as string));
+        returnArray.forEach((item) => returnStringArray.push(item.donate as string));
         const returnNumberArray = returnStringArray.map(Number);
         const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
         return `${total}`;
@@ -93,7 +93,13 @@ function ProfileEdit({ data, paymentList }: { data: DonorIProps, paymentList: Do
         const returnNumberArray2 = returnStringArray2.map(Number);
         const payment = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-        return `${total - payment}`;
+        const returnArray3 = paymentList.filter((item) => item.type === "DONATE");
+        let returnStringArray3: string[] = [];
+        returnArray3.forEach((item) => returnStringArray3.push(item.donate as string));
+        const returnNumberArray3 = returnStringArray3.map(Number);
+        const donate = returnNumberArray3.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+        return `${(total - payment) - donate}`;
     }
 
     const [editMode, setEditMode] = useState<Boolean>(false);

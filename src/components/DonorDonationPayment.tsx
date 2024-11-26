@@ -70,6 +70,7 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
         const donorUsername = username;
         const amount = values.amount;
         const loanPayment = values.loanPayment;
+        const donate = values.donate;
         const type = values.type;
 
         const previous = values?.date as any;
@@ -79,9 +80,8 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
 
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, donate }, {
             onSuccess: (data: DonorPaymentIProps) => {
-                console.log({ data })
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
                 } else {
