@@ -40,14 +40,6 @@ const formSchema = z.object({
     returnDate: z.date({
         required_error: "return date is required.",
     }).optional(),
-}).refine((data) => {
-    if (data.type === "LENDING") {
-        return !!data.returnDate
-    }
-    return true;
-}, {
-    message: "return date is required.",
-    path: ["returnDate"]
 })
 
 
@@ -219,49 +211,6 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
                                 />
                             )
                         }
-                        {
-                            Type === "LENDING" && (
-                                <FormField
-                                    control={form.control}
-                                    name="returnDate"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-col">
-                                            <FormLabel>Date of return</FormLabel>
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <FormControl>
-                                                        <Button
-                                                            variant={"outline"}
-                                                            className={cn(
-                                                                "text-color-main pl-3 text-left font-normal",
-                                                                !field.value && "text-muted-foreground"
-                                                            )}
-                                                        >
-                                                            {field.value ? (
-                                                                format(field.value, "PPP")
-                                                            ) : (
-                                                                <span>Pick a date</span>
-                                                            )}
-                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                        </Button>
-                                                    </FormControl>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-auto p-0" align="start">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={field.value}
-                                                        onSelect={field.onChange}
-                                                        initialFocus
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )
-                        }
-
                     </div>
 
                     <DialogFooter>

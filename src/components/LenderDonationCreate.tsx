@@ -32,7 +32,6 @@ import { DialogClose, DialogFooter } from "./ui/dialog"
 const formSchema = z.object({
     type: z.enum(["LENDING"]),
     amount: z.string().optional(),
-    donate: z.string().optional(),
     loanPayment: z.string().optional(),
     date: z.date({
         required_error: "A date is required.",
@@ -60,14 +59,13 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
         defaultValues: {
             amount: "0",
             loanPayment: "0",
-            donate: "0"
         }
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt, returnDate, donate
+                donorUsername, amount, loanPayment, type, createAt, returnDate
             });
             return response.data;
         },
@@ -81,7 +79,6 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
         const amount = values.amount;
         const loanPayment = values.loanPayment;
         const type = values.type;
-        const donate = values.donate;
 
         const previous = values?.date as any;
         const createAt = new Date(previous);
@@ -94,7 +91,7 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
 
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
@@ -133,7 +130,6 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value="LENDING">LENDING</SelectItem>
-                                                <SelectItem value="DONATE">DONATE</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
@@ -187,41 +183,6 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
                             Type === "LENDING" && (
                                 <FormField
                                     control={form.control}
-                                    name="amount"
-                                    render={({ field }) => (
-                                        <FormItem className=" mt-[-10px]">
-                                            <FormLabel>Amount</FormLabel>
-                                            <FormControl>
-                                                <Input type="number" placeholder="Amount" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )
-                        }
-                        {
-                            Type === "LENDING" && (
-                                <FormField
-                                    control={form.control}
-                                    name="donate"
-                                    render={({ field }) => (
-                                        <FormItem className=" mt-[-10px]">
-                                            <FormLabel>Donate</FormLabel>
-                                            <FormControl>
-                                                <Input type="number" placeholder="Amount" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )
-                        }
-
-                        {
-                            Type === "LENDING" && (
-                                <FormField
-                                    control={form.control}
                                     name="returnDate"
                                     render={({ field }) => (
                                         <FormItem className="flex flex-col">
@@ -254,6 +215,23 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
                                                     />
                                                 </PopoverContent>
                                             </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )
+                        }
+                        {
+                            Type === "LENDING" && (
+                                <FormField
+                                    control={form.control}
+                                    name="amount"
+                                    render={({ field }) => (
+                                        <FormItem className=" mt-[-10px]">
+                                            <FormLabel>Amount</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="Amount" {...field} />
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
