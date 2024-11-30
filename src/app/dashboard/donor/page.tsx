@@ -3,6 +3,7 @@ import {
 	Table,
 	TableBody,
 	TableCell,
+	TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -15,7 +16,61 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ClipboardPenLine } from 'lucide-react';
 import prisma from '@/lib/prisma';
-import { string } from 'zod';
+import { getSearchDonor } from '@/lib/getSearchDonor';
+import SearchBox from '@/components/SearchBox';
+import PaginationPart from '@/components/Pagination';
+
+
+const TotalAmount = async () => {
+	cookies();
+	const paymentList = await prisma.donorPayment.findMany();
+	const returnArray = paymentList.filter((item) => item.type === "LENDING");
+	let returnStringArray: string[] = [];
+	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
+	const returnNumberArray = returnStringArray.map(Number);
+	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	return total;
+}
+
+const Refound = async () => {
+	cookies();
+	const paymentList = await prisma.donorPayment.findMany();
+	let returnStringArray: string[] = [];
+	paymentList.forEach((item) => returnStringArray.push(item.loanPayment as string));
+	const returnNumberArray = returnStringArray.map(Number);
+	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	return total;
+}
+
+const TotalDonate = async () => {
+	cookies();
+	const paymentList = await prisma.donorPayment.findMany();
+
+	const returnArray2 = paymentList.filter((item) => item.type === "DONATE");
+	let returnStringArray2: string[] = [];
+	returnArray2.forEach((item) => returnStringArray2.push(item.donate as string));
+	const returnNumberArray2 = returnStringArray2.map(Number);
+	const donate = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	return donate;
+}
+
+const Donate = async (username: string, status: string) => {
+	cookies();
+	const paymentList = await prisma.donorPayment.findMany({
+		where: {
+			donorUsername: username
+		}
+	});
+
+	const returnArray2 = paymentList.filter((item) => item.type === "DONATE");
+	let returnStringArray2: string[] = [];
+	returnArray2.forEach((item) => returnStringArray2.push(item.donate as string));
+	const returnNumberArray2 = returnStringArray2.map(Number);
+	const donate = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	return donate;
+}
 
 
 
@@ -56,6 +111,30 @@ const TotalRefound = async (username: string, status: string) => {
 	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
 	const result = status === "LEADER" ? total : 0;
+
+	return result;
+}
+const TotalOutstanding = async () => {
+	cookies();
+	const paymentList = await prisma.donorPayment.findMany();
+	const returnArray = paymentList.filter((item) => item.type === "LENDING");
+	let returnStringArray: string[] = [];
+	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
+	const returnNumberArray = returnStringArray.map(Number);
+	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	let returnStringArray2: string[] = [];
+	paymentList.forEach((item) => returnStringArray2.push(item.loanPayment as string));
+	const returnNumberArray2 = returnStringArray2.map(Number);
+	const payment = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	const returnArray3 = paymentList.filter((item) => item.type === "DONATE");
+	let returnStringArray3: string[] = [];
+	returnArray3.forEach((item) => returnStringArray3.push(item.donate as string));
+	const returnNumberArray3 = returnStringArray3.map(Number);
+	const donate = returnNumberArray3.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	const result = (total - payment) - donate;
 
 	return result;
 }
@@ -111,23 +190,17 @@ const DonorTotalAmount = async (username: string) => {
 }
 
 
-async function DonorList() {
+async function DonorList({ searchParams }: {
+	searchParams?: {
+		search?: string,
+		page?: string,
+	}
+}) {
 	cookies();
+	const query = searchParams?.search || "all";
+	const page = searchParams?.page || "1";
 
-	const donors: DonorIProps[] = await prisma.donor.findMany({
-		orderBy: {
-			code: "asc"
-		}
-	}) as DonorIProps[];
-
-
-	const response = await fetch("https://af-admin.vercel.app/api/donor_payment");
-	if (!response.ok) {
-		throw new Error("Failed fetch Data Donor Payment");
-	};
-	const paymentList: DonorPaymentIProps[] = await response.json();
-
-
+	const donors = await getSearchDonor(query, page) as DonorIProps[];
 
 	async function getStatus(status: string) {
 		if (status === "LEADER") {
@@ -149,6 +222,7 @@ async function DonorList() {
 							<TableCell className="font-medium uppercase">{getStatus(item.status)}</TableCell>
 							<TableCell className="font-medium uppercase">{TotalLending(item.username, item.status)}</TableCell>
 							<TableCell className="font-medium uppercase">{TotalRefound(item.username, item.status)}</TableCell>
+							<TableCell className="font-medium uppercase">{Donate(item.username, item.status)}</TableCell>
 							<TableCell className="font-medium uppercase">{Outstanding(item.username, item.status)}</TableCell>
 							<TableCell className="font-medium uppercase">
 								<Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
@@ -168,7 +242,13 @@ async function DonorList() {
 
 
 
-async function page() {
+async function page({ searchParams }: {
+	searchParams?: {
+		search?: string,
+		page?: string,
+	}
+}) {
+	const length = (await prisma.donor.findMany()).length;
 	return (
 		<div className='flex flex-col'>
 			<h2 className="text-xl text-center">Donor List</h2>
@@ -176,7 +256,7 @@ async function page() {
 				<Button asChild>
 					<Link className=' bg-color-main hover:bg-color-sub' href={`donor/create`}>Donor Create</Link>
 				</Button>
-				<Input className='w-64' type="text" placeholder="Search" />
+				<SearchBox />
 			</div>
 			<Table>
 				<TableHeader>
@@ -184,17 +264,31 @@ async function page() {
 						<TableHead>CODE</TableHead>
 						<TableHead className='w-[200px]'>NAME</TableHead>
 						<TableHead>TYPE</TableHead>
-						<TableHead className=' uppercase'>Total Lending </TableHead>
-						<TableHead className=' uppercase'>Total Refound</TableHead>
+						<TableHead className=' uppercase'>amount</TableHead>
+						<TableHead className=' uppercase'>Refound</TableHead>
+						<TableHead className=' uppercase'>donate</TableHead>
 						<TableHead className=' uppercase' >Outstanding</TableHead>
 						<TableHead>UPDATED</TableHead>
 						<TableHead>DELETED</TableHead>
 					</TableRow>
 				</TableHeader>
 				<Suspense fallback={<h2 className='p-4 text-center '>Loading...</h2>} >
-					<DonorList />
+					<DonorList searchParams={searchParams} />
 				</Suspense>
+				<TableFooter>
+					<TableRow>
+						<TableCell colSpan={3}>Total</TableCell>
+						<TableCell >{TotalAmount()}</TableCell>
+						<TableCell >{Refound()}</TableCell>
+						<TableCell >{TotalDonate()}</TableCell>
+						<TableCell >{TotalOutstanding()}</TableCell>
+					</TableRow>
+				</TableFooter>
 			</Table>
+
+			<div className="flex justify-center py-4">
+				<PaginationPart item={10} data={length} />
+			</div>
 		</div>
 	)
 }
