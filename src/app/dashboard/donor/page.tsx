@@ -150,8 +150,9 @@ const TotalOutstanding = async () => {
 	const donate = returnNumberArray3.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
 	const result = (total - payment) - donate;
+	const formatted = new Intl.NumberFormat('en-IN').format(result)
 
-	return result;
+	return `${formatted}/=`;
 }
 
 const Outstanding = async (username: string, status: string) => {
