@@ -24,13 +24,25 @@ import PaginationPart from '@/components/Pagination';
 const TotalAmount = async () => {
 	cookies();
 	const paymentList = await prisma.donorPayment.findMany();
+	const paymentList2 = await prisma.donorPayment.findMany();
+
 	const returnArray = paymentList.filter((item) => item.type === "LENDING");
 	let returnStringArray: string[] = [];
 	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
 	const returnNumberArray = returnStringArray.map(Number);
 	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-	return total;
+
+	const returnArray2 = paymentList2.filter((item) => item.type === "DONATE");
+	let returnStringArray2: string[] = [];
+	returnArray2.forEach((item) => returnStringArray2.push(item.donate as string));
+	const returnNumberArray2 = returnStringArray2.map(Number);
+	const donate = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	const result = total + donate;
+
+	const formatted = new Intl.NumberFormat('en-IN').format(result)
+
+	return `${formatted}/=`;
 }
 
 const Refound = async () => {
@@ -40,8 +52,9 @@ const Refound = async () => {
 	paymentList.forEach((item) => returnStringArray.push(item.loanPayment as string));
 	const returnNumberArray = returnStringArray.map(Number);
 	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	const formatted = new Intl.NumberFormat('en-IN').format(total)
 
-	return total;
+	return `${formatted}/=`;
 }
 
 const TotalDonate = async () => {
@@ -53,7 +66,9 @@ const TotalDonate = async () => {
 	returnArray2.forEach((item) => returnStringArray2.push(item.donate as string));
 	const returnNumberArray2 = returnStringArray2.map(Number);
 	const donate = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-	return donate;
+	const formatted = new Intl.NumberFormat('en-IN').format(donate)
+
+	return `${formatted}/=`;
 }
 
 const Donate = async (username: string, status: string) => {
