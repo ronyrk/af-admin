@@ -138,18 +138,7 @@ const TotalOutstanding = async () => {
 	const returnNumberArray = returnStringArray.map(Number);
 	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-	let returnStringArray2: string[] = [];
-	paymentList.forEach((item) => returnStringArray2.push(item.loanPayment as string));
-	const returnNumberArray2 = returnStringArray2.map(Number);
-	const payment = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-	const returnArray3 = paymentList.filter((item) => item.type === "DONATE");
-	let returnStringArray3: string[] = [];
-	returnArray3.forEach((item) => returnStringArray3.push(item.donate as string));
-	const returnNumberArray3 = returnStringArray3.map(Number);
-	const donate = returnNumberArray3.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-	const result = (total - payment) - donate;
+	const result = total;
 	const formatted = new Intl.NumberFormat('en-IN').format(result)
 
 	return `${formatted}/=`;
