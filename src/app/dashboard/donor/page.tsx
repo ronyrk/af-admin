@@ -24,7 +24,6 @@ import PaginationPart from '@/components/Pagination';
 const TotalAmount = async () => {
 	cookies();
 	const paymentList = await prisma.donorPayment.findMany();
-	const paymentList2 = await prisma.donorPayment.findMany();
 
 	const returnArray = paymentList.filter((item) => item.type === "LENDING");
 	let returnStringArray: string[] = [];
@@ -33,12 +32,12 @@ const TotalAmount = async () => {
 	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
 
-	const returnArray2 = paymentList2.filter((item) => item.type === "DONATE");
+	const returnArray2 = paymentList.filter((item) => item.type === "DONATE");
 	let returnStringArray2: string[] = [];
 	returnArray2.forEach((item) => returnStringArray2.push(item.donate as string));
 	const returnNumberArray2 = returnStringArray2.map(Number);
 	const donate = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-	const result = total + donate;
+	const result = total;
 
 	const formatted = new Intl.NumberFormat('en-IN').format(result)
 
@@ -145,8 +144,6 @@ const TotalOutstanding = async () => {
 	returnArray2.forEach((item) => returnStringArray2.push(item.loanPayment as string));
 	const returnNumberArray2 = returnStringArray2.map(Number);
 	const refound = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-	console.log({ refound });
 
 	const paymentList3 = await prisma.donorPayment.findMany();
 
