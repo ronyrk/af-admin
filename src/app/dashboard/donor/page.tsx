@@ -132,13 +132,31 @@ const TotalRefound = async (username: string, status: string) => {
 const TotalOutstanding = async () => {
 	cookies();
 	const paymentList = await prisma.donorPayment.findMany();
+
 	const returnArray = paymentList.filter((item) => item.type === "LENDING");
 	let returnStringArray: string[] = [];
 	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
 	const returnNumberArray = returnStringArray.map(Number);
 	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-	const result = total;
+
+	const returnArray2 = paymentList.filter((item) => item.type === "REFOUND");
+	let returnStringArray2: string[] = [];
+	returnArray2.forEach((item) => returnStringArray2.push(item.loanPayment as string));
+	const returnNumberArray2 = returnStringArray2.map(Number);
+	const refound = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	console.log({ refound });
+
+	const paymentList3 = await prisma.donorPayment.findMany();
+
+	const returnArray3 = paymentList3.filter((item) => item.type === "DONATE");
+	let returnStringArray3: string[] = [];
+	returnArray3.forEach((item) => returnStringArray3.push(item.donate as string));
+	const returnNumberArray3 = returnStringArray3.map(Number);
+	const donate = returnNumberArray3.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	const result = total - (refound + donate);
 	const formatted = new Intl.NumberFormat('en-IN').format(result)
 
 	return `${formatted}/=`;
