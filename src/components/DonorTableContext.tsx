@@ -22,7 +22,7 @@ function DonorTableContext({ username, status }: { username: string, status: str
                 <DialogTrigger><Button >Deposit</Button></DialogTrigger>
                 <DialogContent>
                     {
-                        status === "LEADER" ? <LenderDonationCreate setOpen={setOpen} username={username} /> : <DonorDonationCreate setOpen={setOpen} username={username} />
+                        status === "LEADER" ? <LenderDonationCreate status={status} setOpen={setOpen} username={username} /> : <DonorDonationCreate status={status} setOpen={setOpen} username={username} />
                     }
                 </DialogContent>
             </Dialog>

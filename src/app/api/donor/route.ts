@@ -34,7 +34,7 @@ export const POST = async (request: Request) => {
 		if (error?.code === 'P2002') {
 			return NextResponse.json({ message: `a new user cannot be created with this ${error?.meta?.target}` });
 		}
-		console.log({ error })
+		// console.log({ error })
 		return NextResponse.json({ message: "Branch Created Failed" });
 	}
 }

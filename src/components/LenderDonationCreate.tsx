@@ -51,7 +51,7 @@ const formSchema = z.object({
 })
 
 
-function LenderDonationCreate({ username, setOpen }: { username: string, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+function LenderDonationCreate({ username, setOpen, status }: { username: string, setOpen: React.Dispatch<React.SetStateAction<boolean>>, status: string, }) {
     const router = useRouter();
 
     // 1. Define your form.
@@ -66,9 +66,9 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate, status }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt, returnDate, donate
+                donorUsername, amount, loanPayment, type, createAt, returnDate, donate, status
             });
             return response.data;
         },
@@ -95,7 +95,7 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
 
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate, status }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
@@ -107,7 +107,7 @@ function LenderDonationCreate({ username, setOpen }: { username: string, setOpen
                 router.refresh();
             },
             onError: (error) => {
-                console.log({ error })
+                // console.log({ error })
                 toast.error("Donor payment Request Created Failed");
             }
         });

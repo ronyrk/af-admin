@@ -76,7 +76,7 @@ function DonorTable(params: ParamsIProps) {
                 <DonorTableContext status={params.data.status} username={params.data.username} />
                 {
                     params.data.status === "LEADER" && (
-                        <LenderTableContext username={params.data.username} />
+                        <LenderTableContext status={params.data.status} username={params.data.username} />
                     )
                 }
             </div>

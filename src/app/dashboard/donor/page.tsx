@@ -21,40 +21,59 @@ import SearchBox from '@/components/SearchBox';
 import PaginationPart from '@/components/Pagination';
 
 
-const TotalAmount = async () => {
+const TotalAmount = async (): Promise<string> => {
+	// Ensure cookies are processed (likely for authentication or session validation).
 	cookies();
+
+	// Fetch all donor payment records from the database.
 	const paymentList = await prisma.donorPayment.findMany();
 
-	const returnArray = paymentList.filter((item) => item.type === "LENDING");
-	let returnStringArray: string[] = [];
-	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
-	const returnNumberArray = returnStringArray.map(Number);
-	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	// Calculate the total of "LENDING" type payments.
+	const totalLending = paymentList
+		.filter((item) => item.type === "LENDING")
+		.reduce((sum, item) => sum + Number(item.amount), 0);
+
+	// Calculate the total donations where status is "DONOR".
+	const totalDonations = paymentList
+		.filter((item) => item.type === "DONATE" && item.status === "DONOR")
+		.reduce((sum, item) => sum + Number(item.donate || 0), 0);
+
+	// Combine the two totals to get the final result.
+	const grandTotal = totalLending + totalDonations;
+
+	// Format the result into a localized format for Bangladesh without decimals.
+	const formattedTotal = new Intl.NumberFormat("en-BD", {
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 0,
+	}).format(grandTotal);
+
+	// Append "/=" to the formatted total.
+	return `${formattedTotal}/=`;
+};
 
 
-	const returnArray2 = paymentList.filter((item) => item.type === "DONATE");
-	let returnStringArray2: string[] = [];
-	returnArray2.forEach((item) => returnStringArray2.push(item.donate as string));
-	const returnNumberArray2 = returnStringArray2.map(Number);
-	const donate = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-	const result = total;
-
-	const formatted = new Intl.NumberFormat('en-IN').format(result)
-
-	return `${formatted}/=`;
-}
-
-const Refound = async () => {
+const calculateRefund = async (): Promise<string> => {
+	// Ensure cookies are processed (likely for authentication or session validation).
 	cookies();
-	const paymentList = await prisma.donorPayment.findMany();
-	let returnStringArray: string[] = [];
-	paymentList.forEach((item) => returnStringArray.push(item.loanPayment as string));
-	const returnNumberArray = returnStringArray.map(Number);
-	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-	const formatted = new Intl.NumberFormat('en-IN').format(total)
 
-	return `${formatted}/=`;
-}
+	// Fetch all donor payment records from the database.
+	const paymentList = await prisma.donorPayment.findMany();
+
+	// Calculate the total loan payment.
+	const totalRefund = paymentList
+		.map((item) => Number(item.loanPayment || 0)) // Convert loanPayment to a number, defaulting to 0 if null/undefined.
+		.reduce((sum, current) => sum + current, 0); // Sum up all loan payments.
+
+	// Format the result for Bangladesh without decimals.
+	const formattedTotal = new Intl.NumberFormat("en-BD", {
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 0,
+	}).format(totalRefund);
+
+	// Append "/=" to the formatted total and return.
+	return `${formattedTotal}/=`;
+};
+
 
 const TotalDonate = async () => {
 	cookies();
@@ -128,36 +147,41 @@ const TotalRefound = async (username: string, status: string) => {
 
 	return result;
 }
-const TotalOutstanding = async () => {
+const TotalOutstanding = async (): Promise<string> => {
+	// Ensure cookies are processed (likely for authentication or session validation).
 	cookies();
+
+	// Fetch all donor payment records from the database.
 	const paymentList = await prisma.donorPayment.findMany();
 
-	const returnArray = paymentList.filter((item) => item.type === "LENDING");
-	let returnStringArray: string[] = [];
-	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
-	const returnNumberArray = returnStringArray.map(Number);
-	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	// Calculate total LENDING amount.
+	const totalLending = paymentList
+		.filter((item) => item.type === "LENDING")
+		.reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
+	// Calculate total REFOUND payments.
+	const totalRefund = paymentList
+		.filter((item) => item.type === "REFOUND")
+		.reduce((sum, item) => sum + Number(item.loanPayment || 0), 0);
 
-	const returnArray2 = paymentList.filter((item) => item.type === "REFOUND");
-	let returnStringArray2: string[] = [];
-	returnArray2.forEach((item) => returnStringArray2.push(item.loanPayment as string));
-	const returnNumberArray2 = returnStringArray2.map(Number);
-	const refound = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	// Calculate total DONATE amount for non-DONOR status.
+	const totalDonate = paymentList
+		.filter((item) => item.type === "DONATE" && item.status !== "DONOR")
+		.reduce((sum, item) => sum + Number(item.donate || 0), 0);
 
-	const paymentList3 = await prisma.donorPayment.findMany();
+	// Calculate the total outstanding amount.
+	const result = totalLending - (totalRefund + totalDonate);
 
-	const returnArray3 = paymentList3.filter((item) => item.type === "DONATE");
-	let returnStringArray3: string[] = [];
-	returnArray3.forEach((item) => returnStringArray3.push(item.donate as string));
-	const returnNumberArray3 = returnStringArray3.map(Number);
-	const donate = returnNumberArray3.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	// Format the result for readability.
+	const formattedResult = new Intl.NumberFormat("en-BN", {
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 0,
+	}).format(result);
 
-	const result = total - (refound + donate);
-	const formatted = new Intl.NumberFormat('en-IN').format(result)
+	// Return the formatted result with "/=" appended.
+	return `${formattedResult}/=`;
+};
 
-	return `${formatted}/=`;
-}
 
 const Outstanding = async (username: string, status: string) => {
 	cookies();
@@ -299,7 +323,7 @@ async function page({ searchParams }: {
 					<TableRow>
 						<TableCell colSpan={3}>Total</TableCell>
 						<TableCell >{TotalAmount()}</TableCell>
-						<TableCell >{Refound()}</TableCell>
+						<TableCell >{calculateRefund()}</TableCell>
 						<TableCell >{TotalDonate()}</TableCell>
 						<TableCell >{TotalOutstanding()}</TableCell>
 					</TableRow>
