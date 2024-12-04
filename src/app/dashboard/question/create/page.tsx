@@ -64,7 +64,7 @@ function CreateFAQ() {
 				toast.error("Created Failed");
 			}
 		});
-		console.log(values, "result");
+		// console.log(values, "result");
 	}
 	return (
 		<div>

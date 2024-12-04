@@ -11,14 +11,14 @@ import {
 import { Button } from "@/components/ui/button"
 import DonorDonationPayment from './DonorDonationPayment';
 
-function LenderTableContext({ username }: { username: string }) {
+function LenderTableContext({ username, status }: { username: string, status: string, }) {
     const [open, setOpen] = useState(false);
     return (
         <>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger><Button >Payment</Button></DialogTrigger>
                 <DialogContent>
-                    <DonorDonationPayment setOpen={setOpen} username={username} />
+                    <DonorDonationPayment status={status} setOpen={setOpen} username={username} />
                 </DialogContent>
             </Dialog>
 

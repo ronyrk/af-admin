@@ -65,7 +65,7 @@ function BorrowersLoanCreate({ username }: { username: string }) {
 
         mutate({ amount, loanAmount, createAt, loanusername: username }, {
             onSuccess: (data) => {
-                console.log({ data })
+                // console.log({ data })
                 if (data?.id) {
                     toast.success("Borrowers Another Loan Create Successfully");
                 } else {

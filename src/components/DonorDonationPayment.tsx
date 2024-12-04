@@ -40,7 +40,7 @@ const formSchema = z.object({
 });
 
 
-function DonorDonationPayment({ username, setOpen }: { username: string, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+function DonorDonationPayment({ username, setOpen, status }: { username: string, setOpen: React.Dispatch<React.SetStateAction<boolean>>, status: string, }) {
     const router = useRouter();
 
     // 1. Define your form.
@@ -54,9 +54,9 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, returnDate, donate, status }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt, returnDate, donate
+                donorUsername, amount, loanPayment, type, createAt, returnDate, donate, status
             });
             return response.data;
         },
@@ -66,7 +66,7 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log({ values })
+        // console.log({ values })
         const donorUsername = username;
         const amount = values.amount;
         const loanPayment = values.loanPayment;
@@ -80,7 +80,7 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
 
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt, donate }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, donate, status }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
@@ -94,7 +94,7 @@ function DonorDonationPayment({ username, setOpen }: { username: string, setOpen
                 }, 2000);
             },
             onError: (error) => {
-                console.log({ error })
+                // console.log({ error })
                 toast.error("Donor payment Request Created Failed");
             }
         });

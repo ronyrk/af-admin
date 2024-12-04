@@ -14,7 +14,7 @@ function Tiptap({ description, onChange }: { description: string, onChange: (ric
 		},
 		onUpdate({ editor }) {
 			onChange(editor.getHTML());
-			console.log(editor.getHTML());
+			// console.log(editor.getHTML());
 		}
 	})
 	return (

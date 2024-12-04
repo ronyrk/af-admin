@@ -73,7 +73,7 @@ function BorrowersLoanPayment({ username }: { username: string }) {
                 router.refresh();
             },
             onError: (error) => {
-                console.log({ error })
+                // console.log({ error })
                 toast.error("Borrowers payment Created Failed");
             }
         });

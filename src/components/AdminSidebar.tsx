@@ -124,7 +124,7 @@ function AdminSidebar() {
 
 	useEffect(() => {
 		if (isUserLoading) {
-			console.log("Loading..")
+			// console.log("Loading..")
 		} else {
 			if (!user?.email) {
 				redirect('/');

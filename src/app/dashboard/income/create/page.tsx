@@ -62,7 +62,7 @@ function IncomeCreate() {
 		const transaction = values.transaction;
 		const type = values.type;
 		const amount = values.amount;
-		console.log({ date })
+		// console.log({ date })
 		// Donor /Lender Payment Created
 		mutate({ date, amount, type, transaction }, {
 			onSuccess: ({ message, data }: { message: string, data: IncomeIProps }) => {

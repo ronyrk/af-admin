@@ -30,7 +30,7 @@ import { DialogClose, DialogFooter } from "./ui/dialog"
 
 
 const formSchema = z.object({
-    type: z.enum(["LENDING", "DONATE"]),
+    type: z.enum(["DONATE"]),
     amount: z.string().optional(),
     donate: z.string().optional(),
     loanPayment: z.string().optional(),
@@ -43,7 +43,7 @@ const formSchema = z.object({
 })
 
 
-function DonorDonationCreate({ username, setOpen }: { username: string, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+function DonorDonationCreate({ username, setOpen, status }: { username: string, setOpen: React.Dispatch<React.SetStateAction<boolean>>, status: string }) {
     const router = useRouter();
 
     // 1. Define your form.
@@ -57,9 +57,9 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, donate, returnDate }: DonorPaymentIPropsSend) => {
+        mutationFn: async ({ donorUsername, amount, loanPayment, type, createAt, donate, returnDate, status }: DonorPaymentIPropsSend) => {
             const response = await axios.post("/api/donor_payment", {
-                donorUsername, amount, loanPayment, type, createAt, donate, returnDate
+                donorUsername, amount, loanPayment, type, createAt, donate, returnDate, status
             });
             return response.data;
         },
@@ -85,7 +85,7 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
 
 
         // Donor /Lender Payment Created
-        mutate({ donorUsername, amount, loanPayment, type, createAt, donate, returnDate }, {
+        mutate({ donorUsername, amount, loanPayment, type, createAt, donate, returnDate, status }, {
             onSuccess: (data: DonorPaymentIProps) => {
                 if (data?.id) {
                     toast.success("Donor Payment Create Successfully");
@@ -100,7 +100,7 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
                 router.refresh();
             },
             onError: (error) => {
-                console.log({ error })
+                // console.log({ error })
                 toast.error("Donor payment Request Created Failed");
             }
         });
@@ -126,7 +126,6 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="LENDING">LENDING</SelectItem>
                                                 <SelectItem value="DONATE">DONATE</SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -171,23 +170,6 @@ function DonorDonationCreate({ username, setOpen }: { username: string, setOpen:
                                                     />
                                                 </PopoverContent>
                                             </Popover>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )
-                        }
-                        {
-                            Type === "LENDING" && (
-                                <FormField
-                                    control={form.control}
-                                    name="amount"
-                                    render={({ field }) => (
-                                        <FormItem className=" mt-[-10px]">
-                                            <FormLabel>Amount</FormLabel>
-                                            <FormControl>
-                                                <Input type="number" placeholder="Amount" {...field} />
-                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}

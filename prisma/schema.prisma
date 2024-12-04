@@ -123,6 +123,7 @@ model DonorPayment {
   loanPayment   String?
   donate        String?
   type          String
+  status        String
   createAt      DateTime
   returnDate    DateTime?
   upComing      Boolean   @default(true)

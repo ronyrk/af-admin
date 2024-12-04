@@ -16,7 +16,7 @@ export async function approvedRequest(id: string, loanusername: string, photoUrl
 		// console.log(approved, '#', removed)
 		return { message: "successfully" };
 	} catch (error) {
-		console.log(error);
+		// console.log(error);
 	}
 
 }
@@ -32,7 +32,7 @@ export async function ApproveProjectRequest(item: any) {
 		})
 		const removed = await prisma.projectDonateRequest.delete({ where: { id } });
 	} catch (error) {
-		console.log(error);
+		// console.log(error);
 	}
 
 }
@@ -49,7 +49,7 @@ export async function ApproveChildSponsor(item: any) {
 		})
 		const removed = await prisma.childsDonateRequest.delete({ where: { id } });
 	} catch (error) {
-		console.log(error);
+		// console.log(error);
 	}
 
 }
