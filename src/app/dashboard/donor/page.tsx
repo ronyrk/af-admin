@@ -20,23 +20,10 @@ import { getSearchDonor } from '@/lib/getSearchDonor';
 import SearchBox from '@/components/SearchBox';
 import PaginationPart from '@/components/Pagination';
 
-const donorCheck = async (username: string) => {
-	const result = await prisma.donor.findUnique({
-		where: {
-			username
-		}
-	});
-	return result?.status === "DONOR";
-}
 
 const TotalAmount = async () => {
 	cookies();
-	const paymentList = await prisma.donorPayment.findMany({
-		where: {
-			type: "LENDING"
-		}
-	});
-	// console.log(paymentList, "payment total amount")
+	const paymentList = await prisma.donorPayment.findMany();
 
 	const resultArray = paymentList.filter((item) => item.type === "LENDING");
 	let resultArrayString: string[] = [];
@@ -44,7 +31,13 @@ const TotalAmount = async () => {
 	const Amounts = resultArrayString.map(Number);
 	const total = Amounts.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-	const result = total;
+	const DonorDonates = paymentList.filter((item) => item.type === "DONATE");
+	let DonateStringArray3: string[] = [];
+	DonorDonates.forEach((item) => DonateStringArray3.push(item.status === "DONOR" ? item.donate as string : "0"));
+	const DonateArray = DonateStringArray3.map(Number);
+	const donate = DonateArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+	const result = total + donate;
 
 	const formatted = new Intl.NumberFormat('en-IN').format(result)
 
@@ -144,17 +137,27 @@ const TotalOutstanding = async () => {
 	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
 	const returnNumberArray = returnStringArray.map(Number);
 	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	console.log(returnArray, "lending", total);
 
 
 	const returnArray2 = paymentList.filter((item) => item.type === "REFOUND");
+
 	let returnStringArray2: string[] = [];
-	returnArray2.forEach((item) => returnStringArray2.push(item.loanPayment as string));
+	paymentList.forEach((item) => returnStringArray2.push(item.loanPayment as string));
 	const returnNumberArray2 = returnStringArray2.map(Number);
 	const refound = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	console.log(returnArray2, "refound", refound);
+
+	const donates = await prisma.donorPayment.findMany();
+
+	const DonorDonates = donates.filter((item) => item.type === "DONATE");
+	let DonateStringArray3: string[] = [];
+	paymentList.forEach((item) => DonateStringArray3.push(item.status === "DONOR" ? "0" : item.donate as string));
+	const DonateArray = DonateStringArray3.map(Number);
+	const donate = DonateArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
 
-
-	const result = total - refound;
+	const result = total - (refound + donate);
 	const formatted = new Intl.NumberFormat('en-IN').format(result)
 
 	return `${formatted}/=`;
