@@ -394,3 +394,24 @@ export interface AllLinkIProps {
 	path: string,
 	type: string,
 }
+export interface OwnerIProps {
+	id?: string,
+	username: string,
+	name: string,
+	email: string,
+	photos: string,
+	facebook: string,
+	linkedin: string,
+	phone: string,
+	about: string,
+	type: string
+}
+export interface OwnerUpdateIProps {
+	name: string,
+	photos: string,
+	facebook: string,
+	linkedin: string,
+	phone: string,
+	about: string,
+	type: string
+}
