@@ -94,6 +94,11 @@ function AdminSidebar() {
 	const others: RoutesIProps[] = [
 
 		{
+			name: "Team Member",
+			path: "/dashboard/owner",
+			active: path === "/dashboard/owner" || path === "/dashboard/owner/create"
+		},
+		{
 			name: "Projects",
 			path: "/dashboard/projects",
 			active: path === "/dashboard/projects" || path === "/dashboard/projects/create"
@@ -105,7 +110,7 @@ function AdminSidebar() {
 		},
 
 		{
-			name: "Member",
+			name: "Branch Member",
 			path: "/dashboard/member",
 			active: path === "/dashboard/member"
 		},
