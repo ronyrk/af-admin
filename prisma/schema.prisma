@@ -301,6 +301,19 @@ model All_links {
   path String
 }
 
+model Owner {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  username String @unique
+  name     String
+  email    String @unique
+  photos   String
+  facebook String
+  linkedin String
+  phone    String
+  about    String
+  type     String
+}
+
 enum Status {
   PENDING
   RUNNING
