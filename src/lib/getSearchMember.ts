@@ -23,7 +23,7 @@ export async function getSearchMember(query: string, page: string) {
         where: {
             OR: [
                 {
-                    username: {
+                    type: {
                         contains: query,
                         mode: "insensitive"
                     }
