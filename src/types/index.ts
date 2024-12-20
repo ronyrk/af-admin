@@ -406,3 +406,12 @@ export interface OwnerIProps {
 	about: string,
 	type: string
 }
+export interface OwnerUpdateIProps {
+	name: string,
+	photos: string,
+	facebook: string,
+	linkedin: string,
+	phone: string,
+	about: string,
+	type: string
+}
