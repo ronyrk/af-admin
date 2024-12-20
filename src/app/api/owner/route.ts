@@ -11,7 +11,7 @@ export const POST = async (request: Request) => {
                 username, name, email, photos, facebook, linkedin, phone, about, type
             }
         });
-        return NextResponse.json(result);
+        return NextResponse.json({ message: "Branch Created Successfully", data: result });
 
     } catch (error: any) {
         if (error?.code === 'P2002') {
