@@ -196,28 +196,28 @@ function MemberProfileEdit({ data }: { data: OwnerIProps }) {
                                     )}
                                 />
                             </h2>
-                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Social media Url :</span>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Facebook :</span>
                                 <FormField
                                     control={form.control}
                                     name="facebook"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.facebook as string}>{data.facebook}</Link>}
+                                                {editMode === true ? <Input className='text-xl w-full'{...field} /> : <Link href={data.facebook as string}>{data.facebook}</Link>}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                             </h2>
-                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Social media Url :</span>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Linkedin :</span>
                                 <FormField
                                     control={form.control}
                                     name="linkedin"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Link href={data.linkedin as string}>{data.linkedin}</Link>}
+                                                {editMode === true ? <Input className='text-xl w-full'{...field} /> : <Link href={data.linkedin as string}>{data.linkedin}</Link>}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
