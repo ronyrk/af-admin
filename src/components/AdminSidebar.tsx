@@ -23,9 +23,14 @@ function AdminSidebar() {
 	const route = path.split('/');
 	const hasana: RoutesIProps[] = [
 		{
-			name: "Branch",
+			name: "Summary",
 			path: "/dashboard",
-			active: path === '/dashboard' || path === '/dashboard/branch_create'
+			active: path === '/dashboard'
+		},
+		{
+			name: "Branch",
+			path: "/dashboard/branch",
+			active: path === '/dashboard/branch' || path === '/dashboard/branch/branch_create'
 		},
 		{
 			name: "Borrowers",
