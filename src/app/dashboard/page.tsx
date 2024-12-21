@@ -28,6 +28,11 @@ const TotalOutstanding = async (): Promise<string> => {
 	// Fetch all donor payment records from the database.
 	const paymentList = await prisma.donorPayment.findMany();
 
+	// Calculate total DONATE amount.
+	const donate = paymentList
+		.filter((item) => item.type === "DONATE")
+		.reduce((sum, item) => sum + Number(item.donate || 0), 0);
+
 	// Calculate total LENDING amount.
 	const totalLending = paymentList
 		.filter((item) => item.type === "LENDING")
@@ -44,13 +49,15 @@ const TotalOutstanding = async (): Promise<string> => {
 		.reduce((sum, item) => sum + Number(item.donate || 0), 0);
 
 	// Calculate the total outstanding amount.
-	const result = totalLending - (totalRefund);
+	const result = totalLending - (totalRefund + totalDonate);
+	const totalAmount = result + donate;
 
 	// Format the result for readability.
 	const formattedResult = new Intl.NumberFormat("en-BN", {
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 0,
-	}).format(result);
+	}).format(totalAmount);
+	console.log(result, donate, totalAmount);
 
 	// Return the formatted result with "/=" appended.
 	return `BDT=${formattedResult}/=`;
