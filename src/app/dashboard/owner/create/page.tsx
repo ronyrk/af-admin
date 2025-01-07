@@ -73,7 +73,7 @@ function OwnerCreate() {
                     } else {
                         throw new Error(message)
                     }
-                    // router.push(`/dashboard/owner`);
+                    router.push(`/dashboard/owner`);
                     router.refresh();
                 },
                 onError: ({ message }: { message: any }) => {
