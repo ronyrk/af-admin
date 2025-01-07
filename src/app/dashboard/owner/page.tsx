@@ -18,6 +18,25 @@ import prisma from '@/lib/prisma';
 import SearchBox from '@/components/SearchBox';
 import PaginationPart from '@/components/Pagination';
 import { getSearchMember } from '@/lib/getSearchMember';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+
+async function htmlConvert(data: string) {
+    const jsonAndHtml = data.split("^");
+    const html = jsonAndHtml[0];
+
+    return (
+        <div className="py-2">
+            <p dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
+    )
+}
 
 
 
@@ -27,8 +46,7 @@ import { getSearchMember } from '@/lib/getSearchMember';
 
 
 
-
-async function DonorList({ searchParams }: {
+async function MemberList({ searchParams }: {
     searchParams?: {
         search?: string,
         page?: string,
@@ -53,12 +71,23 @@ async function DonorList({ searchParams }: {
                             <TableCell className="font-medium uppercase">{item.name}</TableCell>
                             <TableCell className="font-medium uppercase">{item.type}</TableCell>
                             <TableCell className="font-medium uppercase">
-                                <Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
-                                    <Link href={`owner/${item.username}`}><ClipboardPenLine /></Link>
-                                </Button>
+
+                                <Dialog>
+                                    <DialogTrigger>
+                                        <Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
+                                            <ClipboardPenLine />
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader className='p-4'>
+                                            {htmlConvert(item.description)}
+                                        </DialogHeader>
+                                    </DialogContent>
+                                </Dialog>
+
                             </TableCell>
                             <TableCell className="font-medium uppercase">
-                                <DeleteButton type='owner' username={item.username} />
+                                <DeleteButton type='owner' username={item.id || " "} />
                             </TableCell>
                         </TableRow>
                     ))
@@ -97,7 +126,7 @@ async function page({ searchParams }: {
                     </TableRow>
                 </TableHeader>
                 <Suspense fallback={<h2 className='p-4 text-center '>Loading...</h2>} >
-                    <DonorList searchParams={searchParams} />
+                    <MemberList searchParams={searchParams} />
                 </Suspense>
             </Table>
 

@@ -25,14 +25,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import TailwindEditor from "@/components/editor"
 
 const formSchema = z.object({
-    username: z.string().min(2).max(50),
-    email: z.string(),
-    about: z.string(),
+    position: z.string(),
+    description: z.string(),
     name: z.string(),
     facebook: z.string(),
     linkedin: z.string(),
-    phone: z.string(),
-    type: z.enum(["OWNER", "FOUNDER", "ADVISOR"])
+    mobile: z.string(),
+    type: z.string(),
 });
 
 function OwnerCreate() {
@@ -44,9 +43,9 @@ function OwnerCreate() {
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ username, name, email, photos, facebook, linkedin, phone, about, type }: OwnerIProps) => {
+        mutationFn: async ({ position, name, photos, facebook, linkedin, mobile, description, type }: OwnerIProps) => {
             const response = await axios.post("/api/owner", {
-                username, name, email, photos, facebook, linkedin, phone, about, type
+                position, name, photos, facebook, linkedin, mobile, description, type
             });
             return response.data;
         },
@@ -57,18 +56,17 @@ function OwnerCreate() {
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
         const photos = image;
-        const username = values.username;
-        const email = values.email;
+        const position = values.position;
         const name = values.name;
-        const about = values.about;
+        const description = values.description;
         const facebook = values.facebook;
         const linkedin = values.linkedin;
-        const phone = values.phone;
+        const mobile = values.mobile;
         const type = values.type;
 
         // Donor Created
         if (upload === true) {
-            mutate({ username, name, email, photos, facebook, linkedin, phone, about, type }, {
+            mutate({ position, name, photos, facebook, linkedin, mobile, description, type }, {
                 onSuccess: ({ data, message }: { data: OwnerIProps, message: string }) => {
                     if (data?.id) {
                         toast.success(message);
@@ -94,7 +92,7 @@ function OwnerCreate() {
                     <div className=" grid grid-cols-3 items-center gap-3">
                         <FormField
                             control={form.control}
-                            name="type"
+                            name="position"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Type</FormLabel>
@@ -102,14 +100,14 @@ function OwnerCreate() {
                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select a verified type" />
+                                                    <SelectValue placeholder="Select a Position" />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="OWNER">OWNER</SelectItem>
-                                                <SelectItem value="FOUNDER">FOUNDER</SelectItem>
-                                                <SelectItem value="ADVISOR">ADVISOR</SelectItem>
-
+                                                <SelectItem value="Label-1">Label-1</SelectItem>
+                                                <SelectItem value="Label-2">Label-2</SelectItem>
+                                                <SelectItem value="Label-3">Label-3</SelectItem>
+                                                <SelectItem value="Label-4">Label-4</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
@@ -119,12 +117,12 @@ function OwnerCreate() {
                         />
                         <FormField
                             control={form.control}
-                            name="username"
+                            name="type"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Username</FormLabel>
+                                    <FormLabel>Type</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="username" {...field} />
+                                        <Input placeholder="type" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -138,19 +136,6 @@ function OwnerCreate() {
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Name" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="email" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -184,7 +169,7 @@ function OwnerCreate() {
                         />
                         <FormField
                             control={form.control}
-                            name="phone"
+                            name="mobile"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Mobile</FormLabel>
@@ -214,7 +199,7 @@ function OwnerCreate() {
                     <div className="my-3">
                         <FormField
                             control={form.control}
-                            name="about"
+                            name="description"
                             render={({ field }) => (
                                 <FormItem className="">
                                     <FormLabel>Description</FormLabel>

@@ -12,7 +12,7 @@ async function page({ params }: {
 
     const member = await prisma.owner.findUnique({
         where: {
-            username
+            id: username
         }
     }) as OwnerIProps;
 

@@ -30,13 +30,13 @@ import Link from 'next/link';
 import UpdatedEditor from './UpdatedEditor';
 
 const formSchema = z.object({
-    about: z.string(),
-    type: z.string(),
-    name: z.string(),
-    phone: z.string(),
+    position: z.string(),
+    description: z.string(),
     facebook: z.string(),
     linkedin: z.string(),
-
+    mobile: z.string(),
+    type: z.string(),
+    name: z.string(),
 });
 
 async function htmlConvert(data: string) {
@@ -63,19 +63,20 @@ function MemberProfileEdit({ data }: { data: OwnerIProps }) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            about: data.about,
+            position: data.position,
+            description: data.description,
             type: data.type,
-            name: data.name,
-            phone: data.phone,
+            mobile: data.mobile,
             facebook: data.facebook,
             linkedin: data.linkedin,
+            name: data.name,
         }
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ name, photos, facebook, linkedin, phone, about, type, }: OwnerUpdateIProps) => {
-            const response = await axios.patch(`/api/owner/${data.username}`, {
-                name, photos, facebook, linkedin, phone, about, type
+        mutationFn: async ({ id, position, photos, facebook, linkedin, mobile, description, type }: OwnerUpdateIProps) => {
+            const response = await axios.patch(`/api/owner/${data.id}`, {
+                id, position, photos, facebook, linkedin, mobile, description, type
             });
             return response.data;
         },
@@ -83,26 +84,28 @@ function MemberProfileEdit({ data }: { data: OwnerIProps }) {
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
         const photos = image;
-        const name = values.name;
+        const position = values.position;
         const type = values.type;
-        const phone = values.phone;
-        const about = values.about;
+        const mobile = values.mobile;
+        const description = values.description;
         const facebook = values.facebook;
         const linkedin = values.linkedin;
+        const id = data.id as string;
+        const name = values.name;
 
         // Branch Created
-        mutate({ name, photos, facebook, linkedin, phone, about, type }, {
-            onSuccess: ({ message, result }: { message: string, result: DonorIProps }) => {
+        mutate({ id, position, photos, name, facebook, linkedin, mobile, description, type }, {
+            onSuccess: ({ message, result }: { message: string, result: any }) => {
                 if (result.id) {
                     toast.success(message);
                 } else {
-                    throw new Error("Donor Updated Failed");
+                    throw new Error("Member Updated Failed");
                 }
                 setEditMode(false);
                 router.refresh();
             },
             onError: (error) => {
-                toast.error("Donor Updated Failed");
+                toast.error("Member Updated Failed");
             }
         });
     };
@@ -132,13 +135,14 @@ function MemberProfileEdit({ data }: { data: OwnerIProps }) {
                                                 <Select onValueChange={field.onChange} defaultValue={data.type}>
                                                     <FormControl>
                                                         <SelectTrigger disabled={editMode === false}>
-                                                            <SelectValue placeholder="Select a verified type" />
+                                                            <SelectValue placeholder="Select a Position" />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem value="OWNER">OWNER</SelectItem>
-                                                        <SelectItem value="FOUNDER">FOUNDER</SelectItem>
-                                                        <SelectItem value="ADVISOR">ADVISOR</SelectItem>
+                                                        <SelectItem value="Label-1">Label-1</SelectItem>
+                                                        <SelectItem value="Label-2">Label-2</SelectItem>
+                                                        <SelectItem value="Label-3">Label-3</SelectItem>
+                                                        <SelectItem value="Label-4">Label-4</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>
@@ -179,13 +183,24 @@ function MemberProfileEdit({ data }: { data: OwnerIProps }) {
                                     )}
                                 />
                             </h2>
-
-                            <h2 className=" flex flex-row items-center font-normal text-[18px]  text-color-main"><span className="font-semibold mr-2">UserName:</span>{data.username}</h2>
-                            <h2 className=" flex flex-row items-center font-normal text-[18px]  text-color-main"><span className="font-semibold mr-2">Email:</span>{data.email}</h2>
+                            <h2 className=" font-semibold text-xl py-1  text-color-main">
+                                <FormField
+                                    control={form.control}
+                                    name="type"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </h2>
                             <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Mobile :</span>
                                 <FormField
                                     control={form.control}
-                                    name="phone"
+                                    name="mobile"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
@@ -230,24 +245,24 @@ function MemberProfileEdit({ data }: { data: OwnerIProps }) {
                     <div className="p-2">
                         <FormField
                             control={form.control}
-                            name="about"
+                            name="description"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
                                         {editMode === true ? <FormField
                                             control={form.control}
-                                            name="about"
+                                            name="description"
                                             render={({ field }) => (
                                                 <FormItem className="">
                                                     <FormLabel>Description</FormLabel>
                                                     <FormControl className="">
-                                                        <UpdatedEditor content={data.about} description={field.name} onChange={field.onChange} value={field.value} />
+                                                        <UpdatedEditor content={data.description} description={field.name} onChange={field.onChange} value={field.value} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
                                         /> : <div className='p-4 border-[2px] rounded'>
-                                            {htmlConvert(data.about)}
+                                            {htmlConvert(data.description)}
                                         </div>
                                         }
 

@@ -5,10 +5,10 @@ import { NextResponse } from "next/server";
 export const POST = async (request: Request) => {
     try {
         const body: OwnerIProps = await request.json();
-        const { username, name, email, photos, facebook, linkedin, phone, about, type } = body;
+        const { position, name, mobile, photos, facebook, linkedin, description, type } = body;
         const result = await prisma.owner.create({
             data: {
-                username, name, email, photos, facebook, linkedin, phone, about, type
+                position, name, mobile, photos, facebook, linkedin, description, type
             }
         });
         return NextResponse.json({ message: "Branch Created Successfully", data: result });
