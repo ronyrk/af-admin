@@ -18,6 +18,25 @@ import prisma from '@/lib/prisma';
 import SearchBox from '@/components/SearchBox';
 import PaginationPart from '@/components/Pagination';
 import { getSearchMember } from '@/lib/getSearchMember';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+
+function htmlConvert(data: string) {
+    const jsonAndHtml = data.split("^");
+    const html = jsonAndHtml[0];
+
+    return (
+        <div className="py-2">
+            <p dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
+    )
+}
 
 
 
@@ -27,8 +46,7 @@ import { getSearchMember } from '@/lib/getSearchMember';
 
 
 
-
-async function DonorList({ searchParams }: {
+async function MemberList({ searchParams }: {
     searchParams?: {
         search?: string,
         page?: string,
@@ -54,11 +72,11 @@ async function DonorList({ searchParams }: {
                             <TableCell className="font-medium uppercase">{item.type}</TableCell>
                             <TableCell className="font-medium uppercase">
                                 <Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
-                                    <Link href={`owner/${item.username}`}><ClipboardPenLine /></Link>
+                                    <Link href={`owner/${item.id}`}><ClipboardPenLine /></Link>
                                 </Button>
                             </TableCell>
                             <TableCell className="font-medium uppercase">
-                                <DeleteButton type='owner' username={item.username} />
+                                <DeleteButton type='owner' username={item.id || " "} />
                             </TableCell>
                         </TableRow>
                     ))
@@ -76,7 +94,10 @@ async function page({ searchParams }: {
         page?: string,
     }
 }) {
-    const length = (await prisma.owner.findMany()).length;
+    const query = searchParams?.search || "all";
+    const page = searchParams?.page || "1";
+
+    const owner = await getSearchMember(query, page) as OwnerIProps[];
     return (
         <div className='flex flex-col'>
             <h2 className="text-xl text-center">Member List</h2>
@@ -97,12 +118,12 @@ async function page({ searchParams }: {
                     </TableRow>
                 </TableHeader>
                 <Suspense fallback={<h2 className='p-4 text-center '>Loading...</h2>} >
-                    <DonorList searchParams={searchParams} />
+                    <MemberList searchParams={searchParams} />
                 </Suspense>
             </Table>
 
             <div className="flex justify-center py-4">
-                <PaginationPart item={10} data={length} />
+                <PaginationPart item={10} data={owner.length} />
             </div>
         </div>
     )

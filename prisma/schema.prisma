@@ -302,16 +302,15 @@ model All_links {
 }
 
 model Owner {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  username String @unique
-  name     String
-  email    String @unique
-  photos   String
-  facebook String
-  linkedin String
-  phone    String
-  about    String
-  type     String
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  type        String
+  name        String
+  position    String
+  photos      String
+  facebook    String
+  linkedin    String
+  mobile      String
+  description String
 }
 
 enum Status {

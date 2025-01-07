@@ -11,9 +11,6 @@ export async function getSearchMember(query: string, page: string) {
         const result = await prisma.owner.findMany({
             take,
             skip,
-            orderBy: {
-                name: "asc"
-            }
         });
         return result;
     }
@@ -36,9 +33,6 @@ export async function getSearchMember(query: string, page: string) {
                 },
             ]
         },
-        orderBy: {
-            name: "asc"
-        }
     })
     return result;
 };
