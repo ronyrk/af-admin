@@ -91,7 +91,6 @@ function TableExpenses() {
                             <Calendar
                                 mode="single"
                                 onSelect={setDate}
-                                initialFocus
                             />
                         </PopoverContent>
                     </Popover>

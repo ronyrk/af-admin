@@ -23,49 +23,58 @@ async function getMethod(method: string) {
 
 
 async function NewsList() {
-	cookies();
-	let res = await fetch('https://af-admin.vercel.app/api/donate');
-	if (!res.ok) {
-		throw new Error("Failed to fetch data list");
-	};
-	const data: DonateProps[] = await res.json();
+	try {
+		cookies();
+		let res = await fetch('https://af-admin.vercel.app/api/donate');
+		if (!res.ok) {
+			throw new Error("Failed to fetch data list");
+		};
+		const data: DonateProps[] = await res.json();
 
-	return (
-		<TableBody>
-			{
-				data.map((item, index: number) => (
-					<TableRow key={index}>
-						<TableCell className="font-medium">{`${moment(item?.createAt).format('DD/MM/YYYY')}`}</TableCell>
-						<TableCell className="font-medium uppercase">{item.name}</TableCell>
-						<TableCell className="font-medium lowercase">{item.email}</TableCell>
-						<TableCell className="font-medium ">{item.amount}</TableCell>
-						<TableCell className="font-medium ">{item.method ? item.method : "Outside"}</TableCell>
-						<TableCell className="font-medium uppercase">
-							{item.photoUrl === "" ? "N/A" : <Dialog>
-								<DialogTrigger>
-									<Image
-										alt='payment proved'
-										src={item.photoUrl as string}
-										width={80}
-										height={50}
-										className='object-contain h-[60px]'
-									/></DialogTrigger>
-								<DialogContent className=''>
-									<Image
-										alt='payment proved'
-										src={item.photoUrl as string}
-										width={500}
-										height={200}
-										className=' object-fill rounded-md'
-									/>
-								</DialogContent>
-							</Dialog>}
-						</TableCell>
-					</TableRow>
-				))
-			}
-		</TableBody>
-	)
+		return (
+			<TableBody>
+				{
+					data.map((item, index: number) => (
+						<TableRow key={index}>
+							<TableCell className="font-medium">{`${moment(item?.createAt).format('DD/MM/YYYY')}`}</TableCell>
+							<TableCell className="font-medium uppercase">{item.name}</TableCell>
+							<TableCell className="font-medium lowercase">{item.email}</TableCell>
+							<TableCell className="font-medium ">{item.amount}</TableCell>
+							<TableCell className="font-medium ">{item.method ? item.method : "Outside"}</TableCell>
+							<TableCell className="font-medium uppercase">
+								{item.photoUrl === "" ? "N/A" : <Dialog>
+									<DialogTrigger>
+										<Image
+											alt='payment proved'
+											src={item.photoUrl as string}
+											width={80}
+											height={50}
+											className='object-contain h-[60px]'
+										/></DialogTrigger>
+									<DialogContent className=''>
+										<Image
+											alt='payment proved'
+											src={item.photoUrl as string}
+											width={500}
+											height={200}
+											className=' object-fill rounded-md'
+										/>
+									</DialogContent>
+								</Dialog>}
+							</TableCell>
+						</TableRow>
+					))
+				}
+			</TableBody>
+		)
+	} catch (error) {
+		console.log(error);
+		return (
+			<div className=' text-center py-20'>
+				<h3>Error</h3>
+			</div>
+		)
+	}
 };
 
 
