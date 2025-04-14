@@ -313,6 +313,34 @@ model Owner {
   description String
 }
 
+model donor_request {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  phone       String
+  amount      String
+  method      String
+  photoUrl    String
+  about       String?
+  lives       String
+  hometown    String?
+  return_date String
+  createAt    DateTime @default(now())
+}
+
+model donor_payment_request {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  username    String   @unique
+  name        String
+  phone       String
+  amount      String
+  method      String
+  about       String?
+  lives       String
+  hometown    String?
+  return_date String
+  createAt    DateTime @default(now())
+}
+
 enum Status {
   PENDING
   RUNNING
