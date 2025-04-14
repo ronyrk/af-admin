@@ -21,8 +21,9 @@ import prisma from '@/lib/prisma';
 import Image from 'next/image';
 import icon from "../../../public/divider.svg";
 import { filterAndSortDonors } from '@/lib/fillterAndSortDonors';
-import { DonorPaymentIProps } from '@/types';
+import { ChildDonateRequestProps, DonorPaymentIProps, PaymentApproveIProps } from '@/types';
 import { getDonorName } from '@/lib/getDonorName';
+import { GetBranchDetails } from '@/lib/getBranchList';
 
 const TotalOutstanding = async (): Promise<string> => {
 	// Ensure cookies are processed (likely for authentication or session validation).
@@ -81,6 +82,18 @@ async function page() {
 	const updatedList = list.map(item => ({ ...item, upComing: false }));
 	const upComing = filterAndSortDonors(updatedList, skips, true);
 
+	const res = await fetch('https://af-admin.vercel.app/api/request');
+	if (!res.ok) {
+		throw new Error("Failed to fetch data");
+	};
+	const payments: PaymentApproveIProps[] = await res.json();
+
+	let response = await fetch('https://af-admin.vercel.app/api/donation-request');
+	if (!response.ok) {
+		throw new Error("Failed to fetch data list");
+	};
+	const childRequest: ChildDonateRequestProps[] = await response.json();
+
 	return (
 		<div className=''>
 			<div className="p-2 bg-white">
@@ -119,7 +132,7 @@ async function page() {
 									</tr>
 								</thead>
 								<tbody>
-									{upComing.slice(0, 4).map((item, index: number) => (
+									{upComing.slice(0, 3).map((item, index: number) => (
 										<tr key={index} className={`${index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"}`}>
 											<td className="py-2 px-4">{getDonorName(item.donorUsername)}</td>
 											<td className="text-right py-2 px-4">{item.amount}</td>
@@ -145,28 +158,24 @@ async function page() {
 									</tr>
 								</thead>
 								<tbody>
-									<tr className="bg-gray-200">
-										<td className="py-2 px-4">Arif Hossain</td>
-										<td className="text-right py-2 px-4">29670</td>
-									</tr>
-									<tr className="bg-gray-100">
-										<td className="py-2 px-4">Arif Hossain</td>
-										<td className="text-right py-2 px-4">29670</td>
-									</tr>
-									<tr className="bg-gray-200">
-										<td className="py-2 px-4">Arif Hossain</td>
-										<td className="text-right py-2 px-4">29670</td>
-									</tr>
+									{
+										payments.slice(0, 4).map((item, index: number) => (
+											<tr key={index} className={`${index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"}`}>
+												<td className="py-2 px-4">{GetBranchDetails(item.loanusername)}</td>
+												<td className="text-right py-2 px-4">{item.amount}</td>
+											</tr>
+										))
+									}
+
 								</tbody>
 							</table>
-							<div className="text-center py-2 text-sm">1 2 3</div>
 						</div>
 					</div>
 
 					{/* Chadid Donation Request List Panel */}
 					<div className="border border-gray-300 rounded shadow-sm">
 						<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">
-							Chadid Donation Request List
+							Child Donation Request List
 						</div>
 						<div className="p-0">
 							<table className="w-full">
@@ -177,24 +186,18 @@ async function page() {
 									</tr>
 								</thead>
 								<tbody>
-									<tr className="bg-gray-200">
-										<td className="py-2 px-4">জাকাত আমানত</td>
-										<td className="text-right py-2 px-4">29670</td>
-									</tr>
-									<tr className="bg-gray-100">
-										<td className="py-2 px-4">Arif Hossain</td>
-										<td className="text-right py-2 px-4">29670</td>
-									</tr>
-									<tr className="bg-gray-200">
-										<td className="py-2 px-4">Arif Hossain</td>
-										<td className="text-right py-2 px-4">29670</td>
-									</tr>
+									{
+										childRequest.map((item, index: number) => (
+											<tr key={index} className={`${index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"}`}>
+												<td className="py-2 px-4">{item.childName}</td>
+												<td className="text-right py-2 px-4">{item.amount}</td>
+											</tr>
+										))
+									}
 								</tbody>
 							</table>
-							<div className="text-center py-2 text-sm">1 2 3</div>
 						</div>
 					</div>
-
 					{/* Karje hasana Request List Panel */}
 					<div className="border border-gray-300 rounded shadow-sm md:col-span-2">
 						<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">Karje hasana Request List</div>
@@ -222,7 +225,6 @@ async function page() {
 									</tr>
 								</tbody>
 							</table>
-							<div className="text-center py-2 text-sm">1 2 3</div>
 						</div>
 					</div>
 				</div>
