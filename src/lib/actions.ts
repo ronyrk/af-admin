@@ -1,6 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import { revalidatePath } from "next/cache"
 import prisma from "./prisma";
 
 export async function approvedRequest(id: string, loanusername: string, photoUrl: string, method: string, createAt: Date, amount: string) {
@@ -52,4 +53,34 @@ export async function ApproveChildSponsor(item: any) {
 		// console.log(error);
 	}
 
+}
+
+
+// Define the data entry type
+
+// Server action to fetch all entries
+export async function fetchEntries() {
+	cookies();
+	const request = await prisma.donor_request.findMany({}) as any;
+	return request;
+	// Simulate network delay
+}
+
+// Server action to delete an entry
+export async function deleteEntry(id: string) {
+	try {
+		cookies();
+		// Find the entry by ID
+		await prisma.donor_request.delete({
+			where: { id },
+		})
+
+		// Revalidate the data
+		revalidatePath("/dashboard/donor/request")
+
+		return { success: true }
+	} catch (error) {
+		console.error("Error deleting entry:", error)
+		return { success: false, error: "Failed to delete entry" }
+	}
 }

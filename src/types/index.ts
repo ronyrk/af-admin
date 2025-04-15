@@ -416,3 +416,16 @@ export interface OwnerUpdateIProps {
 	mobile: string,
 	description: string,
 }
+export interface DonorRequestIProps {
+	id: string
+	name: string
+	phone: string
+	amount: string
+	method: string
+	photoUrl: string
+	about: string
+	lives: string
+	hometown: string
+	return_date: string
+	createAt: string
+}

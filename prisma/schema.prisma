@@ -330,13 +330,8 @@ model donor_request {
 model donor_payment_request {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   username    String   @unique
-  name        String
-  phone       String
   amount      String
   method      String
-  about       String?
-  lives       String
-  hometown    String?
   return_date String
   createAt    DateTime @default(now())
 }
