@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { revalidatePath } from "next/cache"
 import prisma from "./prisma";
-import { DonorPaymentIProps, DonorPaymentRequestIProps } from '@/types';
+import { DonorIProps, DonorPaymentIProps, DonorPaymentRequestIProps } from '@/types';
 
 export async function approvedRequest(id: string, loanusername: string, photoUrl: string, method: string, createAt: Date, amount: string) {
 	const loanAmount = "0";
@@ -135,5 +135,27 @@ export async function approveEntry(entry: DonorPaymentRequestIProps) {
 	} catch (error) {
 		console.error("Error approving entry:", error)
 		return { success: false, error: "Failed to approve entry" }
+	}
+}
+export async function getDonorData(username: string) {
+	try {
+		cookies();
+		const donor = await prisma.donor.findUnique({
+			where: {
+				username: username,
+			},
+		}) as DonorIProps;
+
+		return {
+			success: true,
+			data: donor,
+		}
+	} catch (error) {
+		console.error("Error fetching donor data:", error)
+		return {
+			success: false,
+			error: "Failed to fetch donor data",
+			data: null,
+		}
 	}
 }

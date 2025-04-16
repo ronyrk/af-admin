@@ -13,8 +13,8 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { toast } from "@/hooks/use-toast"
-import { approveEntry, deleteDonorPaymentRequest } from "@/lib/actions"
-import { DonorPaymentRequestIProps } from "@/types"
+import { approveEntry, deleteDonorPaymentRequest, getDonorData } from "@/lib/actions"
+import { DonorIProps, DonorPaymentRequestIProps } from "@/types"
 
 interface DataEntryListProps {
     initialEntries: DonorPaymentRequestIProps[]
@@ -25,6 +25,8 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
     const [selectedEntry, setSelectedEntry] = useState<DonorPaymentRequestIProps | null>(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [isPending, setIsPending] = useState(false)
+    const [isLoadingDonor, setIsLoadingDonor] = useState(false)
+    const [donorData, setDonorData] = useState<DonorIProps | null>(null);
 
     // Optimistic UI updates
     const [optimisticEntries, updateOptimisticEntries] = useOptimistic(
@@ -55,9 +57,41 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
     }
 
     // Handle view button click
-    const handleView = (entry: DonorPaymentRequestIProps) => {
+    // Handle view button click
+    const handleView = async (entry: DonorPaymentRequestIProps) => {
         setSelectedEntry(entry)
         setIsDialogOpen(true)
+        setIsLoadingDonor(true)
+        setDonorData(null)
+
+        try {
+            const result = await getDonorData(entry.username)
+
+            if (result.success && result.data) {
+                setDonorData(result.data)
+            } else if (!result.success) {
+                toast({
+                    title: "Error",
+                    description: result.error || "Failed to fetch donor data",
+                    variant: "destructive",
+                })
+            } else {
+                // No donor data found
+                toast({
+                    title: "No donor data",
+                    description: `No donor information found for ${entry.username}`,
+                })
+            }
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "An unexpected error occurred while fetching donor data",
+                variant: "destructive",
+            })
+            console.error("Error fetching donor data:", error)
+        } finally {
+            setIsLoadingDonor(false)
+        }
     }
 
     // Handle delete button click in the list
@@ -193,9 +227,26 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                             <div className="grid grid-cols-3 items-center gap-4">
-                                <span className="font-medium">Username:</span>
-                                <span className="col-span-2">{selectedEntry.username}</span>
+                                <span className="font-medium">Code:</span>
+                                <span className="col-span-2">{donorData?.code}</span>
                             </div>
+                            <div className="grid grid-cols-3 items-center gap-4">
+                                <span className="font-medium">Name:</span>
+                                <span className="col-span-2">{donorData?.name}</span>
+                            </div>
+                            <div className="grid grid-cols-3 items-center gap-4">
+                                <span className="font-medium">Mobile:</span>
+                                <span className="col-span-2">{donorData?.mobile}</span>
+                            </div>
+                            <div className="grid grid-cols-3 items-center gap-4">
+                                <span className="font-medium">Lives:</span>
+                                <span className="col-span-2">{donorData?.lives}</span>
+                            </div>
+                            <div className="grid grid-cols-3 items-center gap-4">
+                                <span className="font-medium">HomeTown:</span>
+                                <span className="col-span-2">{donorData?.hometown}</span>
+                            </div>
+
                             <div className="grid grid-cols-3 items-center gap-4">
                                 <span className="font-medium">Amount:</span>
                                 <span className="col-span-2">{formatCurrency(Number(selectedEntry.amount))}</span>
