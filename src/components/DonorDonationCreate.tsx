@@ -50,11 +50,6 @@ function DonorDonationCreate({ username, setOpen, status }: { username: string, 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            amount: "0",
-            loanPayment: "0",
-            donate: "0"
-        }
     });
 
     const { mutate, isPending } = useMutation({
