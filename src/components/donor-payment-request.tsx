@@ -198,7 +198,7 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
                                     <TableCell>BDT={entry.amount}/=</TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
-                                            <Button variant="outline" size="sm" onClick={() => handleView(entry)} disabled={isPending}>
+                                            <Button size="sm" onClick={() => handleView(entry)} disabled={isPending}>
                                                 View
                                             </Button>
                                             <Button
