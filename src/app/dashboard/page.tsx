@@ -72,8 +72,7 @@ async function page() {
 	const skips = 45;
 	const list = await prisma.donorPayment.findMany() as DonorPaymentIProps[];
 
-	const updatedList = list.map(item => ({ ...item, upComing: false }));
-	const upComing = filterAndSortDonors(updatedList, skips, true);
+	const upComing = filterAndSortDonors(list as any, skips, true);
 
 	const res = await fetch('https://af-admin.vercel.app/api/request');
 	if (!res.ok) {
@@ -112,6 +111,18 @@ async function page() {
 											<td className="py-2 px-4">কর্জে হাসনা</td>
 											<td className="text-right py-2 px-4">{TotalOutstanding()}</td>
 										</tr>
+										<tr className="bg-gray-200">
+											<td className="py-2 px-4">কর্জে হাসনা</td>
+											<td className="text-right py-2 px-4"></td>
+										</tr>
+										<tr className="bg-gray-200">
+											<td className="py-2 px-4">কর্জে হাসনা</td>
+											<td className="text-right py-2 px-4"></td>
+										</tr>
+										<tr className="bg-gray-200">
+											<td className="py-2 px-4">কর্জে হাসনা</td>
+											<td className="text-right py-2 px-4"></td>
+										</tr>
 									</tbody>
 								</table>
 							</div>
@@ -131,7 +142,7 @@ async function page() {
 										</tr>
 									</thead>
 									<tbody>
-										{upComing.slice(0, 3).map((item, index: number) => (
+										{upComing.slice(0, 4).map((item, index: number) => (
 											<tr key={index} className={`${index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"}`}>
 												<td className="py-2 px-4">{getDonorName(item.donorUsername)}</td>
 												<td className="text-right py-2 px-4">{item.amount}</td>
@@ -204,7 +215,7 @@ async function page() {
 					{/* Karje hasana Request List Panel */}
 					<Link href="/dashboard/donor/request" className="cursor-pointer">
 						<div className="border border-gray-300 rounded shadow-sm md:col-span-2">
-							<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">Donor Request List</div>
+							<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">New Donor Request List</div>
 							<div className="p-0">
 								<div className="border-b border-orange-300 mx-4 my-1 h-[2px]"></div>
 								<table className="w-full">
@@ -231,7 +242,7 @@ async function page() {
 					</Link>
 					<Link href="/dashboard/donor/payment-request" className="cursor-pointer">
 						<div className="border border-gray-300 rounded shadow-sm md:col-span-2">
-							<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">Donor Payment Request List</div>
+							<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">Old Donor Payment Request List</div>
 							<div className="p-0">
 								<div className="border-b border-orange-300 mx-4 my-1 h-[2px]"></div>
 								<table className="w-full">

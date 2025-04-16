@@ -34,6 +34,7 @@ interface DonorPaymentIProps {
 
 
 async function DonorList() {
+
     cookies();
     const skips = 45;
     const list = await prisma.donorPayment.findMany() as DonorPaymentIProps[];

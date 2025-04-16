@@ -68,7 +68,7 @@ async function NewsList() {
 			</TableBody>
 		)
 	} catch (error) {
-		console.log(error);
+		// console.log(error);
 		return (
 			<div className=' text-center py-20'>
 				<h3>Error</h3>

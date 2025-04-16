@@ -428,6 +428,9 @@ export interface DonorRequestIProps {
 	hometown: string
 	return_date: string
 	createAt: string
+	invoice?: string
+	transactionId?: string
+	sendNumber?: string
 }
 export interface DonorPaymentRequestIProps {
 	id: string
@@ -436,4 +439,7 @@ export interface DonorPaymentRequestIProps {
 	method: string
 	return_date: string
 	createAt: string
+	invoice?: string
+	transactionId?: string
+	sendNumber?: string
 }
