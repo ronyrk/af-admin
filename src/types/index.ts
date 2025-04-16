@@ -429,3 +429,11 @@ export interface DonorRequestIProps {
 	return_date: string
 	createAt: string
 }
+export interface DonorPaymentRequestIProps {
+	id: string
+	username: string
+	amount: string
+	method: string
+	return_date: string
+	createAt: Date
+}

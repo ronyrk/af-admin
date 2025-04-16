@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers';
 import { revalidatePath } from "next/cache"
 import prisma from "./prisma";
+import { DonorPaymentIProps, DonorPaymentRequestIProps } from '@/types';
 
 export async function approvedRequest(id: string, loanusername: string, photoUrl: string, method: string, createAt: Date, amount: string) {
 	const loanAmount = "0";
@@ -83,4 +84,23 @@ export async function deleteEntry(id: string) {
 		console.error("Error deleting entry:", error)
 		return { success: false, error: "Failed to delete entry" }
 	}
+}
+
+export async function getEntries(): Promise<DonorPaymentIProps[]> {
+	// In a real application, you would fetch from a database
+	// Example: return await db.entries.findMany()
+	const result = await prisma.donor_payment_request.findMany({});
+	// For demo purposes, we're returning sample data
+	return result as any;
+}
+
+// Get a single entry by ID
+export async function getEntry(id: string): Promise<DonorPaymentIProps | null> {
+	// In a real application, you would fetch from a database
+	// Example: return await db.entries.findUnique({ where: { id } })
+
+	// For demo purposes, we're searching in sample data
+	return await prisma.donor_payment_request.findUnique({
+		where: { id }
+	}) as any;
 }
