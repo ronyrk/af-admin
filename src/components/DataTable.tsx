@@ -30,6 +30,8 @@ async function TableRowList(params: ParamsIProps) {
         }
     }) as DonorPaymentIProps[];
 
+    console.log(data, "donor payment data")
+
     const loanAmount = async (amount: string, type: string) => {
         if (type === "LENDING") {
             return `BDT =${amount}/=`
@@ -38,13 +40,18 @@ async function TableRowList(params: ParamsIProps) {
         }
     }
 
-    const loanPayment = async (payment: string, donate: string, type: string) => {
-        if (payment === "0" && donate === "0") {
-            return ` N/A`
-        } else if (payment === "0") {
+    const loanPayment = (payment: string, donate: string) => {
+        if (payment === " " && donate === " ") {
+            return 'N/A'
+        }
+        if (Number(payment) > 0 && Number(donate) > 0) {
+            return Number(payment) > Number(donate) ? `BDT =${payment}/=` : `BDT =${donate}/=`
+        } else if (Number(payment) > 0) {
+            return `BDT =${payment}/=`
+        } else if (Number(donate) > 0) {
             return `BDT =${donate}/=`
         } else {
-            return `BDT =${payment}/=`
+            return 'N/A'
         }
     };
     return (
@@ -54,7 +61,7 @@ async function TableRowList(params: ParamsIProps) {
                     <TableRow key={index}>
                         <TableCell>{`${moment(item.createAt).format('DD/MM/YYYY')}`}</TableCell>
                         <TableCell>{loanAmount(item.amount as string, item.type)}</TableCell>
-                        <TableCell className='px-4'>{loanPayment(item.loanPayment as string, item.donate as string, item.type)} </TableCell>
+                        <TableCell className='px-4'>{loanPayment(item.loanPayment as string, item.donate as string)} </TableCell>
                         <TableCell className='px-4'>{item.type} </TableCell>
                         <TableCell className='px-4'>
                             <DeleteButton type='donor/payment' username={item.id as string} />

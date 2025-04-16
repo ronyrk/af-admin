@@ -39,13 +39,13 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
         },
     )
 
-    // Format currency
-    const formatCurrency = (amount: number) => {
-        return `BDT=${new Intl.NumberFormat("en-BD", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        }).format(amount)}`;
-    }
+    // // Format currency
+    // const formatCurrency = (amount: number) => {
+    //     return `BDT=${new Intl.NumberFormat("en-BD", {
+    //         minimumFractionDigits: 2,
+    //         maximumFractionDigits: 2,
+    //     }).format(amount)}`;
+    // }
 
     // Format date
     const formatDate = (dateString: string) => {
@@ -100,7 +100,8 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
             setIsPending(true)
 
             // Optimistic update
-            updateOptimisticEntries({ action: "delete", id })
+            updateOptimisticEntries({ action: "delete", id });
+
 
             try {
                 const result = await deleteDonorPaymentRequest(id)
@@ -194,7 +195,7 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
                                 <TableRow key={entry.id}>
                                     <TableCell className="font-medium">{entry.username}</TableCell>
                                     <TableCell>{formatDate(entry.createAt)}</TableCell>
-                                    <TableCell>{formatCurrency(Number(entry.amount))}</TableCell>
+                                    <TableCell>BDT={entry.amount}/=</TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
                                             <Button variant="outline" size="sm" onClick={() => handleView(entry)} disabled={isPending}>
@@ -249,7 +250,7 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
 
                             <div className="grid grid-cols-3 items-center gap-4">
                                 <span className="font-medium">Amount:</span>
-                                <span className="col-span-2">{formatCurrency(Number(selectedEntry.amount))}</span>
+                                <span className="col-span-2">{selectedEntry.amount}</span>
                             </div>
                             <div className="grid grid-cols-3 items-center gap-4">
                                 <span className="font-medium">Method:</span>

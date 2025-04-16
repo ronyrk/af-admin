@@ -116,25 +116,56 @@ export async function deleteDonorPaymentRequest(id: string) {
 // Approve an entry
 export async function approveEntry(entry: DonorPaymentRequestIProps) {
 	try {
-		// In a real application, you would add to your approved entries database
-		// Example:
-		// await db.approvedEntries.create({
-		//   data: {
-		//     ...entry,
-		//     approvedAt: new Date(),
-		//   }
-		// })
+		const { id, username, amount, createAt, return_date } = entry;
 
-		// For demo purposes, we'll just log
-		console.log(`Approving entry for user: ${entry.username}`, entry)
+		// Determine returnDate and upComing based on return_date
+		let returnDate: Date | null = null;
+		let upComing = false;
+
+		if (return_date === "life-time") {
+			returnDate = null; // No return date for life-time
+			upComing = false;
+		} else if (return_date === "6-months") {
+			returnDate = new Date(createAt);
+			returnDate.setMonth(returnDate.getMonth() + 6); // Add 6 months to createAt
+			upComing = true;
+		} else if (return_date === "1-years") {
+			returnDate = new Date(createAt);
+			returnDate.setFullYear(returnDate.getFullYear() + 1); // Add 1 year to createAt
+			upComing = true;
+		}
+
+		// Create the donor payment entry
+		const result = await prisma.donorPayment.create({
+			data: {
+				donorUsername: username,
+				status: return_date === "life-time" ? "DONOR" : "LEADER",
+				type: return_date === "life-time" ? "DONATE" : "LENDING",
+				donate: return_date === "life-time" ? amount : " ",
+				loanPayment: return_date === "life-time" ? amount : " ",
+				amount: return_date === "life-time" ? " " : amount,
+				returnDate: returnDate,
+				upComing: upComing,
+				createAt,
+			},
+		});
+
+
+		// Delete the original entry
+		await prisma.donor_payment_request.delete({
+			where: { id },
+		});
+
+
+
 
 		// Revalidate the entries page to refresh the data
 		revalidatePath("/dashboard/donor/payment-request");
 
-		return { success: true }
+		return { success: true };
 	} catch (error) {
-		console.error("Error approving entry:", error)
-		return { success: false, error: "Failed to approve entry" }
+		console.error("Error approving entry:", error);
+		return { success: false, error: "Failed to approve entry" };
 	}
 }
 export async function getDonorData(username: string) {
