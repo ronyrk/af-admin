@@ -1,30 +1,22 @@
 import React from 'react'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import {
-	Table,
-	TableBody,
-	TableCaption,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table"
+
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
 import Image from 'next/image';
 import icon from "../../../public/divider.svg";
 import { filterAndSortDonors } from '@/lib/fillterAndSortDonors';
-import { ChildDonateRequestProps, DonorPaymentIProps, PaymentApproveIProps } from '@/types';
-import { getDonorName } from '@/lib/getDonorName';
+import { ChildDonateRequestProps, DonorPaymentIProps, DonorRequestIProps, PaymentApproveIProps } from '@/types';
 import { GetBranchDetails } from '@/lib/getBranchList';
 import Link from 'next/link';
+
+async function getDonorName(donorUsername: string): Promise<string> {
+	const res = await fetch(`https://af-admin.vercel.app/api/donor/${donorUsername}`);
+	if (!res.ok) {
+		throw new Error("Failed to fetch data");
+	}
+	const donor: DonorRequestIProps = await res.json();
+	return donor.name;
+};
 
 const TotalOutstanding = async (): Promise<string> => {
 	// Ensure cookies are processed (likely for authentication or session validation).
@@ -94,6 +86,9 @@ async function page() {
 		throw new Error("Failed to fetch data list");
 	};
 	const childRequest: ChildDonateRequestProps[] = await response.json();
+	const request = await prisma.donor_request.findMany({});
+	const paymentRequest = await prisma.donor_payment_request.findMany({});
+
 
 	return (
 		<div className=''>
@@ -207,34 +202,60 @@ async function page() {
 
 					</Link>
 					{/* Karje hasana Request List Panel */}
-					<div className="border border-gray-300 rounded shadow-sm md:col-span-2">
-						<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">Karje hasana Request List</div>
-						<div className="p-0">
-							<div className="border-b border-orange-300 mx-4 my-1 h-[2px]"></div>
-							<table className="w-full">
-								<thead>
-									<tr className="border-b">
-										<th className="text-left py-2 px-4">NAME</th>
-										<th className="text-right py-2 px-4">AMOUNT</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr className="bg-gray-200">
-										<td className="py-2 px-4">Arif Hossain</td>
-										<td className="text-right py-2 px-4">29670</td>
-									</tr>
-									<tr className="bg-gray-100">
-										<td className="py-2 px-4">Arif Hossain</td>
-										<td className="text-right py-2 px-4">29670</td>
-									</tr>
-									<tr className="bg-gray-200">
-										<td className="py-2 px-4">Arif Hossain</td>
-										<td className="text-right py-2 px-4">29670</td>
-									</tr>
-								</tbody>
-							</table>
+					<Link href="/dashboard/donor/request" className="cursor-pointer">
+						<div className="border border-gray-300 rounded shadow-sm md:col-span-2">
+							<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">Donor Request List</div>
+							<div className="p-0">
+								<div className="border-b border-orange-300 mx-4 my-1 h-[2px]"></div>
+								<table className="w-full">
+									<thead>
+										<tr className="border-b">
+											<th className="text-left py-2 px-4">NAME</th>
+											<th className="text-right py-2 px-4">AMOUNT</th>
+										</tr>
+									</thead>
+									<tbody>
+										{
+											request.map((item, index: number) => (
+												<tr key={index} className={`${index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"}`}>
+													<td className="py-2 px-4">{item.name}</td>
+													<td className="text-right py-2 px-4">{item.amount}</td>
+												</tr>
+											))
+										}
+
+									</tbody>
+								</table>
+							</div>
 						</div>
-					</div>
+					</Link>
+					<Link href="/dashboard/donor/payment-request" className="cursor-pointer">
+						<div className="border border-gray-300 rounded shadow-sm md:col-span-2">
+							<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">Donor Payment Request List</div>
+							<div className="p-0">
+								<div className="border-b border-orange-300 mx-4 my-1 h-[2px]"></div>
+								<table className="w-full">
+									<thead>
+										<tr className="border-b">
+											<th className="text-left py-2 px-4">NAME</th>
+											<th className="text-right py-2 px-4">AMOUNT</th>
+										</tr>
+									</thead>
+									<tbody>
+										{
+											paymentRequest.map((item, index: number) => (
+												<tr key={index} className={`${index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"}`}>
+													<td className="py-2 px-4">{getDonorName(item.username)}</td>
+													<td className="text-right py-2 px-4">{item.amount}</td>
+												</tr>
+											))
+										}
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</Link>
 				</div>
 			</div>
 
