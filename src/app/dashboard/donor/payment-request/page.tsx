@@ -1,10 +1,14 @@
+import DonorPaymentRequest from '@/components/donor-payment-request';
+import { getDonorPaymentRequests } from '@/lib/actions';
+import { cookies } from 'next/headers'
 import React from 'react'
-import prisma from '@/lib/prisma'
 
 export default async function page() {
-    const request = await prisma.donor_payment_request.findMany({});
-    console.log(request)
+    cookies();
+    const entries = await getDonorPaymentRequests();
     return (
-        <div>page</div>
+        <div>
+            <DonorPaymentRequest initialEntries={entries} />
+        </div>
     )
 }

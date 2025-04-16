@@ -86,7 +86,7 @@ export async function deleteEntry(id: string) {
 	}
 }
 
-export async function getEntries(): Promise<DonorPaymentIProps[]> {
+export async function getDonorPaymentRequests(): Promise<any> {
 	// In a real application, you would fetch from a database
 	// Example: return await db.entries.findMany()
 	const result = await prisma.donor_payment_request.findMany({});
@@ -94,13 +94,46 @@ export async function getEntries(): Promise<DonorPaymentIProps[]> {
 	return result as any;
 }
 
-// Get a single entry by ID
-export async function getEntry(id: string): Promise<DonorPaymentIProps | null> {
-	// In a real application, you would fetch from a database
-	// Example: return await db.entries.findUnique({ where: { id } })
+export async function deleteDonorPaymentRequest(id: string) {
+	try {
+		// In a real application, you would delete from your database
+		// Example: await db.entries.delete({ where: { id } })
 
-	// For demo purposes, we're searching in sample data
-	return await prisma.donor_payment_request.findUnique({
-		where: { id }
-	}) as any;
+		await prisma.donor_payment_request.delete({
+			where: { id },
+		});
+
+		// Revalidate the entries page to refresh the data
+		revalidatePath("/dashboard/donor/payment-request")
+
+		return { success: true }
+	} catch (error) {
+		console.error("Error deleting entry:", error)
+		return { success: false, error: "Failed to delete entry" }
+	}
+}
+
+// Approve an entry
+export async function approveEntry(entry: DonorPaymentRequestIProps) {
+	try {
+		// In a real application, you would add to your approved entries database
+		// Example:
+		// await db.approvedEntries.create({
+		//   data: {
+		//     ...entry,
+		//     approvedAt: new Date(),
+		//   }
+		// })
+
+		// For demo purposes, we'll just log
+		console.log(`Approving entry for user: ${entry.username}`, entry)
+
+		// Revalidate the entries page to refresh the data
+		revalidatePath("/dashboard/donor/payment-request");
+
+		return { success: true }
+	} catch (error) {
+		console.error("Error approving entry:", error)
+		return { success: false, error: "Failed to approve entry" }
+	}
 }

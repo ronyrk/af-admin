@@ -435,5 +435,5 @@ export interface DonorPaymentRequestIProps {
 	amount: string
 	method: string
 	return_date: string
-	createAt: Date
+	createAt: string
 }
