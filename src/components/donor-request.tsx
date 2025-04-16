@@ -24,7 +24,7 @@ export default function DataEntryDisplay() {
     const [isDeleting, setIsDeleting] = useState(false)
     const { toast } = useToast();
 
-    console.log(selectedEntry);
+    // console.log(selectedEntry);
 
     // Optimistic UI state
     const [optimisticData, updateOptimisticData] = useOptimistic(data, (state, deletedId: string) =>
@@ -37,7 +37,7 @@ export default function DataEntryDisplay() {
             try {
                 setLoading(true)
                 const entries = await fetchEntries()
-                console.log({ entries });
+                // console.log({ entries });
                 setData(entries)
                 setError(null)
             } catch (err) {
@@ -254,15 +254,15 @@ export default function DataEntryDisplay() {
                                         <div className="col-span-2 flex items-center gap-2">
                                             <div className="text-sm truncate max-w-[200px]">
                                                 {key === "createAt" || key === "return_date"
-                                                    ? formatDate(value.toString())
+                                                    ? formatDate(value?.toString())
                                                     : key === "amount"
                                                         ? `$${value}`
-                                                        : value.toString()}
+                                                        : value?.toString()}
                                             </div>
                                             <Button
                                                 size="icon"
                                                 className="h-8 w-8"
-                                                onClick={() => copyToClipboard(value.toString(), key)}
+                                                onClick={() => copyToClipboard(value?.toString(), key)}
                                             >
                                                 <Copy className="h-4 w-4" />
                                                 <span className="sr-only">Copy {key}</span>
