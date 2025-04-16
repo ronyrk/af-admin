@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers';
 import { revalidatePath } from "next/cache"
 import prisma from "./prisma";
+import { DonorPaymentIProps, DonorPaymentRequestIProps } from '@/types';
 
 export async function approvedRequest(id: string, loanusername: string, photoUrl: string, method: string, createAt: Date, amount: string) {
 	const loanAmount = "0";
@@ -82,5 +83,57 @@ export async function deleteEntry(id: string) {
 	} catch (error) {
 		console.error("Error deleting entry:", error)
 		return { success: false, error: "Failed to delete entry" }
+	}
+}
+
+export async function getDonorPaymentRequests(): Promise<any> {
+	// In a real application, you would fetch from a database
+	// Example: return await db.entries.findMany()
+	const result = await prisma.donor_payment_request.findMany({});
+	// For demo purposes, we're returning sample data
+	return result as any;
+}
+
+export async function deleteDonorPaymentRequest(id: string) {
+	try {
+		// In a real application, you would delete from your database
+		// Example: await db.entries.delete({ where: { id } })
+
+		await prisma.donor_payment_request.delete({
+			where: { id },
+		});
+
+		// Revalidate the entries page to refresh the data
+		revalidatePath("/dashboard/donor/payment-request")
+
+		return { success: true }
+	} catch (error) {
+		console.error("Error deleting entry:", error)
+		return { success: false, error: "Failed to delete entry" }
+	}
+}
+
+// Approve an entry
+export async function approveEntry(entry: DonorPaymentRequestIProps) {
+	try {
+		// In a real application, you would add to your approved entries database
+		// Example:
+		// await db.approvedEntries.create({
+		//   data: {
+		//     ...entry,
+		//     approvedAt: new Date(),
+		//   }
+		// })
+
+		// For demo purposes, we'll just log
+		console.log(`Approving entry for user: ${entry.username}`, entry)
+
+		// Revalidate the entries page to refresh the data
+		revalidatePath("/dashboard/donor/payment-request");
+
+		return { success: true }
+	} catch (error) {
+		console.error("Error approving entry:", error)
+		return { success: false, error: "Failed to approve entry" }
 	}
 }
