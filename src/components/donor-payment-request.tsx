@@ -15,6 +15,9 @@ import {
 import { toast } from "@/hooks/use-toast"
 import { approveEntry, deleteDonorPaymentRequest, getDonorData } from "@/lib/actions"
 import { DonorIProps, DonorPaymentRequestIProps } from "@/types"
+import { Loader2, ImageIcon } from "lucide-react"
+import Image from "next/image"
+import ImagePopupButton from "./image-popup-button"
 
 interface DataEntryListProps {
     initialEntries: DonorPaymentRequestIProps[]
@@ -27,6 +30,7 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
     const [isPending, setIsPending] = useState(false)
     const [isLoadingDonor, setIsLoadingDonor] = useState(false)
     const [donorData, setDonorData] = useState<DonorIProps | null>(null);
+
 
     // Optimistic UI updates
     const [optimisticEntries, updateOptimisticEntries] = useOptimistic(
@@ -256,6 +260,27 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
                                 <span className="font-medium">Method:</span>
                                 <span className="col-span-2">{selectedEntry.method}</span>
                             </div>
+                            {
+                                selectedEntry.method === "mobile-banking" ? (
+                                    <>
+                                        <div className="grid grid-cols-3 items-center gap-4">
+                                            <span className="font-medium">Mobile Number:</span>
+                                            <span className="col-span-2">{selectedEntry.sendNumber}</span>
+                                        </div>
+                                        <div className="grid grid-cols-3 items-center gap-4">
+                                            <span className="font-medium">Method:</span>
+                                            <span className="col-span-2">{selectedEntry.transactionId}</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <ImagePopupButton
+                                        buttonText="View Invoice"
+                                        // imageUrl={selectedEntry.invoice}
+                                        imageUrl={`${selectedEntry.invoice}?height=800&width=1000`}
+                                        imageAlt="Sample receipt image"
+                                    />
+                                )
+                            }
                             <div className="grid grid-cols-3 items-center gap-4">
                                 <span className="font-medium">Return Date:</span>
                                 <span className="col-span-2">{formatDate(selectedEntry.return_date)}</span>

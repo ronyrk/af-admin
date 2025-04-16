@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast"
 
 import { DonorRequestIProps } from "@/types"
 import { deleteEntry, fetchEntries } from "@/lib/actions"
+import ImagePopupButton from "./image-popup-button"
 
 export default function DataEntryDisplay() {
     const [data, setData] = useState<DonorRequestIProps[]>([])
@@ -21,7 +22,9 @@ export default function DataEntryDisplay() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
     const [isDeleting, setIsDeleting] = useState(false)
-    const { toast } = useToast()
+    const { toast } = useToast();
+
+    console.log(selectedEntry);
 
     // Optimistic UI state
     const [optimisticData, updateOptimisticData] = useOptimistic(data, (state, deletedId: string) =>
@@ -34,6 +37,7 @@ export default function DataEntryDisplay() {
             try {
                 setLoading(true)
                 const entries = await fetchEntries()
+                console.log({ entries });
                 setData(entries)
                 setError(null)
             } catch (err) {
@@ -256,7 +260,6 @@ export default function DataEntryDisplay() {
                                                         : value.toString()}
                                             </div>
                                             <Button
-
                                                 size="icon"
                                                 className="h-8 w-8"
                                                 onClick={() => copyToClipboard(value.toString(), key)}
@@ -267,6 +270,26 @@ export default function DataEntryDisplay() {
                                         </div>
                                     </div>
                                 ))}
+
+                                {/* Conditional rendering for mobile-banking or invoice */}
+                                {selectedEntry.method === "mobile-banking" ? (
+                                    <>
+                                        <div className="grid grid-cols-3 items-center gap-4">
+                                            <span className="font-medium">Mobile Number:</span>
+                                            <span className="col-span-2">{selectedEntry.sendNumber}</span>
+                                        </div>
+                                        <div className="grid grid-cols-3 items-center gap-4">
+                                            <span className="font-medium">Transaction ID:</span>
+                                            <span className="col-span-2">{selectedEntry.transactionId}</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <ImagePopupButton
+                                        buttonText="View Invoice"
+                                        imageUrl={`${selectedEntry.invoice}?height=800&width=1000`}
+                                        imageAlt="Sample receipt image"
+                                    />
+                                )}
                             </div>
                         </>
                     )}
