@@ -313,11 +313,8 @@ const DateTimePicker = React.forwardRef<Partial<DateTimePickerRef>, DateTimePick
             value,
             onChange,
             onMonthChange,
-            hourCycle = 24,
             yearRange = 50,
             disabled = false,
-            displayFormat,
-            granularity = 'second',
             placeholder = 'Pick a date',
             className,
             ...props
@@ -328,16 +325,10 @@ const DateTimePicker = React.forwardRef<Partial<DateTimePickerRef>, DateTimePick
         const buttonRef = useRef<HTMLButtonElement>(null);
         const [displayDate, setDisplayDate] = React.useState<Date | undefined>(value ?? undefined);
         onMonthChange ||= onChange;
-        /**
-         * carry over the current time when a user clicks a new day
-         * instead of resetting to 00:00
-         */
+
         const handleMonthChange = (newDay: Date | undefined) => {
-            if (!newDay) {
-                return;
-            }
+            if (!newDay) return;
             if (!defaultPopupValue) {
-                newDay.setHours(month?.getHours() ?? 0, month?.getMinutes() ?? 0, month?.getSeconds() ?? 0);
                 onMonthChange?.(newDay);
                 setMonth(newDay);
                 return;
@@ -345,19 +336,12 @@ const DateTimePicker = React.forwardRef<Partial<DateTimePickerRef>, DateTimePick
             const diff = newDay.getTime() - defaultPopupValue.getTime();
             const diffInDays = diff / (1000 * 60 * 60 * 24);
             const newDateFull = add(defaultPopupValue, { days: Math.ceil(diffInDays) });
-            newDateFull.setHours(
-                month?.getHours() ?? 0,
-                month?.getMinutes() ?? 0,
-                month?.getSeconds() ?? 0,
-            );
             onMonthChange?.(newDateFull);
             setMonth(newDateFull);
         };
 
         const onSelect = (newDay?: Date) => {
-            if (!newDay) {
-                return;
-            }
+            if (!newDay) return;
             onChange?.(newDay);
             setMonth(newDay);
             setDisplayDate(newDay);
@@ -371,15 +355,6 @@ const DateTimePicker = React.forwardRef<Partial<DateTimePickerRef>, DateTimePick
             }),
             [displayDate],
         );
-
-        const initHourFormat = {
-            hour24:
-                displayFormat?.hour24 ??
-                `PPP HH:mm${!granularity || granularity === 'second' ? ':ss' : ''}`,
-            hour12:
-                displayFormat?.hour12 ??
-                `PP hh:mm${!granularity || granularity === 'second' ? ':ss' : ''} b`,
-        };
 
         let loc = enUS;
         const { options, localize, formatLong } = locale;
@@ -408,10 +383,8 @@ const DateTimePicker = React.forwardRef<Partial<DateTimePickerRef>, DateTimePick
                         {displayDate ? (
                             format(
                                 displayDate,
-                                hourCycle === 24 ? initHourFormat.hour24 : initHourFormat.hour12,
-                                {
-                                    locale: loc,
-                                },
+                                'PPP', // Only date, no time
+                                { locale: loc }
                             )
                         ) : (
                             <span>{placeholder}</span>
@@ -442,4 +415,4 @@ const DateTimePicker = React.forwardRef<Partial<DateTimePickerRef>, DateTimePick
 DateTimePicker.displayName = 'DateTimePicker';
 
 export { DateTimePicker };
-export type { TimePickerType, DateTimePickerProps, DateTimePickerRef };
+export type { DateTimePickerProps };
