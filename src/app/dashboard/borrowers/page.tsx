@@ -121,7 +121,7 @@ async function BorrowersList({ searchParams }: {
 	const query = searchParams?.search || "all";
 	const page = searchParams?.page || "1";
 	const borrowers = await getSearchBorrowers(query, page);
-	const pageSize = 11;
+	const pageSize = 10; // Number of items per page
 	const start = (Number(page) - 1) * pageSize;
 	const end = start + pageSize;
 
