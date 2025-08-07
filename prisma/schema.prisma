@@ -355,6 +355,8 @@ model policeStation {
   districtId String   @db.ObjectId
   district   district @relation(fields: [districtId], references: [id])
   createdAt  DateTime @default(now())
+
+  @@index([districtId])
 }
 
 enum Status {

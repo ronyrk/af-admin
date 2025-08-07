@@ -10,6 +10,9 @@ export const GET = async () => {
             {
                 orderBy: {
                     createdAt: "desc"
+                },
+                include: {
+                    policeStations: true
                 }
             }
         );
