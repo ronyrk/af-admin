@@ -7,70 +7,56 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { ChildIProps, LoanIProps, PaymentApproveIProps } from '@/types';
+import { DistrictIProps } from '@/types';
 import { cookies } from 'next/headers';
 import { Input } from '@/components/ui/input';
-import {
-    Dialog,
-    DialogContent,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import Image from 'next/image';
-
 import DeleteButton from '@/components/DeleteButton';
-import { Button } from '@/components/ui/button';
-import { PencilIcon } from 'lucide-react';
-import Link from 'next/link';
 import { DistrictCreate } from '@/components/DistrictCreate';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion"
+import { PlusCircle } from 'lucide-react';
+import { PoliceStationCreate } from '@/components/PoliceStationCreate';
+
 
 async function DistrictList() {
     cookies();
-    const res = await fetch('https://af-admin.vercel.app/api/child');
+    const res = await fetch('https://af-admin.vercel.app/api/district');
     if (!res.ok) {
         throw new Error("Failed to fetch data");
     };
-    const payments: ChildIProps[] = await res.json();
+    const districts: DistrictIProps[] = await res.json();
 
     return (
         <TableBody>
             {
-                payments.map((item, index: number) => (
+                districts.map((item: DistrictIProps, index: number) => (
                     <TableRow key={index}>
-                        <TableCell>{item.academy}</TableCell>
+                        <TableCell>{index + 1}</TableCell>
                         <TableCell className="font-medium uppercase text-blue-800">
-                            <Link href={`child/${item.username}`}>{item.name}</Link>
+                            <Accordion
+                                type="single"
+                                collapsible
+                                className="w-full"
+                            >
+                                <AccordionItem value={`item-${index}`}>
+                                    <AccordionTrigger> {item.name}</AccordionTrigger>
+                                    <AccordionContent>
+                                        <h2>hello</h2>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
                         </TableCell>
-                        <TableCell className="font-medium uppercase">{item.phone}</TableCell>
                         <TableCell className="font-medium uppercase">
-                            <Dialog>
-                                <DialogTrigger>
-                                    <Image
-                                        alt='payment proved'
-                                        src={item.photoUrl}
-                                        width={80}
-                                        height={50}
-                                        className=' object-contain'
-                                    /></DialogTrigger>
-                                <DialogContent>
-                                    <Image
-                                        alt='payment proved'
-                                        src={item.photoUrl}
-                                        width={500}
-                                        height={200}
-                                        className=' object-fill rounded-md'
-                                    />
-                                </DialogContent>
-                            </Dialog>
+                            <PoliceStationCreate districtId={item.id} />
+                        </TableCell>
+                        <TableCell className="font-medium uppercase">
+                            <DeleteButton type='district' username={item.id} />
+                        </TableCell>
 
-                        </TableCell>
-                        <TableCell className="font-medium uppercase">
-                            <Button asChild className=' bg-gray-300 text-red-400 hover:text-red-700 hover:bg-gray-50' >
-                                <Link href={`child/update/${item.username}`}><PencilIcon color='blue' size={18} /></Link>
-                            </Button>
-                        </TableCell>
-                        <TableCell className="font-medium uppercase">
-                            <DeleteButton type='child' username={item.username} />
-                        </TableCell>
                     </TableRow>
                 ))
             }
@@ -92,12 +78,11 @@ async function page() {
                     <TableRow>
                         <TableHead>Index</TableHead>
                         <TableHead>NAME</TableHead>
-
                         <TableHead>DELETE</TableHead>
                     </TableRow>
                 </TableHeader>
                 <Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
-
+                    <DistrictList />
                 </Suspense>
             </Table>
 

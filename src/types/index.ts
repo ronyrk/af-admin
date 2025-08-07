@@ -443,3 +443,14 @@ export interface DonorPaymentRequestIProps {
 	transactionId?: string
 	sendNumber?: string
 }
+export interface PoliceStationIProps {
+	id: string,
+	name: string,
+	districtId: string,
+}
+
+export interface DistrictIProps {
+	id: string,
+	name: string,
+	policeStations: PoliceStationIProps[],
+}
