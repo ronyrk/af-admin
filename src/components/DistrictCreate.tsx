@@ -67,7 +67,7 @@ export function DistrictCreate() {
         <Dialog open={open} onOpenChange={setOpen}>
             <form>
                 <DialogTrigger asChild>
-                    <Button>Open Dialog</Button>
+                    <Button>Create District</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <Form {...form}>
@@ -77,7 +77,7 @@ export function DistrictCreate() {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Name</FormLabel>
+                                        <FormLabel>District Name</FormLabel>
                                         <FormControl>
                                             <Input placeholder="name" {...field} />
                                         </FormControl>
