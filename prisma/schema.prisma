@@ -342,6 +342,21 @@ model donor_payment_request {
   createAt      DateTime @default(now())
 }
 
+model district {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  name           String          @unique
+  policeStations policeStation[]
+  createdAt      DateTime        @default(now())
+}
+
+model policeStation {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  districtId String   @db.ObjectId
+  district   district @relation(fields: [districtId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
 enum Status {
   PENDING
   RUNNING
