@@ -69,7 +69,7 @@ export function PoliceStationCreate({ districtId }: { districtId: string }) {
         <Dialog open={open} onOpenChange={setOpen}>
             <form>
                 <DialogTrigger asChild>
-                    <Button><PlusCircle className="text-blue-800" /></Button>
+                    <Button className="bg-blue-500"><PlusCircle className="text-white" /></Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <Form {...form}>
@@ -79,7 +79,7 @@ export function PoliceStationCreate({ districtId }: { districtId: string }) {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Name</FormLabel>
+                                        <FormLabel>Police Station Name</FormLabel>
                                         <FormControl>
                                             <Input placeholder="name" {...field} />
                                         </FormControl>

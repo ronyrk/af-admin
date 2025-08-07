@@ -45,7 +45,28 @@ async function DistrictList() {
                                 <AccordionItem value={`item-${index}`}>
                                     <AccordionTrigger> {item.name}</AccordionTrigger>
                                     <AccordionContent>
-                                        <h2>hello</h2>
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead>Index</TableHead>
+                                                    <TableHead>Name</TableHead>
+                                                    <TableHead>Action</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {
+                                                    item.policeStations.map((station, index) => (
+                                                        <TableRow key={index}>
+                                                            <TableCell>{index + 1}</TableCell>
+                                                            <TableCell>{station.name}</TableCell>
+                                                            <TableCell>
+                                                                <DeleteButton type='police-station' username={station.id} />
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                }
+                                            </TableBody>
+                                        </Table>
                                     </AccordionContent>
                                 </AccordionItem>
                             </Accordion>
@@ -77,7 +98,8 @@ async function page() {
                 <TableHeader>
                     <TableRow>
                         <TableHead>Index</TableHead>
-                        <TableHead>NAME</TableHead>
+                        <TableHead className='w-[500px]'>NAME</TableHead>
+                        <TableHead>PS</TableHead>
                         <TableHead>DELETE</TableHead>
                     </TableRow>
                 </TableHeader>
