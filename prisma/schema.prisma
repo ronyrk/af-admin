@@ -359,6 +359,52 @@ model policeStation {
   @@index([districtId])
 }
 
+model beneficialDonor {
+  id                    String                  @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String
+  username              String                  @unique
+  live                  String
+  homeTown              String
+  photoUrl              String
+  about                 String?
+  beneficialTransaction beneficialTransaction[]
+  beneficial            beneficial[]
+  createAt              DateTime                @default(now())
+}
+
+model beneficial {
+  id                    String                  @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String
+  username              String                  @unique
+  phone                 String
+  village               String
+  postoffice            String
+  district              String
+  policeStation         String
+  occupation            String
+  photoUrl              String[]
+  active                Boolean                 @default(false)
+  about                 String?
+  beneficialTransaction beneficialTransaction[]
+  beneficialDonorId     String                  @db.ObjectId
+  beneficialDonor       beneficialDonor         @relation(fields: [beneficialDonorId], references: [id])
+  createAt              DateTime                @default(now())
+
+  @@index([beneficialDonorId])
+}
+
+model beneficialTransaction {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  beneficialId      String          @db.ObjectId
+  beneficial        beneficial      @relation(fields: [beneficialId], references: [id])
+  amount            String
+  date              DateTime
+  beneficialDonorId String          @db.ObjectId
+  beneficialDonor   beneficialDonor @relation(fields: [beneficialDonorId], references: [id])
+
+  @@index([beneficialId, beneficialDonorId])
+}
+
 enum Status {
   PENDING
   RUNNING
