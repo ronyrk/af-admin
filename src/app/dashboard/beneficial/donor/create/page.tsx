@@ -18,10 +18,11 @@ import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import { BranchIProps } from "@/types"
+import { BeneficialDonorIProps, BranchIProps } from "@/types"
 import { useState } from "react"
 import { UploadButton } from "@/lib/uploadthing"
 import TailwindEditor from "@/components/editor"
+import { Loader2 } from "lucide-react"
 
 const formSchema = z.object({
     name: z.string(),
@@ -38,13 +39,31 @@ function BeneficialDonorCreate() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     });
-
-
-
+    // 2. Define a mutation.
+    const { mutate, isPending } = useMutation({
+        mutationFn: async ({ username, name, photoUrl, about, live, homeTown }: BeneficialDonorIProps) => {
+            const response = await axios.post("/api/beneficial/donor", {
+                username, name, photoUrl, about, live, homeTown
+            });
+            return response.data;
+        },
+    });
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+        const { username, name, photoUrl, about, live, homeTown } = values;
+        mutate({ username, name, photoUrl, about, live, homeTown }, {
+            onSuccess: ({ message, result }: { message: string, result: BeneficialDonorIProps }) => {
+                toast.success(message);
+                console.log(result);
+
+                // router.push(`/dashboard/beneficial/donor`);
+                router.refresh();
+            },
+            onError: ({ message }: { message: any }) => {
+                toast.error(message);
+            }
+        });
     };
 
     return (
@@ -59,7 +78,7 @@ function BeneficialDonorCreate() {
                                 name="username"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>username</FormLabel>
+                                        <FormLabel>Username</FormLabel>
                                         <FormControl>
                                             <Input placeholder="username" {...field} />
                                         </FormControl>
@@ -147,7 +166,16 @@ function BeneficialDonorCreate() {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit" disabled={isPending} >
+                        {isPending ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Submitting...
+                            </>
+                        ) : (
+                            "Submit"
+                        )}
+                    </Button>
                 </form>
             </Form>
         </div>
