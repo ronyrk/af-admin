@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers'
 import React from 'react'
 import prisma from '@/lib/prisma';
-import BeneficialDonorUpdated from '@/components/beneficial-donor-update';
 import { BeneficialDonorIProps } from '@/types';
+import BeneficialDonorProfileEdit from '@/components/beneficial-donor-profile';
 
 async function page({ params }: { params: Promise<{ username: string }> }) {
     cookies();
@@ -12,7 +12,7 @@ async function page({ params }: { params: Promise<{ username: string }> }) {
     }) as BeneficialDonorIProps;
     return (
         <div>
-            <BeneficialDonorUpdated params={beneficialDonor} />
+            <BeneficialDonorProfileEdit data={beneficialDonor} />
         </div>
     )
 }
