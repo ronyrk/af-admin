@@ -1,3 +1,4 @@
+import { beneficial } from './../../node_modules/.pnpm/@prisma+client@5.10.2_prisma@5.10.2/node_modules/.prisma/client/index.d';
 export interface DonorIProps {
 	id?: string,
 	username: string,
@@ -453,4 +454,38 @@ export interface DistrictIProps {
 	id: string,
 	name: string,
 	policeStations: PoliceStationIProps[],
+}
+
+export interface BeneficialDonorIProps {
+	id: string,
+	name: string,
+	username: string,
+	live: string,
+	homeTown: string,
+	photoUrl: string,
+	about: string,
+	beneficialTransaction: BeneficialTransactionIProps[],
+	beneficial: BeneficialIProps[],
+}
+
+export interface BeneficialIProps {
+	id: string,
+	name: string,
+	username: string,
+	village: string,
+	postoffice: string,
+	district: string,
+	policeStation: string,
+	occupation: string,
+	photoUrl: string[],
+	about?: string,
+	beneficialDonorId: string,
+	beneficialTransaction: BeneficialTransactionIProps[]
+}
+export interface BeneficialTransactionIProps {
+	id: string,
+	beneficialId: string,
+	amount: string,
+	beneficialDonorId: string,
+	date: Date,
 }
