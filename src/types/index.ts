@@ -479,6 +479,21 @@ export interface BeneficialDonorUpdatedIProps {
 }
 
 export interface BeneficialIProps {
+	id: string,
+	name: string,
+	username: string,
+	village: string,
+	postoffice: string,
+	district: string,
+	policeStation: string,
+	occupation: string,
+	photoUrl: string[],
+	phone: string,
+	about?: string,
+	beneficialDonorId: string,
+	beneficialTransaction: BeneficialTransactionIProps[]
+}
+export interface BeneficialCreateIProps {
 	id?: string,
 	name: string,
 	username: string,
@@ -489,8 +504,9 @@ export interface BeneficialIProps {
 	occupation: string,
 	photoUrl: string[],
 	about?: string,
+	phone: string,
 	beneficialDonorId: string,
-	beneficialTransaction: BeneficialTransactionIProps[]
+	beneficialTransaction?: BeneficialTransactionIProps[]
 }
 export interface BeneficialTransactionIProps {
 	id?: string,
