@@ -135,7 +135,7 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <h2 className='text-xl'>{field.value}</h2>}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -149,7 +149,7 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <h2 className='text-xl'>{field.value}</h2>}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -162,7 +162,7 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <Input readOnly className='text-xl w-fit border-none bg-inherit'{...field} />}
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <h2 className='text-xl'>{field.value}</h2>}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
