@@ -1,0 +1,25 @@
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import { BeneficialDonorIProps } from "@/types";
+
+export const dynamic = 'force-dynamic'
+
+
+
+// Create Donor
+export const POST = async (request: Request) => {
+    try {
+        const body: BeneficialDonorIProps = await request.json();
+        const { username, name, photoUrl, about, live, homeTown } = body;
+        const result = await prisma.beneficialDonor.create({
+            data: { username, name, photoUrl, about, live, homeTown }
+        });
+        return NextResponse.json({ message: "successfully Donor Created", result }, { status: 200 });
+    } catch (error: any) {
+        if (error?.code === 'P2002') {
+            return NextResponse.json({ message: `a new user cannot be created with this ${error?.meta?.target}` });
+        }
+        // console.log({ error })
+        return NextResponse.json({ message: "Branch Created Failed" });
+    }
+}
