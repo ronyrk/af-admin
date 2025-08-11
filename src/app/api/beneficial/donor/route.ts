@@ -4,6 +4,14 @@ import { BeneficialDonorIProps } from "@/types";
 
 export const dynamic = 'force-dynamic'
 
+export const GET = async (request: Request) => {
+    try {
+        const result = await prisma.beneficialDonor.findMany();
+        return NextResponse.json(result);
+    } catch (error) {
+        throw new Error("Server Error");
+    }
+}
 
 
 // Create Donor

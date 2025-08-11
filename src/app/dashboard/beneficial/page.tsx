@@ -1,9 +1,16 @@
 import React from 'react'
+import prisma from '@/lib/prisma';
 
-function Beneficial() {
+async function page() {
+    const data = await prisma.beneficial.findMany({
+        include: {
+            beneficialDonor: true
+        }
+    });
+    console.log(data);
     return (
         <div>Beneficial</div>
     )
 }
 
-export default Beneficial;
+export default page;

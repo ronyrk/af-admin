@@ -382,12 +382,13 @@ model beneficial {
   district              String
   policeStation         String
   occupation            String
+  nidFront              String
+  nidBack               String
   photoUrl              String[]
-  active                Boolean                 @default(false)
   about                 String?
   beneficialTransaction beneficialTransaction[]
-  beneficialDonorId     String                  @db.ObjectId
-  beneficialDonor       beneficialDonor         @relation(fields: [beneficialDonorId], references: [id])
+  beneficialDonorId     String?                 @db.ObjectId
+  beneficialDonor       beneficialDonor?        @relation(fields: [beneficialDonorId], references: [id])
   createAt              DateTime                @default(now())
 
   @@index([beneficialDonorId])

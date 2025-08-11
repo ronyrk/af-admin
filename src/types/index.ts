@@ -490,8 +490,10 @@ export interface BeneficialIProps {
 	photoUrl: string[],
 	phone: string,
 	about?: string,
-	beneficialDonorId: string,
-	beneficialTransaction: BeneficialTransactionIProps[]
+	nidFront: string,
+	nidBack: string,
+	beneficialDonorId?: string,
+	beneficialTransaction?: BeneficialTransactionIProps[]
 }
 export interface BeneficialCreateIProps {
 	id?: string,
@@ -505,7 +507,9 @@ export interface BeneficialCreateIProps {
 	photoUrl: string[],
 	about?: string,
 	phone: string,
-	beneficialDonorId: string,
+	nidFront: string,
+	nidBack: string,
+	beneficialDonorId?: string,
 	beneficialTransaction?: BeneficialTransactionIProps[]
 }
 export interface BeneficialTransactionIProps {
