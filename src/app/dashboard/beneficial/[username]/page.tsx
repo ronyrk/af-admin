@@ -10,9 +10,12 @@ export default async function Beneficial({ params }: { params: Promise<{ usernam
             username,
         },
         include: {
-            beneficialDonor: true
+            beneficialDonor: true,
+            beneficialTransaction: true,
         }
     }) as BeneficialIProps;
+
+    console.log(data.beneficialTransaction);
 
     return (
         <div>

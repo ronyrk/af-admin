@@ -41,6 +41,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
+import { BeneficialTransactionCreate } from './beneficial-transaction';
 
 // Types for your API data
 interface PoliceStation {
@@ -87,7 +88,7 @@ const formSchema = z.object({
 function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
     const [openDonor, setOpenDonor] = useState(false);
     const [open, setOpen] = useState(false);
-    const { username, name, photoUrl, about, village, postoffice, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = data;
+    const { id, username, name, photoUrl, about, village, postoffice, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = data;
     const [editMode, setEditMode] = useState<boolean>(false);
     const router = useRouter();
     const [image, setImage] = useState<string[]>(data.photoUrl);
@@ -954,6 +955,15 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
                     )}
                 </form>
             </Form>
+            {beneficialDonorId && (
+                <div>
+                    <BeneficialTransactionCreate
+                        beneficialDonorId={beneficialDonorId as string}
+                        beneficialId={id}
+                    />
+                </div>
+            )}
+
         </div>
     )
 }

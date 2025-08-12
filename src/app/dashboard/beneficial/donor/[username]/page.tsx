@@ -8,7 +8,10 @@ async function page({ params }: { params: Promise<{ username: string }> }) {
     cookies();
     const { username } = await params;
     const beneficialDonor = await prisma.beneficialDonor.findUnique({
-        where: { username }
+        where: { username },
+        include: {
+            beneficialTransaction: true
+        }
     }) as BeneficialDonorIProps;
     return (
         <div>

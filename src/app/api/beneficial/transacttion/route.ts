@@ -9,7 +9,7 @@ export const POST = async (request: Request) => {
     try {
         // Parse and validate request body
         const body: BeneficialTransactionIProps = await request.json();
-        const { beneficialDonorId, amount, beneficialId, date } = body;
+        const { beneficialDonorId, amount, beneficialId, date, description } = body;
 
         // Basic validation
         if (!beneficialDonorId || !amount || !beneficialId) {
@@ -37,8 +37,9 @@ export const POST = async (request: Request) => {
         const result = await prisma.beneficialTransaction.create({
             data: {
                 beneficialDonorId,
-                amount,
+                amount: String(amount),
                 beneficialId,
+                description: description,
                 date: date || new Date() // Use provided date or current date
             }
         });
