@@ -1,6 +1,6 @@
 "use client";
 
-import { BeneficialDonorIProps, BeneficialDonorUpdatedIProps, BeneficialIProps, BeneficialUpdatedIProps, DonorIProps, DonorPaymentIProps } from '@/types';
+import { BeneficialIProps, BeneficialUpdatedIProps } from '@/types';
 import Image from 'next/image'
 import React, { useMemo, useState, useEffect } from 'react'
 import { z } from "zod"
@@ -324,8 +324,6 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
         const { name, photoUrl, about, village, postoffice, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = values;
-
-        console.log({ values })
 
         mutate({ name, photoUrl, about, village, postoffice, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack }, {
             onSuccess: ({ message, result }: { message: string, result: BeneficialIProps }) => {
