@@ -1,4 +1,4 @@
-import { BeneficialDonorIProps, BeneficialUpdatedIProps, DonorIProps, ParamsIProps } from "@/types";
+import { BeneficialUpdatedIProps, ParamsIProps } from "@/types";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
@@ -11,7 +11,6 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
     try {
         const { username } = params;
         const body: BeneficialUpdatedIProps = await request.json();
-        console.log({ body })
         const { name, photoUrl, about, village, postoffice, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = body;
         const result = await prisma.beneficial.update({
             where: { username },
