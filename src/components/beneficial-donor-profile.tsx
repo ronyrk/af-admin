@@ -1,6 +1,6 @@
 "use client";
 
-import { BeneficialDonorIProps, BeneficialDonorUpdatedIProps, DonorIProps, DonorPaymentIProps } from '@/types';
+import { BeneficialDonorIProps, BeneficialDonorUpdatedIProps, BeneficialTransactionIProps, DonorIProps, DonorPaymentIProps } from '@/types';
 import Image from 'next/image'
 import React, { useState } from 'react'
 import DonorTable from './DataTable';
@@ -45,6 +45,12 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
     const [image, setImage] = useState<string>(data.photoUrl);
 
     const upload = image.length >= 1;
+
+    function calculateTotal(data: BeneficialTransactionIProps[]) {
+        return data.reduce((total, transaction) => {
+            return total + (parseFloat(transaction.amount) || 0);
+        }, 0);
+    }
 
 
 
@@ -168,6 +174,7 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
                                         </FormItem>
                                     )}
                                 /></h2>
+                            <h2 className='text-xl'>Total Donate Amount:- {calculateTotal(data.beneficialTransaction || [])}</h2>
 
                         </div>
                     </div>

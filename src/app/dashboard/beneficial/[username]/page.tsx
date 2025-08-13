@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import BeneficialProfileEdit from '@/components/beneficial-profile';
 import { BeneficialIProps, BeneficialTransactionIProps } from '@/types';
 import BeneficialTransactionList from '@/components/transaction-list';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 
 // Skeleton component for individual elements
@@ -212,6 +213,43 @@ const BeneficialProfileEditSkeleton = () => {
     );
 };
 
+function TransactionsListSkeleton() {
+    return (
+
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHead>DATE</TableHead>
+                    <TableHead className=' uppercase'>Amount</TableHead>
+                    <TableHead className=' uppercase'>Description</TableHead>
+                    <TableHead className=' uppercase'>Deleted</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {
+                    Array.from({ length: 5 }).map((_, index) => (
+                        <TableRow key={index}>
+                            <TableCell className="font-medium">
+                                <div className="animate-pulse bg-gray-200 h-4 w-24" />
+                            </TableCell>
+                            <TableCell className="font-medium uppercase">
+                                <div className="animate-pulse bg-gray-200 h-4 w-16" />
+                            </TableCell>
+                            <TableCell className="font-medium uppercase">
+                                <div className="animate-pulse bg-gray-200 h-4 w-32" />
+                            </TableCell>
+                            <TableCell className="font-medium uppercase">
+                                <div className="animate-pulse bg-gray-200 h-4 w-16" />
+                            </TableCell>
+                        </TableRow>
+                    ))
+                }
+            </TableBody>
+        </Table>
+
+    )
+}
+
 
 export default async function Beneficial({ params }: { params: Promise<{ username: string }> }) {
     const { username } = await params;
@@ -230,7 +268,9 @@ export default async function Beneficial({ params }: { params: Promise<{ usernam
             <Suspense fallback={<BeneficialProfileEditSkeleton />}>
                 <BeneficialProfileEdit data={data} />
             </Suspense>
-            <BeneficialTransactionList data={data.beneficialTransaction as BeneficialTransactionIProps[]} />
+            <Suspense fallback={<TransactionsListSkeleton />}>
+                <BeneficialTransactionList data={data.beneficialTransaction as BeneficialTransactionIProps[]} />
+            </Suspense>
         </div>
     )
 }

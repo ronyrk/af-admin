@@ -96,6 +96,8 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
     const [nidFrontImage, setNidFrontImage] = useState<string>(data.nidFront);
     const [nidBackImage, setNidBackImage] = useState<string>(data.nidBack);
 
+
+
     // Drag and drop state
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
