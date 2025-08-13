@@ -1,9 +1,4 @@
-import React, { Suspense } from 'react'
-import prisma from '@/lib/prisma';
-import BeneficialProfileEdit from '@/components/beneficial-profile';
-import { BeneficialIProps, BeneficialTransactionIProps } from '@/types';
-import BeneficialTransactionList from '@/components/transaction-list';
-
+import React from 'react';
 
 // Skeleton component for individual elements
 const Skeleton = ({ className = "" }: { className?: string }) => (
@@ -17,7 +12,7 @@ const ShimmerSkeleton = ({ className = "" }: { className?: string }) => (
     </div>
 );
 
-const BeneficialProfileEditSkeleton = () => {
+const Loading = () => {
     return (
         <div className="flex flex-col gap-6 relative">
             {/* Custom shimmer keyframes - add this to your global CSS */}
@@ -208,29 +203,9 @@ const BeneficialProfileEditSkeleton = () => {
                     </div>
                 </div>
             </div>
+
         </div>
     );
 };
 
-
-export default async function Beneficial({ params }: { params: Promise<{ username: string }> }) {
-    const { username } = await params;
-    const data = await prisma.beneficial.findUnique({
-        where: {
-            username,
-        },
-        include: {
-            beneficialDonor: true,
-            beneficialTransaction: true,
-        }
-    }) as BeneficialIProps;
-
-    return (
-        <div>
-            <Suspense fallback={<BeneficialProfileEditSkeleton />}>
-                <BeneficialProfileEdit data={data} />
-            </Suspense>
-            <BeneficialTransactionList data={data.beneficialTransaction as BeneficialTransactionIProps[]} />
-        </div>
-    )
-}
+export default Loading;
