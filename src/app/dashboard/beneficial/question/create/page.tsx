@@ -38,7 +38,7 @@ function CreateFAQ() {
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: async ({ title, description }: FaqIProps) => {
-			const response = await axios.post("/api/faq", {
+			const response = await axios.post("/api/beneficial/faq", {
 				title, description
 			});
 			return response.data;
@@ -57,7 +57,7 @@ function CreateFAQ() {
 				} else {
 					throw new Error("Created Failed")
 				}
-				router.push('/dashboard/question');
+				router.push('/dashboard/beneficial/question');
 				router.refresh();
 			},
 			onError: (error) => {

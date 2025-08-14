@@ -49,7 +49,7 @@ function page() {
       </div>
       <div className="flex justify-start gap-2">
         <Button className=' w-fit' size={"sm"} asChild>
-          <Link href="/dashboard/question/create">Create FAQ</Link>
+          <Link href="/dashboard/beneficial/question/create">Create FAQ</Link>
         </Button>
       </div>
       <div className="p-2">
