@@ -1,161 +1,96 @@
-import React, { Suspense } from 'react'
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { BeneficialDonorIProps, BeneficialIProps, LoanIProps, PaymentIProps } from '@/types';
-import { cookies } from 'next/headers';
-import { Input } from '@/components/ui/input';
-import DeleteButton from '@/components/DeleteButton';
+import React, { Suspense } from 'react';
+import { Table, TableHeader, TableRow, TableHead } from "@/components/ui/table";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import prisma from '@/lib/prisma';
-import { ClipboardPenLine } from 'lucide-react';
-import PaginationPart from '@/components/Pagination';
-import { getBorrowers } from '@/lib/getBorrowers';
-import SearchBox from '@/components/SearchBox';
-import { getSearchBorrowers } from '@/lib/SearchBorrowers';
+import { getBeneficialData, getLocationOptions } from '@/lib/getBeneficialData';
+import FilterControls from '@/components/FilterControls';
+import BeneficialList from '@/components/BeneficialList';
 import { unstable_noStore } from 'next/cache';
-import Image from 'next/image';
+import { FilterSkeleton, LoadingFallback } from '@/components/FilterSkeleton';
+import PaginationPart from '@/components/beneficial-pagination';
 
-function SearchBarFallback() {
-    return <>placeholder</>
+interface PageProps {
+    searchParams?: {
+        search?: string;
+        district?: string;
+        policeStation?: string;
+        page?: string;
+    };
 }
 
-
-
-async function BeneficialList({ searchParams }: {
-    searchParams?: {
-        search?: string,
-        page?: string,
-    }
-}) {
-    unstable_noStore();
-    const result = await prisma.beneficial.findMany({
-        include: {
-            beneficialDonor: true,
-            beneficialTransaction: true,
-        }
-    }) as BeneficialIProps[];
-    const query = searchParams?.search || "all";
-    const page = searchParams?.page || "1";
-    const borrowers = await getSearchBorrowers(query, page);
-    const pageSize = 10; // Number of items per page
-    const start = (Number(page) - 1) * pageSize;
-    const end = start + pageSize;
-
-    function getStatus(item: BeneficialIProps): string {
-        if (item.beneficialDonorId) {
-            return "Active";
-        }
-        return "Inactive";
-    }
-
-
+async function BeneficialDataWrapper({ searchParams }: PageProps) {
+    const { data, pagination } = await getBeneficialData(searchParams || {});
 
     return (
         <>
-            <TableBody>
-                {
-                    result.map((item, index: number) => (
-                        <TableRow key={index}>
-                            <TableCell className="font-medium">
-                                <Image src={item.photoUrl.at(0) as string} alt={item.name} width={100} height={100} priority />
-                            </TableCell>
-                            <TableCell className="font-medium uppercase">
-                                <div className=' flex flex-col gap-1'>
-                                    <span>{item.village}</span>
-                                    <span>{item.postoffice}</span>
-                                    <span>{item.district}</span>
-                                    <span>{item.policeStation}</span>
-                                </div>
-                            </TableCell>
-                            <TableCell className="font-medium uppercase">
-                                {getStatus(item)}
-                            </TableCell>
-                            <TableCell className="font-medium uppercase">
-                                <Button className='bg-color-main' variant={"outline"} size={"sm"} asChild>
-                                    <Link href={`/dashboard/beneficial/${item.username}`}>Details</Link>
-                                </Button>
-                            </TableCell>
-                            <TableCell className="font-medium uppercase">
-                                {
-                                    item.beneficialDonorId ? (
-                                        <Button className='bg-color-main' variant={"outline"} size={"sm"} asChild>
-                                            <Link href={`/dashboard/beneficial/donor/${item.beneficialDonor?.username}`}>Details</Link>
-                                        </Button>
-                                    ) : " not available"
-
-                                }
-                            </TableCell>
-                            <TableCell className="font-medium uppercase">
-                                <Button className='bg-color-main' variant={"outline"} size={"sm"} asChild>
-                                    <Link href={`${item.username}`}><ClipboardPenLine /></Link>
-                                </Button>
-                            </TableCell>
-                            <TableCell className="font-medium uppercase">
-                                <DeleteButton type='beneficial' username={item.username} />
-                            </TableCell>
-                        </TableRow>
-                    ))
-                }
-            </TableBody>
+            <BeneficialList data={data} />
+            <div className="flex justify-between items-center py-4 px-4">
+                <div className="text-sm text-gray-500">
+                    Showing {data.length} of {pagination.totalCount} results
+                </div>
+                <PaginationPart
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    hasNext={pagination.hasNext}
+                    hasPrev={pagination.hasPrev}
+                />
+            </div>
         </>
-    )
-};
-
-
-
-async function page(
-    { searchParams }: {
-        searchParams?: {
-            search?: string,
-            page?: string,
-        }
-    }
-) {
-    const query = searchParams?.search || "all";
-    const pageNumber = await getBorrowers(query);
-    const length = pageNumber?.length;
-    return (
-        <div className='flex flex-col'>
-
-            <div className="flex flex-row justify-between p-2 ">
-                <Button asChild>
-                    <Link className=' bg-color-main hover:bg-color-sub' href={`borrowers/create`}>Borrowers Create</Link>
-                </Button>
-                <Suspense fallback={<SearchBarFallback />}>
-                    <SearchBox />
-                </Suspense>
-            </div>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Image</TableHead>
-                        <TableHead>Address</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Details</TableHead>
-                        <TableHead>Donor</TableHead>
-                        <TableHead>UPDATED</TableHead>
-                        <TableHead>DELETE</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <Suspense fallback={<h2 className='p-4 text-center '>Loading...</h2>} >
-                    <BeneficialList searchParams={searchParams} />
-                </Suspense>
-            </Table>
-            <div className="flex justify-center py-2">
-                <PaginationPart item={10} data={length} />
-            </div>
-
-        </div>
-    )
+    );
 }
 
-export default page
+// Wrapper component to handle async location options
+async function FilterControlsWrapper({
+    locationOptionsPromise
+}: {
+    locationOptionsPromise: Promise<{ districts: string[], policeStations: { policeStation: string, district: string }[] }>
+}) {
+    const locationOptions = await locationOptionsPromise;
+    return <FilterControls locationOptions={locationOptions} />;
+}
+
+export default async function Page({ searchParams }: PageProps) {
+    unstable_noStore();
+
+    // Show skeleton while location options are loading
+    const locationOptionsPromise = getLocationOptions();
+
+    return (
+        <div className="flex flex-col space-y-6 p-6">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900">Beneficial Management</h1>
+                    <p className="text-gray-600 mt-1">Manage and track beneficial recipients</p>
+                </div>
+                <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                    <Link href="/dashboard/beneficial/create">
+                        Create New Beneficial
+                    </Link>
+                </Button>
+            </div>
+
+            <Suspense fallback={<FilterSkeleton />}>
+                <FilterControlsWrapper locationOptionsPromise={locationOptionsPromise} />
+            </Suspense>
+
+            <div className="bg-white rounded-lg shadow">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-gray-50">
+                            <TableHead className="font-semibold">Photo</TableHead>
+                            <TableHead className="font-semibold">Personal Details</TableHead>
+                            <TableHead className="font-semibold">Status</TableHead>
+                            <TableHead className="font-semibold">Actions</TableHead>
+                            <TableHead className="font-semibold">Donor Info</TableHead>
+                            <TableHead className="font-semibold">Edit</TableHead>
+                            <TableHead className="font-semibold">Delete</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <Suspense fallback={<LoadingFallback />}>
+                        <BeneficialDataWrapper searchParams={searchParams} />
+                    </Suspense>
+                </Table>
+            </div>
+        </div>
+    );
+}
