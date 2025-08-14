@@ -407,6 +407,12 @@ model beneficialTransaction {
   @@index([beneficialId, beneficialDonorId])
 }
 
+model beneficialQuestion {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+}
+
 enum Status {
   PENDING
   RUNNING
