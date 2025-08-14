@@ -35,7 +35,7 @@ async function Question() {
               </Button>
             </TableCell>
             <TableCell className="font-medium uppercase">
-              <DeleteButtonFAQ id={item.id} />
+              <DeleteButtonFAQ path='faq' id={item.id} />
             </TableCell>
           </TableRow>
         ))

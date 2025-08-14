@@ -6,7 +6,6 @@ import {
 	AlertDialogAction,
 	AlertDialogCancel,
 	AlertDialogContent,
-	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
@@ -18,11 +17,11 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
 
-function DeleteButtonFAQ({ id }: { id: string }) {
+function DeleteButtonFAQ({ id, path }: { id: string, path: string }) {
 	const router = useRouter();
 	const { mutate, isPending } = useMutation({
 		mutationFn: async (id: string) => {
-			const response = await axios.delete(`/api/faq/${id}`);
+			const response = await axios.delete(`/api/${path}/${id}`);
 			return response.data;
 		},
 	});

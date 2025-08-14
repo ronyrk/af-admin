@@ -1,4 +1,4 @@
-import FAQUpdated from '@/components/FaqUpdated';
+import BeneficialFAQUpdated from '@/components/beneficial-faq-updated';
 import { FaqProps } from '@/types';
 import { cookies } from 'next/headers';
 import React from 'react'
@@ -16,7 +16,7 @@ async function page({ params }: {
 	const data: FaqProps = await res.json();
 	return (
 		<div>
-			<FAQUpdated data={data} />
+			<BeneficialFAQUpdated data={data} />
 		</div>
 	)
 }
