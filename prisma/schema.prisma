@@ -399,11 +399,18 @@ model beneficialTransaction {
   beneficialId      String          @db.ObjectId
   beneficial        beneficial      @relation(fields: [beneficialId], references: [id])
   amount            String
+  description       String
   date              DateTime
   beneficialDonorId String          @db.ObjectId
   beneficialDonor   beneficialDonor @relation(fields: [beneficialDonorId], references: [id])
 
   @@index([beneficialId, beneficialDonorId])
+}
+
+model beneficialQuestion {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
 }
 
 enum Status {

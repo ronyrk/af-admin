@@ -534,5 +534,6 @@ export interface BeneficialTransactionIProps {
 	beneficialId: string,
 	amount: string,
 	beneficialDonorId: string,
+	description: string,
 	date: Date,
 }
