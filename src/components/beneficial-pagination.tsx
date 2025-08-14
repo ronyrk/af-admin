@@ -32,7 +32,7 @@ export default function PaginationPart({ currentPage, totalPages, hasNext, hasPr
     return (
         <div className="flex items-center justify-center space-x-2">
             <Button
-                variant="outline"
+
                 size="sm"
                 onClick={() => goToPage(currentPage - 1)}
                 disabled={!hasPrev}
@@ -44,7 +44,7 @@ export default function PaginationPart({ currentPage, totalPages, hasNext, hasPr
 
             <div className="flex items-center space-x-1">
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNumber;
+                    let pageNumber: number;
                     if (totalPages <= 5) {
                         pageNumber = i + 1;
                     } else if (currentPage <= 3) {
@@ -58,7 +58,7 @@ export default function PaginationPart({ currentPage, totalPages, hasNext, hasPr
                     return (
                         <Button
                             key={pageNumber}
-                            variant={currentPage === pageNumber ? "default" : "outline"}
+                            variant={currentPage === pageNumber ? "default" : "secondary"}
                             size="sm"
                             onClick={() => goToPage(pageNumber)}
                             className="min-w-[2rem]"
@@ -70,7 +70,6 @@ export default function PaginationPart({ currentPage, totalPages, hasNext, hasPr
             </div>
 
             <Button
-                variant="outline"
                 size="sm"
                 onClick={() => goToPage(currentPage + 1)}
                 disabled={!hasNext}
