@@ -493,6 +493,7 @@ export interface BeneficialIProps {
 	nidFront: string,
 	nidBack: string,
 	beneficialDonorId?: string,
+	beneficialDonor?: BeneficialDonorIProps,
 	beneficialTransaction?: BeneficialTransactionIProps[],
 	createAt: Date
 }

@@ -1,4 +1,3 @@
-"use client";
 import React from 'react';
 
 // Skeleton component for individual elements
@@ -16,15 +15,6 @@ const ShimmerSkeleton = ({ className = "" }: { className?: string }) => (
 const Loading = () => {
     return (
         <div className="flex flex-col gap-6 relative">
-            {/* Custom shimmer keyframes - add this to your global CSS */}
-            <style jsx>{`
-        @keyframes shimmer {
-          100% {
-            transform: translateX(100%);
-          }
-        }
-      `}</style>
-
             {/* Top Bar Actions Skeleton */}
             <div className="absolute flex flex-row gap-2 top-2 right-4 z-50">
                 <Skeleton className="w-20 h-10" />

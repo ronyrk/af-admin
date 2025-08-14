@@ -179,12 +179,12 @@ function BeneficialCreate() {
 
     // 3. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log({ values })
+
         const { username, name, photoUrl, about, village, postoffice, district, policeStation, occupation, beneficialDonorId, phone, nidFront, nidBack } = values;
         mutate({ username, name, photoUrl, about, village, nidBack, nidFront, postoffice, district, policeStation, occupation, beneficialDonorId, phone }, {
             onSuccess: ({ message, result }: { message: string, result: BeneficialIProps }) => {
                 toast.success(message);
-                console.log({ result });
+                router.push("/dashboard/beneficial");
                 router.refresh();
             },
             onError: ({ message }: { message: any }) => {
