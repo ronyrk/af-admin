@@ -1,119 +1,80 @@
-import React, { Suspense } from 'react'
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { DistrictIProps } from '@/types';
-import { cookies } from 'next/headers';
-import { Input } from '@/components/ui/input';
-import DeleteButton from '@/components/DeleteButton';
-import { DistrictCreate } from '@/components/DistrictCreate';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion"
-import { PlusCircle } from 'lucide-react';
-import { PoliceStationCreate } from '@/components/PoliceStationCreate';
+import React, { Suspense } from 'react';
+import { Table, TableHeader, TableRow, TableHead, TableFooter } from "@/components/ui/table";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import BeneficialList from '@/components/BeneficialList';
+import { unstable_noStore } from 'next/cache';
+import { FilterSkeleton, LoadingFallback } from '@/components/FilterSkeleton';
+import Pagination from '@/components/beneficial-pagination';
+import { getBeneficialDonorData } from '@/lib/getBeneficialDonorData';
+import BeneficialDonorList from '@/components/BeneficialDonorList';
+import FilterControls from '@/components/FilterControls';
+import FilterControlsDonor from '@/components/FilterControlsDonor';
 
-
-async function BeneficialDonor() {
-    cookies();
-    const res = await fetch('https://af-admin.vercel.app/api/district');
-    if (!res.ok) {
-        throw new Error("Failed to fetch data");
+interface PageProps {
+    searchParams?: {
+        search?: string;
+        page?: string;
     };
-    const districts: DistrictIProps[] = await res.json();
-
-    return (
-        <TableBody>
-            {
-                districts.map((item: DistrictIProps, index: number) => (
-                    <TableRow key={index}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell className="font-medium uppercase text-blue-800">
-                            <Accordion
-                                type="single"
-                                collapsible
-                                className="w-full"
-                            >
-                                <AccordionItem value={`item-${index}`}>
-                                    <AccordionTrigger> {item.name}</AccordionTrigger>
-                                    <AccordionContent>
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow>
-                                                    <TableHead>Index</TableHead>
-                                                    <TableHead>Name</TableHead>
-                                                    <TableHead>Action</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                {
-                                                    item.policeStations.map((station, index) => (
-                                                        <TableRow key={index}>
-                                                            <TableCell>{index + 1}</TableCell>
-                                                            <TableCell>{station.name}</TableCell>
-                                                            <TableCell>
-                                                                <DeleteButton type='police-station' username={station.id} />
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ))
-                                                }
-                                            </TableBody>
-                                        </Table>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            </Accordion>
-                        </TableCell>
-                        <TableCell className="font-medium uppercase">
-                            <PoliceStationCreate districtId={item.id} />
-                        </TableCell>
-                        <TableCell className="font-medium uppercase">
-                            <DeleteButton type='district' username={item.id} />
-                        </TableCell>
-
-                    </TableRow>
-                ))
-            }
-        </TableBody>
-    )
-};
-
-
-
-async function page() {
-    return (
-        <div className='flex flex-col'>
-            <div className="p-2 flex justify-between ">
-                <Button asChild>
-                    <Link href="/dashboard/beneficial/donor/create">Create Donor</Link>
-                </Button>
-                <Input className='w-64' type="text" placeholder="Search" />
-            </div>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Index</TableHead>
-                        <TableHead className='w-[500px]'>NAME</TableHead>
-                        <TableHead>PS</TableHead>
-                        <TableHead>DELETE</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <Suspense fallback={<h2 className=' text-center p-4'>Loading...</h2>} >
-
-                </Suspense>
-            </Table>
-
-        </div>
-    )
 }
 
-export default page
+// Wrapper component to handle async location options
+async function FilterControlsWrapper() {
+
+    return <FilterControlsDonor />;
+}
+
+
+
+export default async function Page({ searchParams }: PageProps) {
+    unstable_noStore();
+
+    const { data, pagination } = await getBeneficialDonorData(searchParams || {});
+
+    return (
+        <div className="flex flex-col space-y-6 p-6">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900">Beneficial Management</h1>
+                    <p className="text-gray-600 mt-1">Manage and track beneficial recipients</p>
+                </div>
+                <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                    <Link href="/dashboard/beneficial/donor/create">
+                        Create New Beneficial Donor
+                    </Link>
+                </Button>
+            </div>
+            <Suspense fallback={<FilterSkeleton />}>
+                <FilterControlsWrapper />
+            </Suspense>
+
+            <div className="bg-white rounded-lg shadow">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-gray-50 ">
+                            <TableHead className="font-semibold w-1/3">Profile & Details</TableHead>
+                            <TableHead className="font-semibold w-1/4">Total Amount</TableHead>
+                            <TableHead className="font-semibold w-24">Edit</TableHead>
+                            <TableHead className="font-semibold w-24">Delete</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <Suspense fallback={<LoadingFallback />}>
+                        <BeneficialDonorList data={data} />
+                    </Suspense>
+                    <TableFooter>
+                        <TableRow>
+                            <TableHead colSpan={6}>
+                                <Pagination
+                                    currentPage={pagination.currentPage}
+                                    totalPages={pagination.totalPages}
+                                    hasNext={pagination.hasNext}
+                                    hasPrev={pagination.hasPrev}
+                                />
+                            </TableHead>
+                        </TableRow>
+                    </TableFooter>
+                </Table>
+            </div>
+        </div>
+    );
+}
