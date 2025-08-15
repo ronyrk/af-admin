@@ -12,7 +12,7 @@ interface PaginationProps {
     hasPrev: boolean;
 }
 
-export default function PaginationPart({ currentPage, totalPages, hasNext, hasPrev }: PaginationProps) {
+export default function Pagination({ currentPage, totalPages, hasNext, hasPrev }: PaginationProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -32,7 +32,6 @@ export default function PaginationPart({ currentPage, totalPages, hasNext, hasPr
     return (
         <div className="flex items-center justify-center space-x-2">
             <Button
-
                 size="sm"
                 onClick={() => goToPage(currentPage - 1)}
                 disabled={!hasPrev}
@@ -70,6 +69,7 @@ export default function PaginationPart({ currentPage, totalPages, hasNext, hasPr
             </div>
 
             <Button
+
                 size="sm"
                 onClick={() => goToPage(currentPage + 1)}
                 disabled={!hasNext}
@@ -78,10 +78,6 @@ export default function PaginationPart({ currentPage, totalPages, hasNext, hasPr
                 Next
                 <ChevronRight className="h-4 w-4" />
             </Button>
-
-            <div className="text-sm text-gray-500 ml-4">
-                Page {currentPage} of {totalPages}
-            </div>
         </div>
     );
 }
