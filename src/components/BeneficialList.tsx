@@ -93,7 +93,7 @@ const BeneficialRow = memo(({ item }: { item: BeneficialIProps }) => (
 
         <TableCell className="font-medium p-4">
             <Button className="bg-amber-600 hover:bg-amber-700 text-white w-full" variant="default" size="sm" asChild>
-                <Link href={`${item.username}`}>
+                <Link href={`/dashboard/beneficial/${item.username}`}>
                     <ClipboardPenLine className="h-4 w-4 mr-1" />
                     Edit
                 </Link>
