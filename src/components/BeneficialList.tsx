@@ -38,8 +38,9 @@ const BeneficialRow = memo(({ item }: { item: BeneficialIProps }) => (
                 {/* Personal Details right next to image */}
                 <div className="flex-1 min-w-0">
                     <div className="flex flex-col gap-1">
+                        <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
                         {/* Address section with better formatting */}
-                        <div className="mt-2 space-y-1">
+                        <div className="mt-1 space-y-1">
                             <div className="flex items-center gap-2 text-sm">
                                 <span className="text-gray-500">🏠</span>
                                 <span className="font-medium text-gray-700">{item.village}</span>

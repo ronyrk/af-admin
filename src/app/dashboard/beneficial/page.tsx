@@ -18,8 +18,6 @@ interface PageProps {
     };
 }
 
-
-
 // Wrapper component to handle async location options
 async function FilterControlsWrapper({
     locationOptionsPromise
