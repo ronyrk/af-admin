@@ -93,8 +93,8 @@ function AdminSidebar() {
 	const beneficial: RoutesIProps[] = [
 		{
 			name: "District",
-			path: "/dashboard/beneficial/district",
-			active: path === "/dashboard/beneficial/district" || path === "/dashboard/beneficial/district/create"
+			path: "/dashboard/district",
+			active: path === "/dashboard/district",
 		},
 		{
 			name: "Beneficial Question",
