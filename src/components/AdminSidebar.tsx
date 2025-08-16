@@ -90,6 +90,31 @@ function AdminSidebar() {
 		},
 
 	];
+	const beneficial: RoutesIProps[] = [
+		{
+			name: "District",
+			path: "/dashboard/beneficial/district",
+			active: path === "/dashboard/beneficial/district" || path === "/dashboard/beneficial/district/create"
+		},
+		{
+			name: "Beneficial Question",
+			path: "/dashboard/beneficial/question",
+			active: path === "/dashboard/beneficial/question" || path === "/dashboard/beneficial/question/create"
+		},
+		{
+			name: "Beneficial Donor",
+			path: "/dashboard/beneficial/donor",
+			active: path === "/dashboard/beneficial/donor" || path === "/dashboard/beneficial/donor/create"
+		},
+		{
+			name: "Beneficial",
+			path: "/dashboard/beneficial",
+			active: path === "/dashboard/beneficial" || path === "/dashboard/beneficial/create"
+		}
+
+
+
+	];
 
 	const others: RoutesIProps[] = [
 
@@ -151,6 +176,18 @@ function AdminSidebar() {
 						<div className="flex flex-col gap-2">
 							{
 								hasana.map((item, index) => (
+									<Link key={index} className={`px-8 py-3 rounded ${item.active === true ? " bg-color-main text-white" : "hover:bg-color-main hover:text-white"}`} href={item.path}>{item.name}</Link>
+								))
+							}
+						</div>
+					</AccordionContent>
+				</AccordionItem>
+				<AccordionItem value="item-1">
+					<AccordionTrigger className=' px-2 py-4 text-lg'>উপকারী</AccordionTrigger>
+					<AccordionContent>
+						<div className="flex flex-col gap-2">
+							{
+								beneficial.map((item, index) => (
 									<Link key={index} className={`px-8 py-3 rounded ${item.active === true ? " bg-color-main text-white" : "hover:bg-color-main hover:text-white"}`} href={item.path}>{item.name}</Link>
 								))
 							}
