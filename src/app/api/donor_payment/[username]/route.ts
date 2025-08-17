@@ -15,9 +15,9 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
         }
 
         // Query the database
-        const result = await prisma.donorPayment.findUnique({
+        const result = await prisma.donorPayment.findMany({
             where: {
-                id: username
+                donorUsername: username
             }
         });
 
