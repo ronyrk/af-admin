@@ -36,6 +36,7 @@ const formSchema = z.object({
     occupation: z.string(),
     address: z.string(),
     name: z.string(),
+    code: z.string(),
 });
 
 function BorrowerProfile({ data, paymentList }: { data: LoanIProps, paymentList: PaymentIProps[] }) {
@@ -80,6 +81,7 @@ function BorrowerProfile({ data, paymentList }: { data: LoanIProps, paymentList:
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            code: data.code,
             name: data.name,
             occupation: data.occupation,
             phone: data.phone,
@@ -88,9 +90,9 @@ function BorrowerProfile({ data, paymentList }: { data: LoanIProps, paymentList:
         },
     });
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl }: LoanIUpdatedProps) => {
+        mutationFn: async ({ name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl, code }: LoanIUpdatedProps) => {
             const response = await axios.patch(`/api/loan/${data.username}`, {
-                name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl
+                name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl, code
             });
             return response.data;
         },
@@ -110,9 +112,10 @@ function BorrowerProfile({ data, paymentList }: { data: LoanIProps, paymentList:
         const occupation = values.occupation;
         const phone = values.phone;
         const about = values.about;
+        const code = values.code;
 
         // Branch Created
-        mutate({ name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl }, {
+        mutate({ name, address, code, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl }, {
             onSuccess: ({ message, result }: { message: string, result: LoanIProps }) => {
                 if (result?.id) {
                     toast.success(message);
@@ -175,6 +178,19 @@ function BorrowerProfile({ data, paymentList }: { data: LoanIProps, paymentList:
                                     )}
                                 />
                             </h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold">code :</span>
+                                <FormField
+                                    control={form.control}
+                                    name="code"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {editMode === true ? <Input className='text-lg '{...field} /> : <Input readOnly className='text-lg  border-none bg-inherit'{...field} />}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                /></h2>
                             <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold">Lives in :</span>
                                 <FormField
                                     control={form.control}

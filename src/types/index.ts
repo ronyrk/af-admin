@@ -154,6 +154,7 @@ export interface LoanIUpdatedProps {
 	phone: string,
 	photosUrl: string,
 	status?: string,
+	code: string,
 };
 
 export interface PaymentIProps {

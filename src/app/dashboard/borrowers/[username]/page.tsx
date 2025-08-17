@@ -1,6 +1,5 @@
 import BorrowerProfile from '@/components/BorrowerProfile';
 import BorrowersTransaction from '@/components/BorrowersTransaction';
-import BorrowerUpdated from '@/components/BorrowersUpdated';
 import { LoanIProps, PaymentIProps } from '@/types';
 import { cookies } from 'next/headers';
 import React from 'react'
