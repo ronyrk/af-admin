@@ -90,9 +90,9 @@ function BorrowerProfile({ data, paymentList }: { data: LoanIProps, paymentList:
         },
     });
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl }: LoanIUpdatedProps) => {
+        mutationFn: async ({ name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl, code }: LoanIUpdatedProps) => {
             const response = await axios.patch(`/api/loan/${data.username}`, {
-                name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl
+                name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl, code
             });
             return response.data;
         },
