@@ -27,7 +27,7 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 		const result = await prisma.loan.update({
 			where: { username },
 			data: {
-				name, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl
+				name, code, branch, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl
 			}
 		});
 		return NextResponse.json({ message: "successfully updated", result })
