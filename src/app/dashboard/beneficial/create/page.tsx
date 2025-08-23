@@ -79,6 +79,7 @@ const formSchema = z.object({
     beneficialDonorId: z.string().optional(),
     nidFront: z.string().url("NID front image is required"),
     nidBack: z.string().url("NID back image is required"),
+    status: z.string().min(2, "Status must be at least 2 characters").max(100, "Status is too long"),
 });
 
 function BeneficialCreate() {
@@ -104,6 +105,7 @@ function BeneficialCreate() {
             beneficialDonorId: "",
             nidFront: "",
             nidBack: "",
+            status: "",
         }
     });
 
@@ -249,7 +251,7 @@ function BeneficialCreate() {
             return;
         }
 
-        const { username, name, photoUrl, about, village, district, policeStation, occupation, beneficialDonorId, phone, nidFront, nidBack } = values;
+        const { username, name, photoUrl, status, about, village, district, policeStation, occupation, beneficialDonorId, phone, nidFront, nidBack } = values;
 
         mutate({
             username,
@@ -263,7 +265,8 @@ function BeneficialCreate() {
             beneficialDonorId: beneficialDonorId || undefined,
             phone,
             nidFront,
-            nidBack
+            nidBack,
+            status
         });
     }
 
@@ -381,6 +384,27 @@ function BeneficialCreate() {
                                     </FormItem>
                                 )}
                             />
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Status</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a status" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="Active">Active</SelectItem>
+                                                <SelectItem value="Inactive">Inactive</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
 
                             {/* District Select */}
@@ -484,6 +508,7 @@ function BeneficialCreate() {
                                     </FormItem>
                                 )}
                             />
+
 
                             <FormField
                                 control={form.control}

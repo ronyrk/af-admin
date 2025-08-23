@@ -384,6 +384,7 @@ model beneficial {
   nidFront              String
   nidBack               String
   photoUrl              String[]
+  status                String
   about                 String?
   beneficialTransaction beneficialTransaction[]
   beneficialDonorId     String?                 @db.ObjectId
@@ -422,4 +423,9 @@ enum PaymentType {
   LENDING
   DONATE
   REFOUND
+}
+
+enum ProfileStatus {
+  Active
+  Inactive
 }
