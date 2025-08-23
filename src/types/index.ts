@@ -503,7 +503,6 @@ export interface BeneficialCreateIProps {
 	name: string,
 	username: string,
 	village: string,
-	postoffice: string,
 	district: string,
 	policeStation: string,
 	occupation: string,
@@ -519,7 +518,6 @@ export interface BeneficialUpdatedIProps {
 
 	name: string,
 	village: string,
-	postoffice: string,
 	district: string,
 	policeStation: string,
 	occupation: string,
