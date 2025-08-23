@@ -46,7 +46,6 @@ const BeneficialRow = memo(({ item }: { item: BeneficialIProps }) => (
                                 <span className="font-medium text-gray-700">{item.village}</span>
                             </div>
                             <div className="flex items-center gap-4 text-xs text-gray-600">
-                                <span>📮 Post: {item.postoffice}</span>
                                 <span>🏛️ {item.district}</span>
                             </div>
                             <div className="flex items-center gap-4 text-xs text-gray-600">
