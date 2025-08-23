@@ -56,10 +56,10 @@ export async function getBeneficialData(params: FilterParams) {
                 take: pageSize,
                 orderBy: [
                     {
-                        beneficialDonorId: 'asc' // NULL values (inactive) come first, then non-NULL (active)
+                        status: 'desc' // "Active" comes before "Inactive" in descending order
                     },
                     {
-                        createAt: 'desc' // Within each group, order by creation date (newest first)
+                        createAt: 'desc' // Secondary sort for consistent ordering
                     }
                 ]
             }),

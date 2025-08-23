@@ -64,14 +64,10 @@ const BeneficialRow = memo(({ item }: { item: BeneficialIProps }) => (
                     ? 'bg-green-100 text-green-800 border border-green-200'
                     : 'bg-red-100 text-red-800 border border-red-200'
                     }`}>
-                    {getStatus(item) === 'Active' ? '✅' : '⚠️'}
-                    {getStatus(item)}
+                    {item.status === 'Active' ? '✅' : '⚠️'}
+                    {item.status}
                 </span>
-                {getStatus(item) === 'Inactive' && (
-                    <div className="text-xs text-red-600 font-medium bg-red-50 px-2 py-1 rounded">
-                        🎯 Priority: Needs Donor
-                    </div>
-                )}
+
             </div>
         </TableCell>
 
