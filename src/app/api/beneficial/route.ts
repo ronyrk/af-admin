@@ -10,7 +10,6 @@ const beneficialCreateSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name is too long"),
     username: z.string().min(3, "Username must be at least 3 characters").max(50, "Username is too long"),
     village: z.string().min(1, "Village is required").max(100, "Village name is too long"),
-    postoffice: z.string().min(1, "Post office is required").max(100, "Post office name is too long"),
     district: z.string().min(1, "District is required"),
     policeStation: z.string().min(1, "Police station is required"),
     occupation: z.string().min(1, "Occupation is required").max(100, "Occupation is too long"),
@@ -79,7 +78,7 @@ function handlePrismaError(error: any) {
 // Helper function to validate required fields
 function validateRequiredFields(data: any) {
     const requiredFields = [
-        'name', 'username', 'village', 'postoffice', 'district',
+        'name', 'username', 'village', 'district',
         'policeStation', 'occupation', 'photoUrl', 'about',
         'phone', 'nidFront', 'nidBack'
     ];
@@ -154,7 +153,6 @@ export const POST = async (request: Request) => {
             name,
             username,
             village,
-            postoffice,
             district,
             policeStation,
             occupation,
@@ -233,7 +231,6 @@ export const POST = async (request: Request) => {
                     name,
                     username,
                     village,
-                    postoffice,
                     district,
                     policeStation,
                     occupation,

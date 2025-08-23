@@ -70,9 +70,7 @@ interface BeneficialDonor {
 const formSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name is too long"),
     username: z.string().min(3, "Username must be at least 3 characters").max(50, "Username is too long"),
-    village: z.string().min(1, "Village is required").max(100, "Village name is too long"),
-    postoffice: z.string().min(1, "Post office is required").max(100, "Post office name is too long"),
-    photoUrl: z.array(z.string().url("Invalid image URL")).min(1, "Profile picture is required"),
+    village: z.string().min(1, "Village is required").max(100, "Village name is too long"), photoUrl: z.array(z.string().url("Invalid image URL")).min(1, "Profile picture is required"),
     about: z.string().min(10, "About must be at least 10 characters"),
     district: z.string().min(1, "District is required"),
     policeStation: z.string().min(1, "Police station is required"),
@@ -97,7 +95,6 @@ function BeneficialCreate() {
             name: "",
             username: "",
             village: "",
-            postoffice: "",
             photoUrl: [],
             about: "",
             district: "",
@@ -203,6 +200,13 @@ function BeneficialCreate() {
         return () => subscription.unsubscribe();
     }, [form, submitError]);
 
+    // Function to handle username input change
+    const handleUsernameChange = (value: string) => {
+        // Replace spaces with hyphens
+        const formattedValue = value.replace(/\s/g, '-');
+        return formattedValue;
+    };
+
     // 2. Define a mutation with improved error handling
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: BeneficialCreateIProps) => {
@@ -245,7 +249,7 @@ function BeneficialCreate() {
             return;
         }
 
-        const { username, name, photoUrl, about, village, postoffice, district, policeStation, occupation, beneficialDonorId, phone, nidFront, nidBack } = values;
+        const { username, name, photoUrl, about, village, district, policeStation, occupation, beneficialDonorId, phone, nidFront, nidBack } = values;
 
         mutate({
             username,
@@ -253,7 +257,6 @@ function BeneficialCreate() {
             photoUrl,
             about,
             village,
-            postoffice,
             district,
             policeStation,
             occupation,
@@ -313,6 +316,10 @@ function BeneficialCreate() {
                                             <Input
                                                 placeholder="Enter username"
                                                 {...field}
+                                                onChange={(e) => {
+                                                    const formattedValue = handleUsernameChange(e.target.value);
+                                                    field.onChange(formattedValue);
+                                                }}
                                                 disabled={isPending}
                                             />
                                         </FormControl>
@@ -338,16 +345,34 @@ function BeneficialCreate() {
                                     </FormItem>
                                 )}
                             />
+                            <FormField
+                                control={form.control}
+                                name="phone"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Phone Number *</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="01XXXXXXXXX"
+                                                {...field}
+                                                disabled={isPending}
+                                                maxLength={11}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
                             <FormField
                                 control={form.control}
                                 name="village"
                                 render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Village *</FormLabel>
+                                    <FormItem className="col-span-2">
+                                        <FormLabel>Full Address *</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Enter village name"
+                                                placeholder="Enter full address"
                                                 {...field}
                                                 disabled={isPending}
                                             />
@@ -357,23 +382,6 @@ function BeneficialCreate() {
                                 )}
                             />
 
-                            <FormField
-                                control={form.control}
-                                name="postoffice"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Post Office *</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Enter post office"
-                                                {...field}
-                                                disabled={isPending}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
 
                             {/* District Select */}
                             <FormField
@@ -495,24 +503,7 @@ function BeneficialCreate() {
                                 )}
                             />
 
-                            <FormField
-                                control={form.control}
-                                name="phone"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Phone Number *</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="01XXXXXXXXX"
-                                                {...field}
-                                                disabled={isPending}
-                                                maxLength={11}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+
 
                             {/* Beneficial Donor Selection */}
                             <FormField
