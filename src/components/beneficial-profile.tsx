@@ -82,12 +82,13 @@ const formSchema = z.object({
     beneficialDonorId: z.string().optional(),
     nidFront: z.string(),
     nidBack: z.string(),
+    status: z.string().min(2, "Status must be at least 2 characters").max(100, "Status is too long"),
 });
 
 function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
     const [openDonor, setOpenDonor] = useState(false);
     const [open, setOpen] = useState(false);
-    const { id, username, name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = data;
+    const { id, username, name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack, status } = data;
     const [editMode, setEditMode] = useState<boolean>(false);
     const router = useRouter();
     const [image, setImage] = useState<string[]>(data.photoUrl);
@@ -116,9 +117,9 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
             policeStation,
             occupation,
             phone,
-            beneficialDonorId,
             nidFront,
-            nidBack
+            nidBack,
+            status,
         }
     });
 
@@ -243,18 +244,6 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
                 return response.data;
             } catch (error) {
                 console.error('Error fetching beneficial donors:', error);
-                return [
-                    {
-                        id: "68979e361cd5041bc3fcfa74",
-                        name: "MD RAKIBUL HASAN -4",
-                        username: "rakibul",
-                        live: "Rangpur",
-                        homeTown: "kurigram",
-                        photoUrl: "https://utfs.io/f/7f5d5659-450e-480b-b460-55e0381eb385-2f4opl.jpg",
-                        about: "<h2> Hello I am rakibul</h2>",
-                        createAt: "2025-08-09T19:15:02.334Z"
-                    }
-                ];
             }
         },
         staleTime: 5 * 60 * 1000,
@@ -324,9 +313,9 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        const { name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = values;
+        const { name, photoUrl, status, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = values;
 
-        mutate({ name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack }, {
+        mutate({ name, photoUrl, status, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack }, {
             onSuccess: ({ message, result }: { message: string, result: BeneficialIProps }) => {
                 if (result.id) {
                     toast.success(message);
@@ -649,6 +638,35 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
                                                         'Not assigned'}
                                                 </div>
                                             )}
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="status"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Status</FormLabel>
+                                            {
+                                                editMode ? (
+                                                    <Select onValueChange={field.onChange} defaultValue={status}>
+                                                        <FormControl>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Select a status" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <SelectItem value="Active">Active</SelectItem>
+                                                            <SelectItem value="Inactive">Inactive</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                ) : (
+                                                    <div className="text-xl">
+                                                        {field.value || 'Inactive'}
+                                                    </div>
+                                                )}
                                             <FormMessage />
                                         </FormItem>
                                     )}

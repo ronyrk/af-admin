@@ -11,11 +11,11 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
     try {
         const { username } = params;
         const body: BeneficialUpdatedIProps = await request.json();
-        const { name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = body;
+        const { name, photoUrl, about, village, status, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = body;
         const result = await prisma.beneficial.update({
             where: { username },
             data: {
-                name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack
+                name, photoUrl, about, village, status, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack
             }
         });
         return NextResponse.json({ message: "successfully updated", result })

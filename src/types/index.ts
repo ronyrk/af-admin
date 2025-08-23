@@ -484,6 +484,7 @@ export interface BeneficialIProps {
 	name: string,
 	username: string,
 	village: string,
+	status: string,
 	district: string,
 	policeStation: string,
 	occupation: string,
@@ -497,11 +498,16 @@ export interface BeneficialIProps {
 	beneficialTransaction?: BeneficialTransactionIProps[],
 	createAt: Date
 }
+enum ProfileStatus {
+	Active,
+	Inactive
+}
 export interface BeneficialCreateIProps {
 	id?: string,
 	name: string,
 	username: string,
 	village: string,
+	status: string,
 	district: string,
 	policeStation: string,
 	occupation: string,
@@ -521,6 +527,7 @@ export interface BeneficialUpdatedIProps {
 	policeStation: string,
 	occupation: string,
 	photoUrl: string[],
+	status: string,
 	phone: string,
 	about?: string,
 	nidFront?: string,
