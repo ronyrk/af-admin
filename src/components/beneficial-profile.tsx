@@ -303,9 +303,9 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
 
     // 2. Define a mutation.
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack }: BeneficialUpdatedIProps) => {
+        mutationFn: async ({ name, photoUrl, status, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack }: BeneficialUpdatedIProps) => {
             const response = await axios.patch(`/api/beneficial/${username}`, {
-                username, name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack
+                username, name, photoUrl, status, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack
             });
             return response.data;
         },
