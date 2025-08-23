@@ -484,7 +484,6 @@ export interface BeneficialIProps {
 	name: string,
 	username: string,
 	village: string,
-	postoffice: string,
 	district: string,
 	policeStation: string,
 	occupation: string,
