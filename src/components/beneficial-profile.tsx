@@ -73,7 +73,6 @@ const formSchema = z.object({
     name: z.string(),
     username: z.string(),
     village: z.string(),
-    postoffice: z.string(),
     photoUrl: z.array(z.string()),
     about: z.string(),
     district: z.string(),
@@ -88,7 +87,7 @@ const formSchema = z.object({
 function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
     const [openDonor, setOpenDonor] = useState(false);
     const [open, setOpen] = useState(false);
-    const { id, username, name, photoUrl, about, village, postoffice, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = data;
+    const { id, username, name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = data;
     const [editMode, setEditMode] = useState<boolean>(false);
     const router = useRouter();
     const [image, setImage] = useState<string[]>(data.photoUrl);
@@ -111,7 +110,6 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
             name,
             username,
             village,
-            postoffice,
             photoUrl: image,
             about,
             district,
@@ -316,9 +314,9 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
 
     // 2. Define a mutation.
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ name, photoUrl, about, village, postoffice, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack }: BeneficialUpdatedIProps) => {
+        mutationFn: async ({ name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack }: BeneficialUpdatedIProps) => {
             const response = await axios.patch(`/api/beneficial/${username}`, {
-                username, name, photoUrl, about, village, postoffice, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack
+                username, name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack
             });
             return response.data;
         },
@@ -326,9 +324,9 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        const { name, photoUrl, about, village, postoffice, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = values;
+        const { name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = values;
 
-        mutate({ name, photoUrl, about, village, postoffice, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack }, {
+        mutate({ name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack }, {
             onSuccess: ({ message, result }: { message: string, result: BeneficialIProps }) => {
                 if (result.id) {
                     toast.success(message);
@@ -422,23 +420,6 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Home Town</FormLabel>
-                                            <FormControl>
-                                                {editMode ? (
-                                                    <Input className="text-xl" {...field} />
-                                                ) : (
-                                                    <div className="text-xl">{field.value}</div>
-                                                )}
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="postoffice"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Lives in</FormLabel>
                                             <FormControl>
                                                 {editMode ? (
                                                     <Input className="text-xl" {...field} />
