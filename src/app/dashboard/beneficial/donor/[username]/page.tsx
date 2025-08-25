@@ -6,6 +6,8 @@ import BeneficialDonorProfileEdit from '@/components/beneficial-donor-profile';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import BeneficialTransactionList from '@/components/transaction-list';
 import { BeneficialDonorTransactionCreate } from '@/components/beneficial-donor-transaction';
+import Beneficial from '../../[username]/page';
+import { BeneficialDonorSpendTransactionCreate } from '@/components/beneficial-donor-transaction-spend';
 
 function TransactionsListSkeleton() {
     return (
@@ -56,8 +58,9 @@ async function page({ params }: { params: Promise<{ username: string }> }) {
     return (
         <div>
             <BeneficialDonorProfileEdit data={beneficialDonor} />
-            <div className='py-2'>
+            <div className='py-2 flex justify-between gap-2'>
                 <BeneficialDonorTransactionCreate beneficialDonorId={beneficialDonor.id as string} />
+                <BeneficialDonorSpendTransactionCreate beneficialDonorId={beneficialDonor.id as string} />
             </div>
             <Suspense fallback={<TransactionsListSkeleton />}>
                 <BeneficialTransactionList data={beneficialDonor.beneficialTransaction as BeneficialTransactionIProps[]} />
