@@ -13,16 +13,14 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import { BeneficialDonorIProps, BranchIProps } from "@/types"
-import { useState } from "react"
 import { UploadButton } from "@/lib/uploadthing"
 import TailwindEditor from "@/components/editor"
-import { Loader2 } from "lucide-react"
+import { Loader2, Phone } from "lucide-react"
 
 const formSchema = z.object({
     name: z.string(),
@@ -31,6 +29,7 @@ const formSchema = z.object({
     homeTown: z.string(),
     photoUrl: z.string(),
     about: z.string(),
+    phone: z.string(),
 });
 
 function BeneficialDonorCreate() {
@@ -41,9 +40,9 @@ function BeneficialDonorCreate() {
     });
     // 2. Define a mutation.
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ username, name, photoUrl, about, live, homeTown }: BeneficialDonorIProps) => {
+        mutationFn: async ({ username, name, photoUrl, about, live, homeTown, phone }: BeneficialDonorIProps) => {
             const response = await axios.post("/api/beneficial/donor", {
-                username, name, photoUrl, about, live, homeTown
+                username, name, photoUrl, about, live, homeTown, phone
             });
             return response.data;
         },
@@ -51,8 +50,8 @@ function BeneficialDonorCreate() {
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        const { username, name, photoUrl, about, live, homeTown } = values;
-        mutate({ username, name, photoUrl, about, live, homeTown }, {
+        const { username, name, photoUrl, about, live, homeTown, phone } = values;
+        mutate({ username, name, photoUrl, about, live, homeTown, phone }, {
             onSuccess: ({ message, result }: { message: string, result: BeneficialDonorIProps }) => {
                 toast.success(message);
                 console.log(result);
@@ -94,6 +93,19 @@ function BeneficialDonorCreate() {
                                         <FormLabel>Name</FormLabel>
                                         <FormControl>
                                             <Input placeholder="name" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="phone"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Phone</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="phone" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

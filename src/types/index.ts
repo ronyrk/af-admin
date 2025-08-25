@@ -461,6 +461,7 @@ export interface BeneficialDonorIProps {
 	id?: string,
 	name: string,
 	username: string,
+	phone: string,
 	live: string,
 	homeTown: string,
 	photoUrl: string,
@@ -473,6 +474,7 @@ export interface BeneficialDonorUpdatedIProps {
 	name: string,
 	live: string,
 	homeTown: string,
+	phone: string,
 	photoUrl: string,
 	about: string,
 	beneficialTransaction?: BeneficialTransactionIProps[],
@@ -537,9 +539,10 @@ export interface BeneficialUpdatedIProps {
 }
 export interface BeneficialTransactionIProps {
 	id?: string,
-	beneficialId: string,
+	beneficialId?: string,
 	amount: string,
 	beneficialDonorId: string,
-	description: string,
+	description?: string,
+	paymentType: string,
 	date: Date,
 }

@@ -367,6 +367,7 @@ model beneficialDonor {
   homeTown              String
   photoUrl              String
   about                 String?
+  phone                 String
   beneficialTransaction beneficialTransaction[]
   beneficial            beneficial[]
   createAt              DateTime                @default(now())
@@ -396,10 +397,11 @@ model beneficial {
 
 model beneficialTransaction {
   id                String          @id @default(auto()) @map("_id") @db.ObjectId
-  beneficialId      String          @db.ObjectId
-  beneficial        beneficial      @relation(fields: [beneficialId], references: [id])
+  beneficialId      String?         @db.ObjectId
+  beneficial        beneficial?     @relation(fields: [beneficialId], references: [id])
   amount            String
-  description       String
+  description       String?
+  paymentType       String
   date              DateTime
   beneficialDonorId String          @db.ObjectId
   beneficialDonor   beneficialDonor @relation(fields: [beneficialDonorId], references: [id])
