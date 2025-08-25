@@ -33,6 +33,14 @@ const formSchema = z.object({
 });
 
 function BeneficialDonorCreate() {
+
+    // Function to handle username input change
+    const handleUsernameChange = (value: string) => {
+        // Replace spaces with hyphens
+        const formattedValue = value.replace(/\s/g, '-');
+        return formattedValue;
+    };
+
     const router = useRouter();
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -79,7 +87,12 @@ function BeneficialDonorCreate() {
                                     <FormItem>
                                         <FormLabel>Username</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="username" {...field} />
+                                            <Input placeholder="username" {...field}
+                                                onChange={(e) => {
+                                                    const formattedValue = handleUsernameChange(e.target.value);
+                                                    field.onChange(formattedValue);
+                                                }}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
