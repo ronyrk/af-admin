@@ -73,6 +73,7 @@ interface TransactionCreateData {
     beneficialId: string;
     description: string;
     date: Date;
+    paymentType: string;
 }
 
 interface BeneficialTransactionCreateProps {
@@ -81,6 +82,7 @@ interface BeneficialTransactionCreateProps {
     onSuccess?: (data: any) => void;
     disabled?: boolean;
     triggerText?: string;
+
     triggerVariant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 }
 
@@ -96,6 +98,8 @@ export function BeneficialTransactionCreate({
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
+
+    const paymentType = "spend";
 
     // Fix hydration issues
     useEffect(() => {
@@ -278,6 +282,7 @@ export function BeneficialTransactionCreate({
             beneficialId,
             date: values.date,
             description: trimmedDescription,
+            paymentType,
         };
 
         mutate(submitData);
