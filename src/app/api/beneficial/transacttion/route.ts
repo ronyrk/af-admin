@@ -9,13 +9,13 @@ export const POST = async (request: Request) => {
     try {
         // Parse and validate request body
         const body: BeneficialTransactionIProps = await request.json();
-        const { beneficialDonorId, amount, beneficialId, date, description } = body;
+        const { beneficialDonorId, amount, beneficialId, date, description, paymentType } = body;
 
         // Basic validation
-        if (!beneficialDonorId || !amount || !beneficialId) {
+        if (!beneficialDonorId || !amount || !paymentType) {
             return NextResponse.json(
                 {
-                    message: "Missing required fields: beneficialDonorId, amount, and beneficialId are required",
+                    message: "Missing required fields: beneficialDonorId, amount, and paymentType are required",
                     error: "VALIDATION_ERROR"
                 },
                 { status: 400 }
@@ -38,6 +38,7 @@ export const POST = async (request: Request) => {
             data: {
                 beneficialDonorId,
                 amount: String(amount),
+                paymentType,
                 beneficialId,
                 description: description,
                 date: date || new Date() // Use provided date or current date
@@ -46,14 +47,14 @@ export const POST = async (request: Request) => {
 
         return NextResponse.json(
             {
-                message: "Beneficial transaction created successfully",
+                message: " transaction created successfully",
                 data: result
             },
             { status: 201 } // 201 for successful creation
         );
 
     } catch (error: any) {
-        console.error('Beneficial Transaction Creation Error:', error);
+        console.error('Transaction Creation Error:', error);
 
         // Handle JSON parsing errors
         if (error instanceof SyntaxError) {

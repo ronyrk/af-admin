@@ -11,11 +11,11 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
     try {
         const { username } = params;
         const body: BeneficialDonorIProps = await request.json();
-        const { name, photoUrl, about, live, homeTown } = body;
+        const { name, photoUrl, about, live, homeTown, phone } = body;
         const result = await prisma.beneficialDonor.update({
             where: { username },
             data: {
-                name, photoUrl, about, live, homeTown
+                name, photoUrl, about, live, homeTown, phone
             }
         });
         return NextResponse.json({ message: "successfully updated", result })
