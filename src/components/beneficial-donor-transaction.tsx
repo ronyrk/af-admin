@@ -237,7 +237,7 @@ export function BeneficialDonorTransactionCreate({
                         <div className="flex justify-end space-x-2">
                             <Button
                                 type="button"
-                                variant="outline"
+                                variant="destructive"
                                 onClick={() => handleDialogOpenChange(false)}
                                 disabled={isPending}
                             >
