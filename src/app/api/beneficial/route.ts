@@ -299,3 +299,30 @@ export const POST = async (request: Request) => {
         );
     }
 }
+
+export const GET = async () => {
+
+    try {
+        const beneficial = await prisma.beneficial.findMany({
+        });
+
+        if (!beneficial) {
+            return NextResponse.json(
+                { message: "Beneficial not found" },
+                { status: 404 }
+            );
+        }
+
+        return NextResponse.json(
+            beneficial,
+            { status: 200 }
+        );
+
+    } catch (error) {
+        console.error('Error retrieving beneficial:', error);
+        return NextResponse.json(
+            { message: "Error retrieving beneficial" },
+            { status: 500 }
+        );
+    }
+};
