@@ -119,7 +119,7 @@ export function BeneficialTransactionCreate({
     const { mutate, isPending, error, reset } = useMutation({
         mutationFn: async (data: TransactionCreateData): Promise<any> => {
             // Fix the typo in the API endpoint
-            const response = await axios.post("/api/beneficial/transacttion", data);
+            const response = await axios.post("/api/beneficial/transaction", data);
             return response.data;
         },
 
