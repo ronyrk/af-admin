@@ -36,12 +36,13 @@ const formSchema = z.object({
     homeTown: z.string(),
     photoUrl: z.string(),
     about: z.string(),
+    phone: z.string(),
 
 });
 
 function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
 
-    const { username, name, photoUrl, about, live, homeTown } = data;
+    const { username, name, photoUrl, about, live, homeTown, phone } = data;
     const [image, setImage] = useState<string>(data.photoUrl);
 
     const upload = image.length >= 1;
@@ -65,16 +66,16 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
             photoUrl,
             about,
             live,
-            homeTown
-
+            homeTown,
+            phone
         }
     });
 
     // 2. Define a mutation.
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ name, photoUrl, about, live, homeTown }: BeneficialDonorUpdatedIProps) => {
+        mutationFn: async ({ name, photoUrl, about, live, homeTown, phone }: BeneficialDonorUpdatedIProps) => {
             const response = await axios.patch(`/api/beneficial/donor/${username}`, {
-                username, name, photoUrl, about, live, homeTown
+                username, name, photoUrl, about, live, homeTown, phone
             });
             return response.data;
         },
@@ -82,10 +83,10 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
     });
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        const { name, photoUrl, about, live, homeTown } = values;
+        const { name, photoUrl, about, live, homeTown, phone } = values;
 
         // Branch Created
-        mutate({ name, photoUrl, about, live, homeTown }, {
+        mutate({ name, photoUrl, about, live, homeTown, phone }, {
             onSuccess: ({ message, result }: { message: string, result: BeneficialDonorIProps }) => {
                 if (result.id) {
                     toast.success(message);
@@ -148,10 +149,24 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
                                     )}
                                 />
                             </h2>
+
                             <h2 className=" flex flex-row items-center font-normal text-[18px]  text-color-main"><span className="font-semibold mr-2">Home Town :</span>
                                 <FormField
                                     control={form.control}
                                     name="homeTown"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <h2 className='text-xl'>{field.value}</h2>}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                /></h2>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Phone:</span>
+                                <FormField
+                                    control={form.control}
+                                    name="live"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
