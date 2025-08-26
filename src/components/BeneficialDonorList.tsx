@@ -268,7 +268,7 @@ const BeneficialDonorRow = memo(({ item }: { item: BeneficialDonorIProps }) => {
                         asChild
                     >
                         <Link
-                            href={`donor/${item.username || item.id}`}
+                            href={`/dashboard/beneficiaries/donor/${item.username || item.id}`}
                             className="flex items-center justify-center gap-2"
                         >
                             <ClipboardPenLine className="h-4 w-4" />
