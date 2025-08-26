@@ -299,7 +299,7 @@ const BeneficialDonorList = memo(({ data }: BeneficialListProps) => {
     }, [data]);
 
     return (
-        <TableBody>
+        <>
             {validData.length === 0 ? (
                 <EmptyState />
             ) : (
@@ -307,7 +307,7 @@ const BeneficialDonorList = memo(({ data }: BeneficialListProps) => {
                     <BeneficialDonorRow key={item.id || item.username} item={item} />
                 ))
             )}
-        </TableBody>
+        </>
     );
 });
 
