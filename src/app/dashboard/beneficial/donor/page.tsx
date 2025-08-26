@@ -30,11 +30,11 @@ export default async function Page({ searchParams }: PageProps) {
     const { data, pagination } = await getBeneficialDonorData(searchParams || {});
 
     return (
-        <div className="flex flex-col space-y-6 p-6">
+        <div className="flex flex-col space-y-1 py-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Beneficial Management</h1>
-                    <p className="text-gray-600 mt-1">Manage and track beneficial recipients</p>
+                    <h1 className="text-3xl font-bold text-gray-900">Beneficial Donor Management</h1>
+                    <p className="text-gray-600 mt-1">Manage and track beneficial donors</p>
                 </div>
                 <Button asChild className="bg-blue-600 hover:bg-blue-700">
                     <Link href="/dashboard/beneficial/donor/create">
@@ -50,10 +50,11 @@ export default async function Page({ searchParams }: PageProps) {
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-gray-50 ">
-                            <TableHead className="font-semibold w-1/3">Profile & Details</TableHead>
-                            <TableHead className="font-semibold w-1/4">Total Amount</TableHead>
-                            <TableHead className="font-semibold w-24">Edit</TableHead>
-                            <TableHead className="font-semibold w-24">Delete</TableHead>
+                            <TableHead className="font-semibold ">Profile & Details</TableHead>
+                            <TableHead className="font-semibold ">Donate</TableHead>
+                            <TableHead className="font-semibold ">Spending</TableHead>
+                            <TableHead className="font-semibold ">Balance</TableHead>
+                            <TableHead className="font-semibold ">Others</TableHead>
                         </TableRow>
                     </TableHeader>
                     <Suspense fallback={<LoadingFallback />}>
