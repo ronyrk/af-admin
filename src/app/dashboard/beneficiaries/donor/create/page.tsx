@@ -62,7 +62,7 @@ function BeneficialDonorCreate() {
         mutate({ username, name, photoUrl, about, live, homeTown, phone }, {
             onSuccess: ({ message, result }: { message: string, result: BeneficialDonorIProps }) => {
                 toast.success(message);
-                console.log(result);
+                // console.log(result);
 
                 router.push(`/dashboard/beneficiaries/donors`);
                 router.refresh();

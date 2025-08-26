@@ -138,7 +138,7 @@ function BeneficialCreate() {
         queryFn: async () => {
             try {
                 const response = await axios.get('/api/beneficial/donor');
-                console.log('Beneficial Donors Response:', response.data);
+                // console.log('Beneficial Donors Response:', response.data);
 
                 if (!response.data || !Array.isArray(response.data)) {
                     console.warn('Invalid donors data format, using fallback');
