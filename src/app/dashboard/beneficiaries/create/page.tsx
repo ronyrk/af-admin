@@ -226,7 +226,7 @@ function BeneficialCreate() {
         onSuccess: ({ message, result }: { message: string, result: BeneficialIProps }) => {
             toast.success(message);
             form.reset(); // Reset form after successful submission
-            router.push("/dashboard/beneficial");
+            router.push("/dashboard/beneficiaries");
             router.refresh();
         },
         onError: (error: Error) => {

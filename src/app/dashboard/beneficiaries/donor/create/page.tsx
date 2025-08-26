@@ -64,7 +64,7 @@ function BeneficialDonorCreate() {
                 toast.success(message);
                 console.log(result);
 
-                // router.push(`/dashboard/beneficial/donor`);
+                router.push(`/dashboard/beneficiaries/donors`);
                 router.refresh();
             },
             onError: ({ message }: { message: any }) => {

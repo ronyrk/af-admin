@@ -97,19 +97,19 @@ function AdminSidebar() {
 			active: path === "/dashboard/district",
 		},
 		{
-			name: "Beneficial Question",
-			path: "/dashboard/beneficial/question",
-			active: path === "/dashboard/beneficial/question" || path === "/dashboard/beneficial/question/create"
+			name: "Beneficiary Question",
+			path: "/dashboard/beneficiary/about-beneficiary",
+			active: path === "/dashboard/beneficiary/about-beneficiary" || path === "/dashboard/beneficiary/about-beneficiary/create"
 		},
 		{
-			name: "Beneficial Donor",
-			path: "/dashboard/beneficial/donor",
-			active: path === "/dashboard/beneficial/donor" || path === "/dashboard/beneficial/donor/create"
+			name: "Beneficiary Donor",
+			path: "/dashboard/beneficiary/donors",
+			active: path === "/dashboard/beneficiary/donors" || path === "/dashboard/beneficiaries/donor/create"
 		},
 		{
-			name: "Beneficial",
-			path: "/dashboard/beneficial",
-			active: path === "/dashboard/beneficial" || path === "/dashboard/beneficial/create"
+			name: "Beneficiaries",
+			path: "/dashboard/beneficiaries",
+			active: path === "/dashboard/beneficiaries" || path === "/dashboard/beneficiaries/create"
 		}
 
 

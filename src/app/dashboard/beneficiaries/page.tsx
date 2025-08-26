@@ -43,8 +43,8 @@ export default async function Page({ searchParams }: PageProps) {
                     <p className="text-gray-600 mt-1">Manage and track beneficial recipients</p>
                 </div>
                 <Button asChild className="bg-blue-600 hover:bg-blue-700">
-                    <Link href="/dashboard/beneficial/create">
-                        Create New Beneficial
+                    <Link href="/dashboard/beneficiaries/create">
+                        Create New Beneficiary
                     </Link>
                 </Button>
             </div>
