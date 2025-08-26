@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
 import React, { Suspense } from 'react'
-import { BeneficialDonorIProps, BeneficialTransactionIProps } from '@/types';
+import { BeneficialDonorIProps, BeneficialTransactionIProps, TotalsIProps } from '@/types';
 import BeneficialDonorProfileEdit from '@/components/beneficial-donor-profile';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { BeneficialDonorTransactionCreate } from '@/components/beneficial-donor-transaction';
@@ -45,6 +45,21 @@ function TransactionsListSkeleton() {
     )
 }
 
+function calculateTotal(transactions: BeneficialTransactionIProps[], field: string): number {
+    return transactions
+        .filter((item) => item.paymentType === field)
+        .reduce((total, item) => {
+            return total + (parseFloat(item.amount || "0") || 0);
+        }, 0);
+};
+
+function calculateTotals(transactions: BeneficialTransactionIProps[]): TotalsIProps {
+    const totalDonate = calculateTotal(transactions, 'donate');
+    const totalSpend = calculateTotal(transactions, 'spend');
+    const totalBalance = totalDonate - totalSpend;
+    return { totalDonate, totalSpend, totalBalance };
+};
+
 async function page({ params }: { params: Promise<{ username: string }> }) {
     cookies();
     const { username } = await params;
@@ -53,12 +68,13 @@ async function page({ params }: { params: Promise<{ username: string }> }) {
 
     if (!beneficialDonor) {
         notFound();
-    }
-    console.log(beneficialDonor.beneficialTransaction, "transaction")
+    };
+
+    const totals = calculateTotals(beneficialDonor.beneficialTransaction as BeneficialTransactionIProps[]);
 
     return (
         <div>
-            <BeneficialDonorProfileEdit data={beneficialDonor} />
+            <BeneficialDonorProfileEdit data={beneficialDonor} totals={totals} />
             <div className='py-2 flex justify-between gap-2'>
                 <BeneficialDonorTransactionCreate beneficialDonorId={beneficialDonor.id as string} />
                 <BeneficialDonorSpendTransactionCreate beneficialDonorId={beneficialDonor.id as string} />

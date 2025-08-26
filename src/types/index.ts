@@ -546,3 +546,9 @@ export interface BeneficialTransactionIProps {
 	paymentType: string,
 	date: Date,
 }
+
+export interface TotalsIProps {
+	totalDonate: number;
+	totalSpend: number;
+	totalBalance: number;
+}

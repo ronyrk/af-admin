@@ -2,13 +2,11 @@ import React, { Suspense } from 'react';
 import { Table, TableHeader, TableRow, TableHead, TableFooter } from "@/components/ui/table";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import BeneficialList from '@/components/BeneficialList';
 import { unstable_noStore } from 'next/cache';
 import { FilterSkeleton, LoadingFallback } from '@/components/FilterSkeleton';
 import Pagination from '@/components/beneficial-pagination';
 import { getBeneficialDonorData } from '@/lib/getBeneficialDonorData';
 import BeneficialDonorList from '@/components/BeneficialDonorList';
-import FilterControls from '@/components/FilterControls';
 import FilterControlsDonor from '@/components/FilterControlsDonor';
 
 interface PageProps {
