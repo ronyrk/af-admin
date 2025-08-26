@@ -59,7 +59,7 @@ function TransactionsList({ data }: { data: BeneficialTransactionIProps[] }) {
                             </Dialog>
                         </TableCell>
                         <TableCell className="font-medium uppercase">
-                            <DeleteButton type='beneficial/transacttion' username={item?.id as string} />
+                            <DeleteButton type='beneficial/transaction' username={item.id as string} />
                         </TableCell>
                     </TableRow>
                 ))

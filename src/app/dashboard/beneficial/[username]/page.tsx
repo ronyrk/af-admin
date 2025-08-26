@@ -19,6 +19,8 @@ export default async function Beneficial({ params }: { params: Promise<{ usernam
         }
     }) as BeneficialIProps;
 
+    console.log(data)
+
     return (
         <div>
             <BeneficialProfileEdit data={data} />

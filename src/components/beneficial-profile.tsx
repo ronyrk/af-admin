@@ -1,6 +1,6 @@
 "use client";
 
-import { BeneficialIProps, BeneficialUpdatedIProps } from '@/types';
+import { BeneficialIProps, BeneficialTransactionIProps, BeneficialUpdatedIProps } from '@/types';
 import Image from 'next/image'
 import React, { useMemo, useState, useEffect } from 'react'
 import { z } from "zod"
@@ -69,6 +69,21 @@ interface BeneficialDonor {
     createAt: string;
 }
 
+const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+    }).format(amount);
+};
+
+function calculateTotal(data: BeneficialTransactionIProps[]) {
+    const total = data.reduce((total, transaction) => {
+        return total + (parseFloat(transaction.amount) || 0);
+    }, 0);
+    return formatCurrency(total);
+}
+
 const formSchema = z.object({
     name: z.string(),
     username: z.string(),
@@ -88,7 +103,7 @@ const formSchema = z.object({
 function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
     const [openDonor, setOpenDonor] = useState(false);
     const [open, setOpen] = useState(false);
-    const { id, username, name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack, status } = data;
+    const { id, username, name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, beneficialTransaction, nidFront, nidBack, status } = data;
     const [editMode, setEditMode] = useState<boolean>(false);
     const router = useRouter();
     const [image, setImage] = useState<string[]>(data.photoUrl);
@@ -671,6 +686,7 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
                                         </FormItem>
                                     )}
                                 />
+                                <h2 className="text-xl">Spending Amount: {calculateTotal(beneficialTransaction || [])}</h2>
                             </div>
                         </div>
                     </div>
@@ -957,7 +973,7 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
                 </form>
             </Form>
             {beneficialDonorId && (
-                <div>
+                <div className='py-2 px-4 mx-2 my-4'>
                     <BeneficialTransactionCreate
                         beneficialDonorId={beneficialDonorId as string}
                         beneficialId={id}
