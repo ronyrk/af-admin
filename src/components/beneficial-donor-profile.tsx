@@ -1,6 +1,6 @@
 "use client";
 
-import { BeneficialDonorIProps, BeneficialDonorUpdatedIProps, BeneficialTransactionIProps, DonorIProps, DonorPaymentIProps } from '@/types';
+import { BeneficialDonorIProps, BeneficialDonorUpdatedIProps, BeneficialTransactionIProps, DonorIProps, DonorPaymentIProps, TotalsIProps } from '@/types';
 import Image from 'next/image'
 import React, { useState } from 'react'
 import DonorTable from './DataTable';
@@ -40,7 +40,7 @@ const formSchema = z.object({
 
 });
 
-function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
+function BeneficialDonorProfileEdit({ data, totals }: { data: BeneficialDonorIProps, totals: TotalsIProps }) {
 
     const { username, name, photoUrl, about, live, homeTown, phone } = data;
     const [image, setImage] = useState<string>(data.photoUrl);
@@ -52,7 +52,6 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
             return total + (parseFloat(transaction.amount) || 0);
         }, 0);
     }
-
 
 
     const [editMode, setEditMode] = useState<Boolean>(false);
@@ -149,11 +148,10 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
                                     )}
                                 />
                             </h2>
-
-                            <h2 className=" flex flex-row items-center font-normal text-[18px]  text-color-main"><span className="font-semibold mr-2">Home Town :</span>
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Phone:</span>
                                 <FormField
                                     control={form.control}
-                                    name="homeTown"
+                                    name="phone"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
@@ -163,10 +161,11 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
                                         </FormItem>
                                     )}
                                 /></h2>
-                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Phone:</span>
+
+                            <h2 className=" flex flex-row items-center font-normal text-[15px]  text-color-main"><span className="font-semibold mr-2">Home Town :</span>
                                 <FormField
                                     control={form.control}
-                                    name="live"
+                                    name="homeTown"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
@@ -189,8 +188,18 @@ function BeneficialDonorProfileEdit({ data }: { data: BeneficialDonorIProps }) {
                                         </FormItem>
                                     )}
                                 /></h2>
-                            <h2 className='text-xl'>Total Donate Amount:- {calculateTotal(data.beneficialTransaction || [])}</h2>
-
+                            <h2 className="font-normal text-[15px] text-color-main">
+                                <span className="font-semibold mr-2">Total Donate:</span>
+                                {totals.totalDonate.toLocaleString()}
+                            </h2>
+                            <h2 className="font-normal text-[15px] text-color-main">
+                                <span className="font-semibold mr-2">Total Spending:</span>
+                                {totals.totalSpend.toLocaleString()}
+                            </h2>
+                            <h2 className="font-normal text-[15px] text-color-main">
+                                <span className="font-semibold mr-2">Balance:</span>
+                                {totals.totalBalance.toLocaleString()}
+                            </h2>
                         </div>
                     </div>
                     <div className="p-2">
