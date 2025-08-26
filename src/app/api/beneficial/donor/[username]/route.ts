@@ -5,6 +5,22 @@ import prisma from "@/lib/prisma";
 export const dynamic = 'force-dynamic'
 
 
+export const GET = async (request: Request, { params }: ParamsIProps) => {
+    try {
+        const { username } = params;
+        const beneficialDonor = await prisma.beneficialDonor.findUnique({
+            where: { username },
+            include: {
+                beneficialTransaction: true,
+                beneficial: true
+            }
+        });
+        return NextResponse.json(beneficialDonor);
+    } catch (error) {
+        return NextResponse.json({ error });
+    }
+};
+
 // Single branch Updated
 
 export const PATCH = async (request: Request, { params }: ParamsIProps) => {

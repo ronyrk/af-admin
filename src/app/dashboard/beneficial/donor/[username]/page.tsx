@@ -1,13 +1,12 @@
 import { cookies } from 'next/headers'
 import React, { Suspense } from 'react'
-import prisma from '@/lib/prisma';
 import { BeneficialDonorIProps, BeneficialTransactionIProps } from '@/types';
 import BeneficialDonorProfileEdit from '@/components/beneficial-donor-profile';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import BeneficialTransactionList from '@/components/transaction-list';
 import { BeneficialDonorTransactionCreate } from '@/components/beneficial-donor-transaction';
-import Beneficial from '../../[username]/page';
 import { BeneficialDonorSpendTransactionCreate } from '@/components/beneficial-donor-transaction-spend';
+import { notFound } from 'next/navigation';
+import BeneficialDonorTransactionList from '@/components/donor-transactions-list';
 
 function TransactionsListSkeleton() {
     return (
@@ -49,12 +48,14 @@ function TransactionsListSkeleton() {
 async function page({ params }: { params: Promise<{ username: string }> }) {
     cookies();
     const { username } = await params;
-    const beneficialDonor = await prisma.beneficialDonor.findUnique({
-        where: { username },
-        include: {
-            beneficialTransaction: true
-        }
-    }) as BeneficialDonorIProps;
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/beneficial/donor/${username}`, { cache: 'no-store' });
+    const beneficialDonor: BeneficialDonorIProps = await response.json();
+
+    if (!beneficialDonor) {
+        notFound();
+    }
+    console.log(beneficialDonor.beneficialTransaction, "transaction")
+
     return (
         <div>
             <BeneficialDonorProfileEdit data={beneficialDonor} />
@@ -63,7 +64,7 @@ async function page({ params }: { params: Promise<{ username: string }> }) {
                 <BeneficialDonorSpendTransactionCreate beneficialDonorId={beneficialDonor.id as string} />
             </div>
             <Suspense fallback={<TransactionsListSkeleton />}>
-                <BeneficialTransactionList data={beneficialDonor.beneficialTransaction as BeneficialTransactionIProps[]} />
+                <BeneficialDonorTransactionList data={beneficialDonor.beneficialTransaction as BeneficialTransactionIProps[]} />
             </Suspense>
         </div>
     )
