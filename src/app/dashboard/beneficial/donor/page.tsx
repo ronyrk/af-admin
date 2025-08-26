@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Table, TableHeader, TableRow, TableHead, TableFooter } from "@/components/ui/table";
+import { Table, TableHeader, TableRow, TableHead, TableFooter, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { unstable_noStore } from 'next/cache';
@@ -8,6 +8,7 @@ import Pagination from '@/components/beneficial-pagination';
 import { getBeneficialDonorData } from '@/lib/getBeneficialDonorData';
 import BeneficialDonorList from '@/components/BeneficialDonorList';
 import FilterControlsDonor from '@/components/FilterControlsDonor';
+import { BeneficialTransactionIProps, TotalsIProps } from '@/types';
 
 interface PageProps {
     searchParams?: {
@@ -22,10 +23,74 @@ async function FilterControlsWrapper() {
     return <FilterControlsDonor />;
 }
 
+// Optimized calculation functions with better error handling and performance
+const calculateTotal = (transactions: BeneficialTransactionIProps[], field: string): number => {
+    if (!transactions?.length) return 0;
+
+    return transactions.reduce((total, item) => {
+        if (item?.paymentType === field) {
+            const amount = Number(item.amount) || 0;
+            return total + amount;
+        }
+        return total;
+    }, 0);
+};
+
+const calculateTotals = (transactions: BeneficialTransactionIProps[]): TotalsIProps => {
+    if (!transactions?.length) {
+        return { totalDonate: 0, totalSpend: 0, totalBalance: 0 };
+    }
+
+    // Single pass calculation for better performance
+    const totals = transactions.reduce(
+        (acc, item) => {
+            const amount = Number(item.amount) || 0;
+            if (item?.paymentType === 'donate') {
+                acc.totalDonate += amount;
+            } else if (item?.paymentType === 'spend') {
+                acc.totalSpend += amount;
+            }
+            return acc;
+        },
+        { totalDonate: 0, totalSpend: 0, totalBalance: 0 }
+    );
+
+    totals.totalBalance = totals.totalDonate - totals.totalSpend;
+    return totals;
+};
+
+// Format currency helper
+const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+    }).format(amount);
+};
+
+
 
 
 export default async function Page({ searchParams }: PageProps) {
     unstable_noStore();
+
+    // Fetch transactions with error handling
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/beneficial/transaction`, {
+        cache: 'no-store',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch transactions: ${response.status}`);
+    }
+
+    const transactions: BeneficialTransactionIProps[] = await response.json();
+
+    // Calculate totals
+    const totals = calculateTotals(transactions);
+
 
     const { data, pagination } = await getBeneficialDonorData(searchParams || {});
 
@@ -57,9 +122,59 @@ export default async function Page({ searchParams }: PageProps) {
                             <TableHead className="font-semibold ">Others</TableHead>
                         </TableRow>
                     </TableHeader>
-                    <Suspense fallback={<LoadingFallback />}>
-                        <BeneficialDonorList data={data} />
-                    </Suspense>
+                    <TableBody>
+                        <Suspense fallback={<LoadingFallback />}>
+                            <BeneficialDonorList data={data} />
+                        </Suspense>
+                        <TableRow>
+                            <TableCell className="text-center">
+
+                            </TableCell>
+                            {/* Balance Column */}
+                            <TableCell className="p-4">
+                                <div className={` rounded-xl p-4 transition-all duration-200 hover:shadow-sm border-2 ${'border-green-200border-gray-200'
+                                    }`}>
+                                    <div className="flex items-center justify-between mb-2">
+
+                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                                            Donate
+                                        </span>
+                                    </div>
+                                    <div className={`text-lg font-bold  truncate`}>
+                                        {formatCurrency(totals.totalDonate)}
+                                    </div>
+                                </div>
+                            </TableCell>
+                            <TableCell className="p-4">
+                                <div className={` rounded-xl p-4 transition-all duration-200 hover:shadow-sm border-2 ${'border-green-200border-gray-200'
+                                    }`}>
+                                    <div className="flex items-center justify-between mb-2">
+
+                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                                            Spending
+                                        </span>
+                                    </div>
+                                    <div className={`text-lg font-bold  truncate`}>
+                                        {formatCurrency(totals.totalSpend)}
+                                    </div>
+                                </div>
+                            </TableCell>
+                            <TableCell className="p-4">
+                                <div className={` rounded-xl p-4 transition-all duration-200 hover:shadow-sm border-2 ${'border-green-200border-gray-200'
+                                    }`}>
+                                    <div className="flex items-center justify-between mb-2">
+
+                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                                            Balance
+                                        </span>
+                                    </div>
+                                    <div className={`text-lg font-bold  truncate`}>
+                                        {formatCurrency(totals.totalBalance)}
+                                    </div>
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
                     <TableFooter>
                         <TableRow>
                             <TableHead colSpan={6}>

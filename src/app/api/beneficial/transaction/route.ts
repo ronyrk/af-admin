@@ -4,6 +4,27 @@ import { BeneficialTransactionIProps } from "@/types";
 
 export const dynamic = 'force-dynamic'
 
+
+export const GET = async () => {
+    try {
+        const transactions = await prisma.beneficialTransaction.findMany({
+            orderBy: {
+                date: 'desc'
+            }
+        });
+        return NextResponse.json(transactions, { status: 200 });
+    } catch (error) {
+        console.error('Fetch Transactions Error:', error);
+        return NextResponse.json(
+            {
+                message: "An error occurred while fetching beneficial transactions",
+                error: "INTERNAL_SERVER_ERROR"
+            },
+            { status: 500 }
+        );
+    }
+}
+
 // Create Beneficial Transaction
 export const POST = async (request: Request) => {
     try {

@@ -78,7 +78,7 @@ function BeneficialDonorCreate() {
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
                     <div className=" flex flex-col gap-3">
-                        <h2 className=" text-lg text-color-main font-medium">Branch Information</h2>
+                        <h2 className=" text-lg text-color-main font-medium">Beneficial Donor Information</h2>
                         <div className=" grid grid-cols-3 gap-3 border-2 rounded p-3">
                             <FormField
                                 control={form.control}
