@@ -156,7 +156,7 @@ const BeneficialDonorRow = memo(({ item }: { item: BeneficialDonorIProps }) => {
     return (
         <TableRow className="hover:bg-gray-50/50 transition-all duration-300 group border-b border-gray-100">
             {/* Profile Section */}
-            <TableCell className="p-6">
+            <TableCell className="p-1">
                 <div className="flex items-start gap-4">
                     {/* Enhanced Image Section */}
                     <div className="relative flex-shrink-0">
@@ -212,9 +212,9 @@ const BeneficialDonorRow = memo(({ item }: { item: BeneficialDonorIProps }) => {
             </TableCell>
 
             {/* Donations Column */}
-            <TableCell className="p-4">
-                <div className={`${donationStatus.bgColor} rounded-xl p-4 transition-all duration-200 hover:shadow-sm`}>
-                    <div className="flex items-center justify-between mb-2">
+            <TableCell className="p-2">
+                <div className={`${donationStatus.bgColor} rounded-xl p-2 transition-all duration-200 hover:shadow-sm`}>
+                    <div className="flex items-center justify-between mb-1">
                         <donationStatus.icon className={`h-4 w-4 ${donationStatus.color}`} />
                         <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
                             Donations
@@ -227,9 +227,9 @@ const BeneficialDonorRow = memo(({ item }: { item: BeneficialDonorIProps }) => {
             </TableCell>
 
             {/* Spending Column */}
-            <TableCell className="p-4">
-                <div className={`${spendingStatus.bgColor} rounded-xl p-4 transition-all duration-200 hover:shadow-sm`}>
-                    <div className="flex items-center justify-between mb-2">
+            <TableCell className="p-2">
+                <div className={`${spendingStatus.bgColor} rounded-xl p-2 transition-all duration-200 hover:shadow-sm`}>
+                    <div className="flex items-center justify-between mb-1">
                         <spendingStatus.icon className={`h-4 w-4 ${spendingStatus.color}`} />
                         <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
                             Spending
@@ -242,11 +242,11 @@ const BeneficialDonorRow = memo(({ item }: { item: BeneficialDonorIProps }) => {
             </TableCell>
 
             {/* Balance Column */}
-            <TableCell className="p-4">
-                <div className={`${balanceStatus.bgColor} rounded-xl p-4 transition-all duration-200 hover:shadow-sm border-2 ${financialData.balance > 0 ? 'border-green-200' :
+            <TableCell className="p-2">
+                <div className={`${balanceStatus.bgColor} rounded-xl p-2 transition-all duration-200 hover:shadow-sm border-2 ${financialData.balance > 0 ? 'border-green-200' :
                     financialData.balance < 0 ? 'border-red-200' : 'border-gray-200'
                     }`}>
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-1">
                         <balanceStatus.icon className={`h-4 w-4 ${balanceStatus.color}`} />
                         <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
                             Balance
@@ -259,7 +259,7 @@ const BeneficialDonorRow = memo(({ item }: { item: BeneficialDonorIProps }) => {
             </TableCell>
 
             {/* Actions Column */}
-            <TableCell className="p-4">
+            <TableCell className="p-2">
                 <div className="flex flex-col gap-2">
                     <Button
                         className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-sm hover:shadow-md transition-all duration-200 group-hover:scale-[1.02] w-full"
@@ -279,7 +279,7 @@ const BeneficialDonorRow = memo(({ item }: { item: BeneficialDonorIProps }) => {
                     <div className="w-full">
                         <DeleteButton
                             type="beneficial/donor"
-                            username={item.id as string}
+                            username={item.username as string}
                         />
                     </div>
                 </div>
