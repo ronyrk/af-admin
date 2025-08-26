@@ -30,7 +30,7 @@ async function TableRowList(params: ParamsIProps) {
         }
     }) as DonorPaymentIProps[];
 
-    console.log(data, "donor payment data")
+    // console.log(data, "donor payment data")
 
     const loanAmount = async (amount: string, type: string) => {
         if (type === "LENDING") {

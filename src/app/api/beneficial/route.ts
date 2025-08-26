@@ -256,7 +256,7 @@ export const POST = async (request: Request) => {
                 }
             });
 
-            console.log('Successfully created beneficial:', result.id);
+            // console.log('Successfully created beneficial:', result.id);
 
             return NextResponse.json(
                 {

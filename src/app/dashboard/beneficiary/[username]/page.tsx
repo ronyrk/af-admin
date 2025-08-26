@@ -19,7 +19,7 @@ export default async function Beneficial({ params }: { params: Promise<{ usernam
         }
     }) as BeneficialIProps;
 
-    console.log(data)
+    // console.log(data)
 
     return (
         <div>

@@ -255,7 +255,7 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
         queryFn: async () => {
             try {
                 const response = await axios.get('/api/beneficial/donor');
-                console.log('Beneficial Donors Response:', response.data);
+                // console.log('Beneficial Donors Response:', response.data);
                 return response.data;
             } catch (error) {
                 console.error('Error fetching beneficial donors:', error);
