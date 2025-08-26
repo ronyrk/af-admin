@@ -57,7 +57,7 @@ function CreateFAQ() {
 				} else {
 					throw new Error("Created Failed")
 				}
-				router.push('/dashboard/beneficial/question');
+				router.push('/dashboard/beneficiary/about-beneficiary');
 				router.refresh();
 			},
 			onError: (error) => {
