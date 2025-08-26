@@ -21,7 +21,7 @@ function getStatus(item: BeneficialIProps): string {
 
 const BeneficialRow = memo(({ item }: { item: BeneficialIProps }) => (
     <TableRow className="hover:bg-gray-50 transition-colors">
-        <TableCell className="font-medium p-4">
+        <TableCell className="font-medium p-1">
             <div className="flex items-start gap-4">
                 {/* Image */}
                 <div className="flex-shrink-0">
