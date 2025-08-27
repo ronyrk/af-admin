@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import {
     TableBody,
     TableCell,
@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { ClipboardPenLine } from 'lucide-react';
 import DeleteButton from '@/components/DeleteButton';
 import Image from 'next/image';
-import { BeneficialIProps } from '@/types';
+import { BeneficialIProps, BeneficialTransactionIProps } from '@/types';
 
 interface BeneficialListProps {
     data: BeneficialIProps[];
@@ -19,94 +19,128 @@ function getStatus(item: BeneficialIProps): string {
     return item.beneficialDonorId ? "Active" : "Inactive";
 }
 
-const BeneficialRow = memo(({ item }: { item: BeneficialIProps }) => (
-    <TableRow className="hover:bg-gray-50 transition-colors">
-        <TableCell className="font-medium p-1">
-            <div className="flex items-start gap-4">
-                {/* Image */}
-                <div className="flex-shrink-0">
-                    <Image
-                        src={item.photoUrl.at(0) as string}
-                        alt={item.name}
-                        width={80}
-                        height={80}
-                        priority
-                        className="rounded-lg object-cover border-2 border-gray-200"
-                    />
-                </div>
+const calculateSpendingTotal = (data: BeneficialTransactionIProps[]): number => {
+    if (!data || !Array.isArray(data)) return 0;
+    return data
+        .filter(tx => tx?.paymentType === 'spend')
+        .reduce((total, transaction) => {
+            const amount = parseFloat(transaction?.amount || '0') || 0;
+            return total + amount;
+        }, 0);
+};
 
-                {/* Personal Details right next to image */}
-                <div className="flex-1 min-w-0">
-                    <div className="flex flex-col gap-1">
-                        <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
-                        {/* Address section with better formatting */}
-                        <div className="mt-1 space-y-1">
-                            <div className="flex items-center gap-2 text-sm">
-                                <span className="text-gray-500">🏠</span>
-                                <span className="font-medium text-gray-700">{item.village}</span>
-                            </div>
-                            <div className="flex items-center gap-4 text-xs text-gray-600">
-                                <span>🏛️ {item.district}</span>
-                            </div>
-                            <div className="flex items-center gap-4 text-xs text-gray-600">
-                                <span>🚔 PS: {item.policeStation}</span>
-                                <span>💼 {item.occupation}</span>
+// Format currency with proper localization
+const formatCurrency = (amount: number): string => {
+    return amount.toLocaleString('en-BD', {
+        style: 'currency',
+        currency: 'BDT',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+    });
+};
+
+const BeneficialRow = memo(({ item }: { item: BeneficialIProps }) => {
+    // If you want to use financialData, make sure to import useMemo, calculateDonationTotal, calculateSpendingTotal, and formatCurrency
+    const financialData = useMemo(() => {
+        const spending = calculateSpendingTotal(item.beneficialTransaction || []);
+
+        return {
+            spending,
+            formattedSpending: formatCurrency(spending),
+        };
+    }, [item.beneficialTransaction]);
+
+    return (
+        <TableRow className="hover:bg-gray-50 transition-colors">
+            <TableCell className="font-medium p-1">
+                <div className="flex items-start gap-4">
+                    {/* Image */}
+                    <div className="flex-shrink-0">
+                        <Image
+                            src={item.photoUrl.at(0) as string}
+                            alt={item.name}
+                            width={80}
+                            height={80}
+                            priority
+                            className="rounded-lg object-cover border-2 border-gray-200"
+                        />
+                    </div>
+
+                    {/* Personal Details right next to image */}
+                    <div className="flex-1 min-w-0">
+                        <div className="flex flex-col gap-1">
+                            <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
+                            {/* Address section with better formatting */}
+                            <div className="mt-1 space-y-1">
+                                <div className="flex items-center gap-2 text-sm">
+                                    <span className="text-gray-500">🏠</span>
+                                    <span className="font-medium text-gray-700">{item.village}</span>
+                                </div>
+                                <div className="flex items-center gap-4 text-xs text-gray-600">
+                                    <span>🏛️ {item.district}</span>
+                                </div>
+                                <div className="flex items-center gap-4 text-xs text-gray-600">
+                                    <span>🚔 PS: {item.policeStation}</span>
+                                    <span>💼 {item.occupation}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </TableCell>
+            </TableCell>
+            <TableCell className="font-medium uppercase">
+                {financialData.formattedSpending}
+            </TableCell>
+            <TableCell className="font-medium p-4">
+                <div className="flex flex-col items-start gap-2">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1 ${getStatus(item) === 'Active'
+                        ? 'bg-green-100 text-green-800 border border-green-200'
+                        : 'bg-red-100 text-red-800 border border-red-200'
+                        }`}>
+                        {item.status === 'Active' ? '✅' : '⚠️'}
+                        {item.status}
+                    </span>
 
-        <TableCell className="font-medium p-4">
-            <div className="flex flex-col items-start gap-2">
-                <span className={`px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1 ${getStatus(item) === 'Active'
-                    ? 'bg-green-100 text-green-800 border border-green-200'
-                    : 'bg-red-100 text-red-800 border border-red-200'
-                    }`}>
-                    {item.status === 'Active' ? '✅' : '⚠️'}
-                    {item.status}
-                </span>
+                </div>
+            </TableCell>
 
-            </div>
-        </TableCell>
+            <TableCell className="font-medium p-4">
+                {item.beneficialDonorId ? (
+                    <Button className="bg-green-600 hover:bg-green-700 text-white w-full" variant="default" size="sm" asChild>
+                        <Link href={`/dashboard/beneficiaries/donor/${item.beneficialDonor?.username}`}>
+                            💝 Donor Details
+                        </Link>
+                    </Button>
+                ) : (
+                    <div className="text-center p-2 bg-gray-50 rounded border-2 border-dashed border-gray-300">
+                        <span className="text-gray-500 text-sm block">❌ No donor</span>
+                        <span className="text-xs text-gray-400">assigned yet</span>
+                    </div>
+                )}
+            </TableCell>
 
-        <TableCell className="font-medium p-4">
-            {item.beneficialDonorId ? (
-                <Button className="bg-green-600 hover:bg-green-700 text-white w-full" variant="default" size="sm" asChild>
-                    <Link href={`/dashboard/beneficiaries/donor/${item.beneficialDonor?.username}`}>
-                        💝 Donor Details
+            <TableCell className="font-medium p-4">
+                <Button className="bg-amber-600 hover:bg-amber-700 text-white w-full" variant="default" size="sm" asChild>
+                    <Link href={`/dashboard/beneficiary/${item.username}`}>
+                        <ClipboardPenLine className="h-4 w-4 mr-1" />
+                        Edit
                     </Link>
                 </Button>
-            ) : (
-                <div className="text-center p-2 bg-gray-50 rounded border-2 border-dashed border-gray-300">
-                    <span className="text-gray-500 text-sm block">❌ No donor</span>
-                    <span className="text-xs text-gray-400">assigned yet</span>
+            </TableCell>
+
+            <TableCell className="font-medium p-4">
+                <div className="w-full">
+                    <DeleteButton type="beneficial" username={item.username} />
                 </div>
-            )}
-        </TableCell>
-
-        <TableCell className="font-medium p-4">
-            <Button className="bg-amber-600 hover:bg-amber-700 text-white w-full" variant="default" size="sm" asChild>
-                <Link href={`/dashboard/beneficiary/${item.username}`}>
-                    <ClipboardPenLine className="h-4 w-4 mr-1" />
-                    Edit
-                </Link>
-            </Button>
-        </TableCell>
-
-        <TableCell className="font-medium p-4">
-            <div className="w-full">
-                <DeleteButton type="beneficial" username={item.username} />
-            </div>
-        </TableCell>
-    </TableRow>
-));
+            </TableCell>
+        </TableRow>
+    );
+});
 
 BeneficialRow.displayName = 'BeneficialRow';
 
 const BeneficialList = memo(({ data }: BeneficialListProps) => (
-    <TableBody>
+    <>
         {data.length === 0 ? (
             <TableRow>
                 <TableCell colSpan={7} className="text-center py-12">
@@ -128,7 +162,7 @@ const BeneficialList = memo(({ data }: BeneficialListProps) => (
                 <BeneficialRow key={item.id} item={item} />
             ))
         )}
-    </TableBody>
+    </>
 ));
 
 BeneficialList.displayName = 'BeneficialList';

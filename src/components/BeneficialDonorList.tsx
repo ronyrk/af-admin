@@ -292,7 +292,7 @@ BeneficialDonorRow.displayName = 'BeneficialDonorRow';
 
 // Main component with enhanced error handling
 const BeneficialDonorList = memo(({ data }: BeneficialListProps) => {
-    // Validate and sanitize data
+    // Validate and sanitize data 
     const validData = useMemo(() => {
         if (!data || !Array.isArray(data)) return [];
         return data.filter(item => item && typeof item === 'object' && item.id);

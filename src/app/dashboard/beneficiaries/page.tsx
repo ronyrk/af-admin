@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Table, TableHeader, TableRow, TableHead, TableFooter } from "@/components/ui/table";
+import { Table, TableHeader, TableRow, TableHead, TableFooter, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { getBeneficialData, getLocationOptions } from '@/lib/getBeneficialData';
@@ -8,6 +8,7 @@ import BeneficialList from '@/components/BeneficialList';
 import { unstable_noStore } from 'next/cache';
 import { FilterSkeleton, LoadingFallback } from '@/components/FilterSkeleton';
 import Pagination from '@/components/beneficial-pagination';
+import { BeneficialTransactionIProps, TotalsIProps } from '@/types';
 
 interface PageProps {
     searchParams?: {
@@ -28,8 +29,58 @@ async function FilterControlsWrapper({
     return <FilterControls locationOptions={locationOptions} />;
 }
 
+// Calculate totals helper
+const calculateTotals = (transactions: BeneficialTransactionIProps[]): TotalsIProps => {
+    if (!transactions?.length) {
+        return { totalDonate: 0, totalSpend: 0, totalBalance: 0 };
+    }
+
+    // Single pass calculation for better performance
+    const totals = transactions.reduce(
+        (acc, item) => {
+            const amount = Number(item.amount) || 0;
+            if (item?.paymentType === 'donate') {
+                acc.totalDonate += amount;
+            } else if (item?.paymentType === 'spend') {
+                acc.totalSpend += amount;
+            }
+            return acc;
+        },
+        { totalDonate: 0, totalSpend: 0, totalBalance: 0 }
+    );
+
+    totals.totalBalance = totals.totalDonate - totals.totalSpend;
+    return totals;
+};
+
+// Format currency helper
+const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+    }).format(amount);
+};
+
 export default async function Page({ searchParams }: PageProps) {
     unstable_noStore();
+
+    // Fetch transactions with error handling
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/beneficial/transaction`, {
+        cache: 'no-store',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch transactions: ${response.status}`);
+    }
+
+    const transactions: BeneficialTransactionIProps[] = await response.json();
+
+    // Calculate totals
+    const totals = calculateTotals(transactions);
 
     const { data, pagination } = await getBeneficialData(searchParams || {});
     // Show skeleton while location options are loading
@@ -57,16 +108,40 @@ export default async function Page({ searchParams }: PageProps) {
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-gray-50 ">
-                            <TableHead className="font-semibold w-1/3">Profile & Details</TableHead>
-                            <TableHead className="font-semibold  w-32">Status</TableHead>
-                            <TableHead className="font-semibold  w-32">Donor Info</TableHead>
-                            <TableHead className="font-semibold  w-24">Edit</TableHead>
-                            <TableHead className="font-semibold  w-24">Delete</TableHead>
+                            <TableHead className="font-semibold ">Profile & Details</TableHead>
+                            <TableHead className="font-semibold ">Total Spend</TableHead>
+                            <TableHead className="font-semibold ">Status</TableHead>
+                            <TableHead className="font-semibold ">Donor Info</TableHead>
+                            <TableHead className="font-semibold ">Edit</TableHead>
+                            <TableHead className="font-semibold ">Delete</TableHead>
                         </TableRow>
                     </TableHeader>
-                    <Suspense fallback={<LoadingFallback />}>
-                        <BeneficialList data={data} />
-                    </Suspense>
+                    <TableBody>
+                        <Suspense fallback={<LoadingFallback />}>
+                            <BeneficialList data={data} />
+                        </Suspense>
+                        <TableRow>
+                            <TableCell className="text-center">
+
+                            </TableCell>
+                            {/* Balance Column */}
+                            <TableCell className="p-1">
+                                <div className={` rounded-xl p-1 transition-all duration-200 hover:shadow-sm border-2 ${'border-green-200border-gray-200'
+                                    }`}>
+                                    <div className="flex items-center justify-between mb-1">
+
+                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                                            Total Spend
+                                        </span>
+                                    </div>
+                                    <div className={`text-lg font-bold  truncate`}>
+                                        {formatCurrency(totals.totalSpend)}
+                                    </div>
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+
                     <TableFooter>
                         <TableRow>
                             <TableHead colSpan={6}>
