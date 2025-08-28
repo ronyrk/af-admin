@@ -15,6 +15,8 @@ import { tree } from 'next/dist/build/templates/app-page';
 
 interface BeneficialListProps {
     data: BeneficialDonorIProps[];
+    currentPage: number;
+    pageSize: number;
 }
 
 // Separate calculation functions for different transaction types
@@ -122,7 +124,7 @@ const EmptyState = memo(() => (
 EmptyState.displayName = 'EmptyState';
 
 // Enhanced donor row component with proper calculations
-const BeneficialDonorRow = memo(({ item }: { item: BeneficialDonorIProps }) => {
+const BeneficialDonorRow = memo(({ item, index }: { item: BeneficialDonorIProps; index: number }) => {
     // Memoize all calculations
     const financialData = useMemo(() => {
         const donations = calculateDonationTotal(item.beneficialTransaction || []);
@@ -155,6 +157,13 @@ const BeneficialDonorRow = memo(({ item }: { item: BeneficialDonorIProps }) => {
 
     return (
         <TableRow className="hover:bg-gray-50/50 transition-all duration-300 group border-b border-gray-100">
+            <TableCell className="font-medium py-2 text-center">
+                <div className="flex items-center justify-start min-h-[80px]">
+                    <span className="text-base text-gray-700 bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center">
+                        {index}
+                    </span>
+                </div>
+            </TableCell>
             {/* Profile Section */}
             <TableCell className="p-1">
                 <div className="flex items-start gap-4">
@@ -291,8 +300,9 @@ const BeneficialDonorRow = memo(({ item }: { item: BeneficialDonorIProps }) => {
 BeneficialDonorRow.displayName = 'BeneficialDonorRow';
 
 // Main component with enhanced error handling
-const BeneficialDonorList = memo(({ data }: BeneficialListProps) => {
-    // Validate and sanitize data 
+const BeneficialDonorList = memo(({ data, currentPage, pageSize }: BeneficialListProps) => {
+    const startIndex = (currentPage - 1) * pageSize + 1;
+    // Validate and sanitize data
     const validData = useMemo(() => {
         if (!data || !Array.isArray(data)) return [];
         return data.filter(item => item && typeof item === 'object' && item.id);
@@ -303,8 +313,8 @@ const BeneficialDonorList = memo(({ data }: BeneficialListProps) => {
             {validData.length === 0 ? (
                 <EmptyState />
             ) : (
-                validData.map((item) => (
-                    <BeneficialDonorRow key={item.id || item.username} item={item} />
+                validData.map((item, arrayIndex) => (
+                    <BeneficialDonorRow key={item.id || item.username} item={item} index={startIndex + arrayIndex} />
                 ))
             )}
         </>

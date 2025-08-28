@@ -93,6 +93,8 @@ export default async function Page({ searchParams }: PageProps) {
 
 
     const { data, pagination } = await getBeneficialDonorData(searchParams || {});
+    const currentPage = Number(searchParams?.page || '1');
+    const pageSize = 10;
 
     return (
         <div className="flex flex-col space-y-1 py-6">
@@ -115,6 +117,7 @@ export default async function Page({ searchParams }: PageProps) {
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-gray-50 ">
+                            <TableHead className="font-semibold ">Index</TableHead>
                             <TableHead className="font-semibold ">Profile & Details</TableHead>
                             <TableHead className="font-semibold ">Donate</TableHead>
                             <TableHead className="font-semibold ">Spending</TableHead>
@@ -124,9 +127,16 @@ export default async function Page({ searchParams }: PageProps) {
                     </TableHeader>
                     <TableBody>
                         <Suspense fallback={<LoadingFallback />}>
-                            <BeneficialDonorList data={data} />
+                            <BeneficialDonorList
+                                data={data}
+                                currentPage={currentPage}
+                                pageSize={pageSize}
+                            />
                         </Suspense>
                         <TableRow>
+                            <TableCell className="text-center">
+
+                            </TableCell>
                             <TableCell className="text-center">
 
                             </TableCell>
