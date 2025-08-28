@@ -26,6 +26,12 @@ import { UploadButton } from "@/lib/uploadthing"
 import { useState } from "react"
 
 
+// Function to handle username input change
+const handleUsernameChange = (value: string) => {
+	// Replace spaces with hyphens
+	const formattedValue = value.replace(/\s/g, '-');
+	return formattedValue;
+};
 
 
 
@@ -105,7 +111,12 @@ function ProjectCreate() {
 								<FormItem>
 									<FormLabel>UserName</FormLabel>
 									<FormControl>
-										<Input placeholder="username" {...field} />
+										<Input placeholder="username"
+											{...field}
+											onChange={(e) => {
+												const formattedValue = handleUsernameChange(e.target.value);
+												field.onChange(formattedValue);
+											}} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>

@@ -24,6 +24,8 @@ import { UploadButton } from "@/lib/uploadthing"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 
+
+
 const formSchema = z.object({
 	code: z.string().min(4),
 	username: z.string(),
@@ -43,6 +45,13 @@ function BorrowerCreate() {
 	const [Form1, setForm1] = useState<string>("");
 	const [Form2, setForm2] = useState<string>("");
 	const router = useRouter();
+
+	// Function to handle username input change
+	const handleUsernameChange = (value: string) => {
+		// Replace spaces with hyphens
+		const formattedValue = value.replace(/\s/g, '-');
+		return formattedValue;
+	};
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -131,7 +140,13 @@ function BorrowerCreate() {
 								<FormItem>
 									<FormLabel>Username</FormLabel>
 									<FormControl>
-										<Input placeholder="username" {...field} />
+										<Input placeholder="username"
+											{...field}
+
+											onChange={(e) => {
+												const formattedValue = handleUsernameChange(e.target.value);
+												field.onChange(formattedValue);
+											}} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
