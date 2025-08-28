@@ -22,6 +22,13 @@ import { BranchIProps } from "@/types"
 import { useState } from "react"
 import { UploadButton } from "@/lib/uploadthing"
 
+// Function to handle username input change
+const handleUsernameChange = (value: string) => {
+	// Replace spaces with hyphens
+	const formattedValue = value.replace(/\s/g, '-');
+	return formattedValue;
+};
+
 const formSchema = z.object({
 	code: z.string().min(4),
 	username: z.string().min(2).max(50),
@@ -147,7 +154,12 @@ function BranchCreate() {
 									<FormItem>
 										<FormLabel>Username</FormLabel>
 										<FormControl>
-											<Input placeholder="username" {...field} />
+											<Input placeholder="username"
+												{...field}
+												onChange={(e) => {
+													const formattedValue = handleUsernameChange(e.target.value);
+													field.onChange(formattedValue);
+												}} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>

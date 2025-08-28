@@ -26,7 +26,12 @@ import { useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
 
 
-
+// Function to handle username input change
+const handleUsernameChange = (value: string) => {
+	// Replace spaces with hyphens
+	const formattedValue = value.replace(/\s/g, '-');
+	return formattedValue;
+};
 
 
 const formSchema = z.object({
@@ -110,7 +115,12 @@ function Child() {
 									<FormItem>
 										<FormLabel>UserName</FormLabel>
 										<FormControl>
-											<Input placeholder="username" {...field} />
+											<Input placeholder="username"
+												{...field}
+												onChange={(e) => {
+													const formattedValue = handleUsernameChange(e.target.value);
+													field.onChange(formattedValue);
+												}} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
