@@ -11,7 +11,11 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
         const beneficialDonor = await prisma.beneficialDonor.findUnique({
             where: { username },
             include: {
-                beneficialTransaction: true,
+                beneficialTransaction: {
+                    orderBy: {
+                        date: "asc"
+                    }
+                },
                 beneficial: true
             }
         });

@@ -47,7 +47,7 @@ const BeneficialList = React.memo(({ data }: { data: BeneficialIProps[] }) => {
                                         fill
                                         className="object-cover"
                                         sizes="(max-width: 96px) 100vw, 96px"
-                                        priority={false}
+                                        priority
                                     />
                                 </div>
                                 <div className="absolute -top-1 -right-1">
@@ -188,10 +188,10 @@ export default async function BeneficialDonorPage({
 
     const { username } = await params;
 
-    // Validate username parameter
-    if (!username || typeof username !== 'string') {
-        redirect('/dashboard/beneficial');
-    }
+    // // Validate username parameter
+    // if (!username || typeof username !== 'string') {
+    //     redirect('/dashboard/beneficial');
+    // }
 
     const beneficialDonor = await fetchBeneficialDonor(username);
 
