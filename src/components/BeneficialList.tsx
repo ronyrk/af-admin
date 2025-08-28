@@ -13,6 +13,8 @@ import { BeneficialIProps, BeneficialTransactionIProps } from '@/types';
 
 interface BeneficialListProps {
     data: BeneficialIProps[];
+    currentPage: number;
+    itemsPerPage: number;
 }
 
 function getStatus(item: BeneficialIProps): string {
@@ -39,7 +41,7 @@ const formatCurrency = (amount: number): string => {
     });
 };
 
-const BeneficialRow = memo(({ item }: { item: BeneficialIProps }) => {
+const BeneficialRow = memo(({ item, index }: { item: BeneficialIProps, index: number }) => {
     // If you want to use financialData, make sure to import useMemo, calculateDonationTotal, calculateSpendingTotal, and formatCurrency
     const financialData = useMemo(() => {
         const spending = calculateSpendingTotal(item.beneficialTransaction || []);
@@ -52,6 +54,13 @@ const BeneficialRow = memo(({ item }: { item: BeneficialIProps }) => {
 
     return (
         <TableRow className="hover:bg-gray-50 transition-colors">
+            <TableCell className="font-medium py-2 text-center">
+                <div className="flex items-center justify-start min-h-[80px]">
+                    <span className="text-base text-gray-700 bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center">
+                        {index}
+                    </span>
+                </div>
+            </TableCell>
             <TableCell className="font-medium p-1">
                 <div className="flex items-start gap-4">
                     {/* Image */}
@@ -139,31 +148,37 @@ const BeneficialRow = memo(({ item }: { item: BeneficialIProps }) => {
 
 BeneficialRow.displayName = 'BeneficialRow';
 
-const BeneficialList = memo(({ data }: BeneficialListProps) => (
-    <>
-        {data.length === 0 ? (
-            <TableRow>
-                <TableCell colSpan={7} className="text-center py-12">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="text-gray-400">
-                            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.01-5.824-2.562M15 6.306A7.962 7.962 0 0112 5c-2.34 0-4.29 1.01-5.824 2.562" />
-                            </svg>
+const BeneficialList = memo(({ data, currentPage, itemsPerPage }: BeneficialListProps) => {
+    const startIndex = (currentPage - 1) * itemsPerPage + 1;
+    return (
+        <>
+            {data.length === 0 ? (
+                <TableRow>
+                    <TableCell colSpan={7} className="text-center py-12">
+                        <div className="flex flex-col items-center gap-4">
+                            <div className="text-gray-400">
+                                <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.01-5.824-2.562M15 6.306A7.962 7.962 0 0112 5c-2.34 0-4.29 1.01-5.824 2.562" />
+                                </svg>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-gray-500 text-lg font-medium">No beneficiaries found</p>
+                                <p className="text-gray-400 text-sm">Try adjusting your search criteria or clear all filters</p>
+                            </div>
                         </div>
-                        <div className="text-center">
-                            <p className="text-gray-500 text-lg font-medium">No beneficiaries found</p>
-                            <p className="text-gray-400 text-sm">Try adjusting your search criteria or clear all filters</p>
-                        </div>
-                    </div>
-                </TableCell>
-            </TableRow>
-        ) : (
-            data.map((item) => (
-                <BeneficialRow key={item.id} item={item} />
-            ))
-        )}
-    </>
-));
+                    </TableCell>
+                </TableRow>
+            ) : (
+                data.map((item, arrayIndex) => (
+                    <BeneficialRow
+                        key={item.id} item={item}
+                        index={startIndex + arrayIndex}
+                    />
+                ))
+            )}
+        </>
+    )
+});
 
 BeneficialList.displayName = 'BeneficialList';
 

@@ -86,6 +86,9 @@ export default async function Page({ searchParams }: PageProps) {
     // Show skeleton while location options are loading
     const locationOptionsPromise = getLocationOptions();
 
+    const currentPage = Number(searchParams?.page || '1');
+    const itemsPerPage = 10;
+
     return (
         <div className="flex flex-col space-y-6 p-6">
             <div className="flex justify-between items-center">
@@ -108,6 +111,7 @@ export default async function Page({ searchParams }: PageProps) {
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-gray-50 ">
+                            <TableHead className="font-semibold ">Index</TableHead>
                             <TableHead className="font-semibold ">Profile & Details</TableHead>
                             <TableHead className="font-semibold ">Total Spend</TableHead>
                             <TableHead className="font-semibold ">Status</TableHead>
@@ -118,9 +122,16 @@ export default async function Page({ searchParams }: PageProps) {
                     </TableHeader>
                     <TableBody>
                         <Suspense fallback={<LoadingFallback />}>
-                            <BeneficialList data={data} />
+                            <BeneficialList
+                                data={data}
+                                currentPage={currentPage}
+                                itemsPerPage={itemsPerPage}
+                            />
                         </Suspense>
                         <TableRow>
+                            <TableCell className="text-center">
+
+                            </TableCell>
                             <TableCell className="text-center">
 
                             </TableCell>
