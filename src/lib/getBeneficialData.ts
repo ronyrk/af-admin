@@ -56,10 +56,7 @@ export async function getBeneficialData(params: FilterParams) {
                 take: pageSize,
                 orderBy: [
                     {
-                        status: 'desc' // "Active" comes before "Inactive" in descending order
-                    },
-                    {
-                        createAt: 'desc' // Secondary sort for consistent ordering
+                        code: "desc"
                     }
                 ]
             }),
