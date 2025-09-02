@@ -5,7 +5,7 @@ import BeneficialDonorProfileEdit from '@/components/beneficial-donor-profile';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
-import { Briefcase, DollarSign, MapPin, Users } from 'lucide-react';
+import { Briefcase, DollarSign, Eye, MapPin, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
@@ -92,10 +92,10 @@ const BeneficialList = React.memo(({
                 return (
                     <Card key={beneficial.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
                         <CardContent className="p-6">
-                            <div className="flex items-start gap-6">
+                            <div className="flex items-center gap-6">
                                 {/* Enhanced Image Section */}
                                 <div className="flex-shrink-0 relative">
-                                    <div className="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-100 shadow-sm">
+                                    <div className="relative w-16 h-16 rounded-xl overflow-hidden border-2 border-gray-100 shadow-sm">
                                         <Image
                                             src={photoUrl}
                                             alt={`${beneficial.name}'s profile`}
@@ -113,34 +113,26 @@ const BeneficialList = React.memo(({
                                         <h3 className="text-xl font-semibold text-gray-900 mb-1">
                                             {beneficial.name}
                                         </h3>
-                                        <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
-                                            <Briefcase className="h-4 w-4" />
-                                            <span>{beneficial.occupation}</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Location Information Grid */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <h3 className="text-[15px]  text-gray-900 mb-1">
+                                            <span className="font-semibold mr-2">Total Spend:</span>
+                                            {formatCurrency(spending)}
+                                        </h3>
                                         <div className="flex items-center gap-2 text-sm text-gray-600">
                                             <MapPin className="h-4 w-4 text-green-500" />
                                             <span className="font-medium">{beneficial.village}</span>
                                         </div>
 
-                                        <div className="flex items-center gap-2 text-xl font-medium text-gray-600 md:col-span-2">
-                                            <span>Total Spend:-</span>
-                                            <span>{formatCurrency(spending)}</span>
-                                        </div>
                                     </div>
                                 </div>
 
                                 {/* Enhanced Action Button */}
                                 <div className="flex-shrink-0">
                                     <Button
-                                        className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                                        className=" bg-color-main hover:bg-color-main/90 text-white shadow-lg hover:shadow-xl transition-all duration-200"
                                         size="lg"
                                         asChild
                                     >
-                                        <Link href={`/beneficiary/${beneficial.username}`} className="flex items-center gap-2">
+                                        <Link href={`/dashboard/beneficiary/${beneficial.username}`} className="flex items-center gap-2">
                                             Details
                                         </Link>
                                     </Button>
@@ -153,6 +145,8 @@ const BeneficialList = React.memo(({
         </div>
     );
 });
+
+BeneficialList.displayName = "BeneficialList";
 
 BeneficialList.displayName = "BeneficialList";
 
@@ -208,23 +202,17 @@ async function page({ params }: { params: Promise<{ username: string }> }) {
         <div>
             <BeneficialDonorProfileEdit data={beneficialDonor} totals={totals} />
 
+
             {/* Enhanced Beneficial List Section */}
-            <Card className="shadow-lg my-4">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Users className="h-5 w-5" />
-                        Beneficial Recipients
-                    </CardTitle>
-                </CardHeader>
+            <Card className="shadow-lg my-2">
                 <CardContent>
                     <Accordion type="single" collapsible className="w-full">
                         <AccordionItem value="beneficial-list" className="border-0">
                             <AccordionTrigger className="hover:no-underline">
                                 <div className="flex items-center gap-2">
-                                    <Badge variant="outline">
-                                        {beneficiaryCount} Recipients
-                                    </Badge>
-                                    <span>View All Recipients</span>
+                                    <button className='inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'>
+                                        <Eye className="w-4 h-4" />
+                                        View All Beneficiary Recipients for {beneficialDonor.name}</button>
                                 </div>
                             </AccordionTrigger>
                             <AccordionContent className="pt-4">
@@ -239,8 +227,9 @@ async function page({ params }: { params: Promise<{ username: string }> }) {
                     </Accordion>
                 </CardContent>
             </Card>
+
             {/* Enhanced Transaction Actions */}
-            <Card className="shadow-lg">
+            <Card className="shadow-lg my-4">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <DollarSign className="h-5 w-5" />
