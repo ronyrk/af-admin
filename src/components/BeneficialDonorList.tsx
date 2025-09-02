@@ -141,13 +141,9 @@ const BeneficialDonorRow = memo(({ item, index }: { item: BeneficialDonorIProps;
         };
     }, [item.beneficialTransaction]);
 
-    // Get status for each amount type
-    const donationStatus = useMemo(() => getAmountStatus(financialData.donations, 'donation'), [financialData.donations]);
-    const spendingStatus = useMemo(() => getAmountStatus(financialData.spending, 'spending'), [financialData.spending]);
-    const balanceStatus = useMemo(() => getAmountStatus(financialData.balance, 'balance'), [financialData.balance]);
 
     return (
-        <TableRow className="hover:bg-gray-50/50 transition-all duration-300 group border-b border-gray-100">
+        <TableRow className="hover:bg-gray-50 hover:shadow-lg transition-shadow duration-200 my-4">
             <TableCell className="font-medium py-2 text-center">
                 <div className="flex items-center justify-start min-h-[80px]">
                     <span className="text-base text-gray-700 bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center">
