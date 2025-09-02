@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { BeneficialCreateIProps } from "@/types";
 import { z } from "zod";
-import { stat } from "fs";
 
 export const dynamic = 'force-dynamic'
 
@@ -21,6 +20,7 @@ const beneficialCreateSchema = z.object({
     nidBack: z.string().url("NID back image is required"),
     beneficialDonorId: z.string().optional().nullable(),
     status: z.string().min(2, "Status must be at least 2 characters").max(100, "Status is too long"),
+    code: z.string().min(1, "Code is required").max(50, "Code is too long"),
 });
 
 // Helper function to handle Prisma errors
@@ -82,7 +82,7 @@ function validateRequiredFields(data: any) {
     const requiredFields = [
         'name', 'username', 'village', 'district',
         'policeStation', 'occupation', 'photoUrl', 'about',
-        'phone', 'nidFront', 'nidBack', 'status'
+        'phone', 'nidFront', 'nidBack', 'status', 'code'
     ];
 
     const missingFields = requiredFields.filter(field => {
@@ -164,6 +164,7 @@ export const POST = async (request: Request) => {
             phone,
             nidFront,
             nidBack,
+            code,
             status
         } = validatedData;
 
@@ -243,7 +244,8 @@ export const POST = async (request: Request) => {
                     phone,
                     nidFront,
                     nidBack,
-                    status
+                    status,
+                    code
                 },
                 include: {
                     beneficialDonor: {
