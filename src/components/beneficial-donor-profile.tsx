@@ -37,12 +37,13 @@ const formSchema = z.object({
     photoUrl: z.string(),
     about: z.string(),
     phone: z.string(),
+    code: z.string(),
 
 });
 
 function BeneficialDonorProfileEdit({ data, totals }: { data: BeneficialDonorIProps, totals: TotalsIProps }) {
 
-    const { username, name, photoUrl, about, live, homeTown, phone } = data;
+    const { username, name, photoUrl, about, live, homeTown, phone, code } = data;
     const [image, setImage] = useState<string>(data.photoUrl);
 
     const upload = image.length >= 1;
@@ -66,15 +67,16 @@ function BeneficialDonorProfileEdit({ data, totals }: { data: BeneficialDonorIPr
             about,
             live,
             homeTown,
-            phone
+            phone,
+            code
         }
     });
 
     // 2. Define a mutation.
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ name, photoUrl, about, live, homeTown, phone }: BeneficialDonorUpdatedIProps) => {
+        mutationFn: async ({ name, photoUrl, about, live, homeTown, phone, code }: BeneficialDonorUpdatedIProps) => {
             const response = await axios.patch(`/api/beneficial/donor/${username}`, {
-                username, name, photoUrl, about, live, homeTown, phone
+                username, name, photoUrl, about, live, homeTown, phone, code
             });
             return response.data;
         },
@@ -82,10 +84,10 @@ function BeneficialDonorProfileEdit({ data, totals }: { data: BeneficialDonorIPr
     });
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        const { name, photoUrl, about, live, homeTown, phone } = values;
+        const { name, photoUrl, about, live, homeTown, phone, code } = values;
 
         // Branch Created
-        mutate({ name, photoUrl, about, live, homeTown, phone }, {
+        mutate({ name, photoUrl, about, live, homeTown, phone, code }, {
             onSuccess: ({ message, result }: { message: string, result: BeneficialDonorIProps }) => {
                 if (result.id) {
                     toast.success(message);
@@ -142,6 +144,20 @@ function BeneficialDonorProfileEdit({ data, totals }: { data: BeneficialDonorIPr
                                         <FormItem>
                                             <FormControl>
                                                 {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <h2 className='text-xl'>{field.value}</h2>}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </h2>
+                            <h2 className=" font-semibold text-xl py-1  text-color-main">
+                                <FormField
+                                    control={form.control}
+                                    name="code"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {editMode === true ? <Input className='text-xl w-fit'{...field} /> : <h2 className='text-xl'>Code:- {field.value}</h2>}
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

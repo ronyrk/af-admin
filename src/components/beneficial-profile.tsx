@@ -97,13 +97,14 @@ const formSchema = z.object({
     beneficialDonorId: z.string().optional(),
     nidFront: z.string(),
     nidBack: z.string(),
+    code: z.string(),
     status: z.string().min(2, "Status must be at least 2 characters").max(100, "Status is too long"),
 });
 
 function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
     const [openDonor, setOpenDonor] = useState(false);
     const [open, setOpen] = useState(false);
-    const { id, username, name, photoUrl, about, village, district, policeStation, occupation, phone, beneficialDonorId, beneficialTransaction, nidFront, nidBack, status } = data;
+    const { id, username, name, photoUrl, about, code, village, district, policeStation, occupation, phone, beneficialDonorId, beneficialTransaction, nidFront, nidBack, status } = data;
     const [editMode, setEditMode] = useState<boolean>(false);
     const router = useRouter();
     const [image, setImage] = useState<string[]>(data.photoUrl);
@@ -135,6 +136,7 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
             nidFront,
             nidBack,
             status,
+            code
         }
     });
 
@@ -261,7 +263,7 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
                 console.error('Error fetching beneficial donors:', error);
             }
         },
-        staleTime: 5 * 60 * 1000,
+        staleTime: 60 * 1000,
         retry: 1,
     });
 
@@ -328,9 +330,9 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        const { name, photoUrl, status, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = values;
+        const { name, photoUrl, status, about, village, district, code, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack } = values;
 
-        mutate({ name, photoUrl, status, about, village, district, policeStation, occupation, phone, beneficialDonorId, nidFront, nidBack }, {
+        mutate({ name, photoUrl, status, about, village, district, policeStation, code, occupation, phone, beneficialDonorId, nidFront, nidBack }, {
             onSuccess: ({ message, result }: { message: string, result: BeneficialIProps }) => {
                 if (result.id) {
                     toast.success(message);
@@ -407,6 +409,23 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Name</FormLabel>
+                                            <FormControl>
+                                                {editMode ? (
+                                                    <Input className="text-xl" {...field} />
+                                                ) : (
+                                                    <div className="text-xl font-semibold">{field.value}</div>
+                                                )}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="code"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Code</FormLabel>
                                             <FormControl>
                                                 {editMode ? (
                                                     <Input className="text-xl" {...field} />

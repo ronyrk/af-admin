@@ -80,6 +80,7 @@ const formSchema = z.object({
     nidFront: z.string().url("NID front image is required"),
     nidBack: z.string().url("NID back image is required"),
     status: z.string().min(2, "Status must be at least 2 characters").max(100, "Status is too long"),
+    code: z.string().min(1, "Code is required").max(50, "Code is too long"),
 });
 
 function BeneficialCreate() {
@@ -251,7 +252,7 @@ function BeneficialCreate() {
             return;
         }
 
-        const { username, name, photoUrl, status, about, village, district, policeStation, occupation, beneficialDonorId, phone, nidFront, nidBack } = values;
+        const { username, name, photoUrl, status, about, village, district, policeStation, occupation, beneficialDonorId, phone, nidFront, nidBack, code } = values;
 
         mutate({
             username,
@@ -266,7 +267,8 @@ function BeneficialCreate() {
             phone,
             nidFront,
             nidBack,
-            status
+            status,
+            code
         });
     }
 
@@ -331,6 +333,23 @@ function BeneficialCreate() {
                                 )}
                             />
 
+                            <FormField
+                                control={form.control}
+                                name="code"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Code *</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="code"
+                                                {...field}
+                                                disabled={isPending}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="name"

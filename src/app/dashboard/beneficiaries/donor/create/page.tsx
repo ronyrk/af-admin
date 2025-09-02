@@ -30,6 +30,7 @@ const formSchema = z.object({
     photoUrl: z.string(),
     about: z.string(),
     phone: z.string(),
+    code: z.string(),
 });
 
 function BeneficialDonorCreate() {
@@ -48,9 +49,9 @@ function BeneficialDonorCreate() {
     });
     // 2. Define a mutation.
     const { mutate, isPending } = useMutation({
-        mutationFn: async ({ username, name, photoUrl, about, live, homeTown, phone }: BeneficialDonorIProps) => {
+        mutationFn: async ({ username, name, photoUrl, about, live, homeTown, phone, code }: BeneficialDonorIProps) => {
             const response = await axios.post("/api/beneficial/donor", {
-                username, name, photoUrl, about, live, homeTown, phone
+                username, name, photoUrl, about, live, homeTown, phone, code
             });
             return response.data;
         },
@@ -58,8 +59,8 @@ function BeneficialDonorCreate() {
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        const { username, name, photoUrl, about, live, homeTown, phone } = values;
-        mutate({ username, name, photoUrl, about, live, homeTown, phone }, {
+        const { username, name, photoUrl, about, live, homeTown, phone, code } = values;
+        mutate({ username, name, photoUrl, about, live, homeTown, phone, code }, {
             onSuccess: ({ message, result }: { message: string, result: BeneficialDonorIProps }) => {
                 toast.success(message);
                 // console.log(result);
@@ -92,6 +93,22 @@ function BeneficialDonorCreate() {
                                                     const formattedValue = handleUsernameChange(e.target.value);
                                                     field.onChange(formattedValue);
                                                 }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="code"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Code *</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="code"
+                                                {...field}
                                             />
                                         </FormControl>
                                         <FormMessage />
