@@ -460,6 +460,7 @@ export interface DistrictIProps {
 export interface BeneficialDonorIProps {
 	id?: string,
 	name: string,
+	code: string,
 	username: string,
 	phone: string,
 	live: string,
@@ -471,6 +472,7 @@ export interface BeneficialDonorIProps {
 }
 export interface BeneficialDonorUpdatedIProps {
 	id?: string,
+	code: string,
 	name: string,
 	live: string,
 	homeTown: string,
@@ -483,6 +485,7 @@ export interface BeneficialDonorUpdatedIProps {
 
 export interface BeneficialIProps {
 	id: string,
+	code: string,
 	name: string,
 	username: string,
 	village: string,
@@ -507,6 +510,7 @@ enum ProfileStatus {
 export interface BeneficialCreateIProps {
 	id?: string,
 	name: string,
+	code: string,
 	username: string,
 	village: string,
 	status: string,
@@ -524,6 +528,7 @@ export interface BeneficialCreateIProps {
 export interface BeneficialUpdatedIProps {
 
 	name: string,
+	code: string,
 	village: string,
 	district: string,
 	policeStation: string,
