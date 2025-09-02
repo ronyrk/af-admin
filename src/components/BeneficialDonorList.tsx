@@ -146,15 +146,6 @@ const BeneficialDonorRow = memo(({ item, index }: { item: BeneficialDonorIProps;
     const spendingStatus = useMemo(() => getAmountStatus(financialData.spending, 'spending'), [financialData.spending]);
     const balanceStatus = useMemo(() => getAmountStatus(financialData.balance, 'balance'), [financialData.balance]);
 
-    // Determine overall donor status badge
-    const overallStatus = useMemo(() => {
-        if (financialData.donations === 0) return { label: 'Inactive', variant: 'secondary' as const };
-        if (financialData.balance < 0) return { label: 'Overspent', variant: 'destructive' as const };
-        if (financialData.donations < 10000) return { label: 'New', variant: 'default' as const };
-        if (financialData.donations < 50000) return { label: 'Regular', variant: 'default' as const };
-        return { label: 'Major', variant: 'default' as const };
-    }, [financialData]);
-
     return (
         <TableRow className="hover:bg-gray-50/50 transition-all duration-300 group border-b border-gray-100">
             <TableCell className="font-medium py-2 text-center">
@@ -165,11 +156,11 @@ const BeneficialDonorRow = memo(({ item, index }: { item: BeneficialDonorIProps;
                 </div>
             </TableCell>
             {/* Profile Section */}
-            <TableCell className="p-1">
+            <TableCell className="p-3">
                 <div className="flex items-start gap-4">
                     {/* Enhanced Image Section */}
                     <div className="relative flex-shrink-0">
-                        <div className="relative w-16 h-16 rounded-2xl overflow-hidden border-2 border-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                        <div className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
                             <Image
                                 src={item.photoUrl || '/placeholder-avatar.png'}
                                 alt={`${item.name}'s profile`}
@@ -178,13 +169,6 @@ const BeneficialDonorRow = memo(({ item, index }: { item: BeneficialDonorIProps;
                                 sizes="64px"
                                 priority
                             />
-                        </div>
-
-                        {/* Status indicator */}
-                        <div className="absolute -top-2 -right-2">
-                            <Badge variant={overallStatus.variant} className="text-xs px-2 py-1 font-semibold shadow-sm">
-                                {overallStatus.label}
-                            </Badge>
                         </div>
                     </div>
 
@@ -202,7 +186,7 @@ const BeneficialDonorRow = memo(({ item, index }: { item: BeneficialDonorIProps;
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
                                     <MapPin className="h-4 w-4 text-green-500 flex-shrink-0" />
                                     <span className="truncate">
-                                        <span className="font-medium">Lives:</span> {item.live}
+                                        <span className="font-medium">Lives in:</span> {item.live}
                                     </span>
                                 </div>
                             )}
@@ -221,50 +205,19 @@ const BeneficialDonorRow = memo(({ item, index }: { item: BeneficialDonorIProps;
             </TableCell>
 
             {/* Donations Column */}
-            <TableCell className="p-2">
-                <div className={`${donationStatus.bgColor} rounded-xl p-2 transition-all duration-200 hover:shadow-sm`}>
-                    <div className="flex items-center justify-between mb-1">
-                        <donationStatus.icon className={`h-4 w-4 ${donationStatus.color}`} />
-                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                            Donations
-                        </span>
-                    </div>
-                    <div className={`text-lg font-bold ${donationStatus.color} truncate`}>
-                        {financialData.formattedDonations}
-                    </div>
-                </div>
+            <TableCell className="p-1 font-semibold">
+                {financialData.formattedDonations}
             </TableCell>
 
             {/* Spending Column */}
-            <TableCell className="p-2">
-                <div className={`${spendingStatus.bgColor} rounded-xl p-2 transition-all duration-200 hover:shadow-sm`}>
-                    <div className="flex items-center justify-between mb-1">
-                        <spendingStatus.icon className={`h-4 w-4 ${spendingStatus.color}`} />
-                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                            Spending
-                        </span>
-                    </div>
-                    <div className={`text-lg font-bold ${spendingStatus.color} truncate`}>
-                        {financialData.formattedSpending}
-                    </div>
-                </div>
+            <TableCell className="p-1 font-semibold">
+                {financialData.formattedSpending}
             </TableCell>
 
+
             {/* Balance Column */}
-            <TableCell className="p-2">
-                <div className={`${balanceStatus.bgColor} rounded-xl p-2 transition-all duration-200 hover:shadow-sm border-2 ${financialData.balance > 0 ? 'border-green-200' :
-                    financialData.balance < 0 ? 'border-red-200' : 'border-gray-200'
-                    }`}>
-                    <div className="flex items-center justify-between mb-1">
-                        <balanceStatus.icon className={`h-4 w-4 ${balanceStatus.color}`} />
-                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                            Balance
-                        </span>
-                    </div>
-                    <div className={`text-lg font-bold ${balanceStatus.color} truncate`}>
-                        {financialData.formattedBalance}
-                    </div>
-                </div>
+            <TableCell className="p-1 font-semibold">
+                {financialData.formattedBalance}
             </TableCell>
 
             {/* Actions Column */}

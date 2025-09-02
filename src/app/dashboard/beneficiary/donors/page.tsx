@@ -61,9 +61,9 @@ const calculateTotals = (transactions: BeneficialTransactionIProps[]): TotalsIPr
 
 // Format currency helper
 const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-BD', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'BDT',
         minimumFractionDigits: 2
     }).format(amount);
 };
@@ -134,53 +134,25 @@ export default async function Page({ searchParams }: PageProps) {
                             />
                         </Suspense>
                         <TableRow>
-                            <TableCell className="text-center">
-
-                            </TableCell>
-                            <TableCell className="text-center">
-
+                            <TableCell colSpan={2} className="text-center">
+                                <div className={`text-lg font-bold  truncate`}>
+                                    Total:-
+                                </div>
                             </TableCell>
                             {/* Balance Column */}
-                            <TableCell className="p-4">
-                                <div className={` rounded-xl p-4 transition-all duration-200 hover:shadow-sm border-2 ${'border-green-200border-gray-200'
-                                    }`}>
-                                    <div className="flex items-center justify-between mb-2">
-
-                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                                            Donate
-                                        </span>
-                                    </div>
-                                    <div className={`text-lg font-bold  truncate`}>
-                                        {formatCurrency(totals.totalDonate)}
-                                    </div>
+                            <TableCell className="p-1">
+                                <div className={`text-lg font-bold  truncate`}>
+                                    {formatCurrency(totals.totalDonate)}
                                 </div>
                             </TableCell>
-                            <TableCell className="p-4">
-                                <div className={` rounded-xl p-4 transition-all duration-200 hover:shadow-sm border-2 ${'border-green-200border-gray-200'
-                                    }`}>
-                                    <div className="flex items-center justify-between mb-2">
-
-                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                                            Spending
-                                        </span>
-                                    </div>
-                                    <div className={`text-lg font-bold  truncate`}>
-                                        {formatCurrency(totals.totalSpend)}
-                                    </div>
+                            <TableCell className="p-1">
+                                <div className={`text-lg font-bold  truncate`}>
+                                    {formatCurrency(totals.totalSpend)}
                                 </div>
                             </TableCell>
-                            <TableCell className="p-4">
-                                <div className={` rounded-xl p-4 transition-all duration-200 hover:shadow-sm border-2 ${'border-green-200border-gray-200'
-                                    }`}>
-                                    <div className="flex items-center justify-between mb-2">
-
-                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                                            Balance
-                                        </span>
-                                    </div>
-                                    <div className={`text-lg font-bold  truncate`}>
-                                        {formatCurrency(totals.totalBalance)}
-                                    </div>
+                            <TableCell className="p-1">
+                                <div className={`text-lg font-bold  truncate`}>
+                                    {formatCurrency(totals.totalBalance)}
                                 </div>
                             </TableCell>
                         </TableRow>
