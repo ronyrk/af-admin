@@ -55,9 +55,9 @@ const calculateTotals = (transactions: BeneficialTransactionIProps[]): TotalsIPr
 
 // Format currency helper
 const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-BD', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'BDT',
         minimumFractionDigits: 2
     }).format(amount);
 };
@@ -137,17 +137,8 @@ export default async function Page({ searchParams }: PageProps) {
                             </TableCell>
                             {/* Balance Column */}
                             <TableCell className="p-1">
-                                <div className={` rounded-xl p-1 transition-all duration-200 hover:shadow-sm border-2 ${'border-green-200border-gray-200'
-                                    }`}>
-                                    <div className="flex items-center justify-between mb-1">
-
-                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                                            Total Spend
-                                        </span>
-                                    </div>
-                                    <div className={`text-lg font-bold  truncate`}>
-                                        {formatCurrency(totals.totalSpend)}
-                                    </div>
+                                <div className={`text-lg font-bold  truncate`}>
+                                    {formatCurrency(totals.totalSpend)}
                                 </div>
                             </TableCell>
                         </TableRow>
