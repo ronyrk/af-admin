@@ -138,7 +138,7 @@ const BeneficialDonorRow = memo(({ item, index }: { item: BeneficialDonorIProps;
             <TableCell className="font-medium py-2 text-center">
                 <div className="flex items-center justify-start min-h-[80px]">
                     <span className="text-base text-gray-700 bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center">
-                        {index}
+                        {item.code}
                     </span>
                 </div>
             </TableCell>
