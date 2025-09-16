@@ -56,7 +56,7 @@ async function page() {
         <div className='flex flex-col'>
             <div className="p-2 flex justify-between ">
                 <Button asChild>
-                    <Link className=' bg-color-main hover:bg-color-sub' href={`dashboard/branch/branch_create`}>Branch Create</Link>
+                    <Link className=' bg-color-main hover:bg-color-sub' href={`/dashboard/branch/branch_create`}>Branch Create</Link>
                 </Button>
                 <Input className='w-64' type="text" placeholder="Search" />
             </div>
