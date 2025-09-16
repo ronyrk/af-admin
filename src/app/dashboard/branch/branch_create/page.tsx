@@ -114,7 +114,7 @@ function BranchCreate() {
 					} else {
 						throw new Error(message)
 					}
-					router.push(`/dashboard`);
+					router.push(`/dashboard/branch`);
 					router.refresh();
 				},
 				onError: ({ message }: { message: any }) => {
