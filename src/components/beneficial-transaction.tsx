@@ -58,7 +58,7 @@ const formSchema = z.object({
     }),
     description: z.string()
         .min(2, "Description is required")
-        .max(1000, "Description must be less than 1000 characters")
+        .max(3000, "Description must be less than 3000 characters")
         .refine((val) => val.trim().length >= 2, {
             message: "Description cannot be just whitespace"
         }),
@@ -409,7 +409,7 @@ export function BeneficialTransactionCreate({
                                         </FormControl>
                                         <FormMessage />
                                         <div className="text-xs text-muted-foreground mt-1">
-                                            {field.value ? field.value.length : 0}/1000 characters
+                                            {field.value ? field.value.length : 0}/3000 characters
                                         </div>
                                     </FormItem>
                                 )}
