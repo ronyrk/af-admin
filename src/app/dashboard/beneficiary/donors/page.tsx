@@ -83,7 +83,7 @@ export default async function Page({ searchParams }: PageProps) {
     });
 
     if (!response.ok) {
-        console.log(`Failed to fetch transactions: ${response.status}`);
+        // console.log(`Failed to fetch transactions: ${response.status}`);
     }
 
     const transactions: BeneficialTransactionIProps[] = await response.json();
