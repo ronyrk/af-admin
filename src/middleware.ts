@@ -5,9 +5,6 @@ import { verifyToken } from './lib/auth'
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
-
-    console.log(pathname, "logs")
-
     // Protect admin routes except login
     if (pathname.startsWith("/dashboard") && pathname !== "/") {
         const token = request.cookies.get("auth")?.value

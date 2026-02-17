@@ -44,7 +44,7 @@ export const POST = async (request: NextRequest) => {
 			}
 		};
 	} catch (error) {
-		console.log(error, "error logs")
+		// console.log(error, "error logs")
 		return NextResponse.json({ message: "An error occurred during login." }, { status: 500 });
 	}
 }
