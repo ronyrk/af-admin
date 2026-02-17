@@ -57,7 +57,7 @@ async function getDonorName(donorUsername: string): Promise<string> {
 
 	try {
 		const res = await fetch(`${BASE_URL}/api/donor/${donorUsername}`, {
-			next: { revalidate: 0 } // Cache for 5 minutes
+			next: { revalidate: 0 }
 		});
 
 		if (!res.ok) {

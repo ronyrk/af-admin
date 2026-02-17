@@ -2,7 +2,6 @@
 import Link from 'next/link'
 import { redirect, usePathname } from 'next/navigation';
 import React, { useEffect } from 'react'
-import { useUser } from './ContextProvider';
 import {
 	Accordion,
 	AccordionContent,
@@ -19,7 +18,6 @@ interface RoutesIProps {
 
 function AdminSidebar() {
 	const path = usePathname();
-	const { user, isUserLoading } = useUser();
 	const route = path.split('/');
 	const hasana: RoutesIProps[] = [
 		{
@@ -156,16 +154,6 @@ function AdminSidebar() {
 		}
 
 	];
-
-	useEffect(() => {
-		if (isUserLoading) {
-			// console.log("Loading..")
-		} else {
-			if (!user?.email) {
-				redirect('/');
-			}
-		}
-	}, [user?.email, isUserLoading]);
 
 	return (
 		<div className=' min-h-screen flex flex-col gap-2'>
