@@ -10,6 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Branches
 model Branch {
   id                   String   @id @default(auto()) @map("_id") @db.ObjectId
   code                 String   @unique
@@ -41,16 +42,7 @@ model Branch {
   status               String   @default("BRANCH")
 }
 
-model Member {
-  id                   String @id @default(auto()) @map("_id") @db.ObjectId
-  branch               String
-  teamMemberName       String
-  teamMemberPhone      String
-  teamMemberAddress    String
-  teamMemberOccupation String
-  teamMemberPhotoUrl   String
-}
-
+// Borrowers
 model Loan {
   id         String  @id @default(auto()) @map("_id") @db.ObjectId
   username   String  @unique
@@ -72,15 +64,7 @@ model Loan {
   status     Status  @default(RUNNING)
 }
 
-model Admin {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String @unique
-  password String
-  photourl String
-  username String @unique
-}
-
+// Donors
 model Donor {
   id           String  @id @default(auto()) @map("_id") @db.ObjectId
   username     String  @unique
@@ -99,26 +83,108 @@ model Donor {
   mobile       String
 }
 
-model Request {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  loanusername String
-  photoUrl     String
-  amount       String
-  method       String
-  createAt     DateTime
+// Demo
+
+// Branches
+model BranchList {
+  id                   String      @id @default(auto()) @map("_id") @db.ObjectId
+  code                 String      @unique
+  username             String      @unique
+  email                String      @unique
+  branchName           String
+  district             String
+  ps                   String
+  password             String
+  address              String
+  photoUrl             String[]
+  teamLeaderName       String
+  teamLeaderPhone      String
+  teamLeaderAddress    String
+  teamLeaderOccupation String
+  teamLeaderPhotoUrl   String
+  presidentName        String
+  presidentAddress     String
+  presidentPhone       String
+  presidentOccupation  String
+  ImamName             String
+  ImamAddress          String
+  ImamPhone            String
+  ImamOccupation       String
+  SecretaryName        String
+  SecretaryAddress     String
+  SecretaryPhone       String
+  SecretaryOccupation  String
+  status               String      @default("BRANCH")
+  donorLists           DonorList[]
+  borrowers            Borrowers[]
 }
 
+// Borrowers
+model Borrowers {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  username   String     @unique
+  name       String
+  code       String
+  address    String
+  about      String?
+  disbursed  String?
+  recovered  String?
+  balance    String
+  form1      String
+  form2      String
+  nidfont    String
+  nidback    String
+  occupation String
+  phone      String
+  photosUrl  String
+  status     Status     @default(RUNNING)
+  branch     String
+  branchList BranchList @relation(fields: [branch], references: [username])
+  payments   payment[]
+
+  @@index([branch])
+}
+
+// borrowers payment
 model payment {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  loanusername String
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
   amount       String
   loanAmount   String
   createAt     DateTime
+  loanusername String
+  brrowser     Borrowers @relation(fields: [loanusername], references: [username])
+
+  @@index([loanusername])
 }
+
+// Donors
+model DonorList {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  username      String         @unique
+  email         String         @unique
+  code          String         @unique
+  password      String
+  name          String
+  photoUrl      String
+  about         String
+  amount        String?
+  lives         String
+  hometown      String
+  status        String
+  socailMedia1  String
+  socailMedia2  String
+  mobile        String
+  branch        String
+  branchList    BranchList     @relation(fields: [branch], references: [username])
+  donorPayments DonorPayment[]
+
+  @@index([branch])
+}
+
+// Donors payment
 
 model DonorPayment {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  donorUsername String
   amount        String?
   loanPayment   String?
   donate        String?
@@ -127,6 +193,55 @@ model DonorPayment {
   createAt      DateTime
   returnDate    DateTime?
   upComing      Boolean   @default(true)
+  donorUsername String
+  donorList     DonorList @relation(fields: [donorUsername], references: [username])
+
+  @@index([donorUsername])
+}
+
+model district {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  name           String          @unique
+  policeStations policeStation[]
+  createdAt      DateTime        @default(now())
+}
+
+model policeStation {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  districtId String   @db.ObjectId
+  district   district @relation(fields: [districtId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@index([districtId])
+}
+
+model Member {
+  id                   String @id @default(auto()) @map("_id") @db.ObjectId
+  branch               String
+  teamMemberName       String
+  teamMemberPhone      String
+  teamMemberAddress    String
+  teamMemberOccupation String
+  teamMemberPhotoUrl   String
+}
+
+model Admin {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  email    String @unique
+  password String
+  photourl String
+  username String @unique
+}
+
+model Request {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  loanusername String
+  photoUrl     String
+  amount       String
+  method       String
+  createAt     DateTime
 }
 
 model Faq {
@@ -340,23 +455,6 @@ model donor_payment_request {
   transactionId String?
   invoice       String?
   createAt      DateTime @default(now())
-}
-
-model district {
-  id             String          @id @default(auto()) @map("_id") @db.ObjectId
-  name           String          @unique
-  policeStations policeStation[]
-  createdAt      DateTime        @default(now())
-}
-
-model policeStation {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
-  districtId String   @db.ObjectId
-  district   district @relation(fields: [districtId], references: [id])
-  createdAt  DateTime @default(now())
-
-  @@index([districtId])
 }
 
 model beneficialDonor {

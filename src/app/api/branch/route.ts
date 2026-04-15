@@ -7,10 +7,12 @@ export const dynamic = 'force-dynamic'
 
 export const GET = async () => {
 	try {
-		const result = await prisma.branch.findMany();
+		const result = await prisma.branchList.findMany({
+		});
 		return NextResponse.json(result);
 	} catch (error) {
-		throw new Error("Server Error");
+		console.log(error);
+		return NextResponse.json({ message: "Branch Get Failed" });
 	}
 };
 

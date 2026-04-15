@@ -3,48 +3,63 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { createToken } from "@/lib/auth";
 
-
 export const dynamic = 'force-dynamic'
 
 export const POST = async (request: NextRequest) => {
 	try {
 		const body: LoginIProps = await request.json();
 		const { email, password } = body;
+
 		if (!email || !password) {
-			return NextResponse.json({ message: "Invalid request. Email and password are required." });
-		};
+			return NextResponse.json(
+				{ message: "Email and password are required." },
+				{ status: 400 }
+			);
+		}
 
-		// Alternative
-		const user = await prisma.admin.findUnique({
-			where: {
-				email
-			}
-		})
-		if (!user) {
-			return NextResponse.json({ message: "User Not register" });
-		} else {
-			if (user.password === password) {
-				const token = await createToken(user.username)
-				// Create response and set auth cookie
-				const response = NextResponse.json({
-					success: true,
-					user
-				})
-				response.cookies.set("auth", token, {
-					httpOnly: true,
-					secure: process.env.NODE_ENV === "production",
-					sameSite: "lax",
-					maxAge: 60 * 60 * 24 * 7, // 7 days
-					path: "/",
-				})
+		// ── Fire both queries simultaneously ─────────────────────────────────
+		const [admin, branch] = await Promise.all([
+			prisma.admin.findUnique({ where: { email } }),
+			prisma.branch.findUnique({ where: { email } }),
+		]);
 
-				return response
-			} else {
-				return NextResponse.json({ message: "your password  is incorrect" });
-			}
-		};
+		const user = admin ?? branch;
+		const role = admin ? "admin" : branch ? "branch" : null;
+
+		// ── No account found ─────────────────────────────────────────────────
+		if (!user || !role) {
+			return NextResponse.json(
+				{ message: "No account found with this email." },
+				{ status: 404 }
+			);
+		}
+
+		// ── Wrong password ────────────────────────────────────────────────────
+		if (user.password !== password) {
+			return NextResponse.json(
+				{ message: "Your password is incorrect." },
+				{ status: 401 }
+			);
+		}
+
+		// ── Issue token ───────────────────────────────────────────────────────
+		const token = await createToken(user.username, role);
+
+		const response = NextResponse.json({ success: true, role, user });
+		response.cookies.set("auth", token, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: "lax",
+			maxAge: 60 * 60 * 24 * 7,
+			path: "/",
+		});
+
+		return response;
+
 	} catch (error) {
-		// console.log(error, "error logs")
-		return NextResponse.json({ message: "An error occurred during login." }, { status: 500 });
+		return NextResponse.json(
+			{ message: "An error occurred during login." },
+			{ status: 500 }
+		);
 	}
-}
+};

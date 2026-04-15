@@ -15,6 +15,7 @@ export async function middleware(request: NextRequest) {
 
         try {
             const verified = await verifyToken(token)
+            // console.log(verified, "decoded");
             if (!verified) {
                 return NextResponse.redirect(new URL("/", request.url))
             }
