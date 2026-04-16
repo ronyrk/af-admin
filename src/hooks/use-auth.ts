@@ -100,7 +100,7 @@ export function useAuth(): UseAuthReturn {
             if (response.ok) {
                 setUser(null);
                 setError(null);
-                router.push('/login');
+                router.push('/');
                 router.refresh();
             } else {
                 setError('Logout failed');

@@ -13,10 +13,10 @@ import {
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { LogOut, Settings, User, Loader2 } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuthContext } from '@/components/auth-provider';
 
 function NavbarContent() {
-	const { user, isLoading, logout } = useAuth();
+	const { user, isLoading, logout } = useAuthContext();
 
 	// Get user initials for avatar fallback
 	const getUserInitials = () => {
@@ -141,7 +141,7 @@ function NavbarContent() {
 							</DropdownMenu>
 						) : (
 							<Button asChild variant="default" size="sm">
-								<Link href="/login">Login</Link>
+								<Link href="/">Login</Link>
 							</Button>
 						)}
 					</div>

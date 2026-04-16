@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
         } catch (error) {
             // Token is invalid, clear it and redirect to login if on protected route
             const response = NextResponse.next();
-            response.cookies.delete('auth_token');
+            response.cookies.delete('auth');
 
             if (isProtectedRoute) {
                 const loginUrl = new URL('/login', request.url);
