@@ -17,7 +17,7 @@ export default async function DashboardLayout({
 	const authenticated = await isAuthenticated();
 
 	if (!authenticated) {
-		redirect('/login');
+		redirect('/');
 	}
 
 	return (
