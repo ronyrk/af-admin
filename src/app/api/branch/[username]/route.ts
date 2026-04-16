@@ -8,10 +8,13 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
 
-		const result = await prisma.branch.findUnique({ where: { username } })
+		const result = await prisma.branch.findUnique({
+			where: { username }
+		});
 		return NextResponse.json(result);
 	} catch (error) {
-		throw new Error("Server Error");
+		console.log(error);
+		return NextResponse.json({ message: "Branch Get Failed" });
 	}
 };
 

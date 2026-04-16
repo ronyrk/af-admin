@@ -20,6 +20,7 @@ import { useMutation } from "@tanstack/react-query"
 import { LoginIProps } from "@/types"
 import toast from "react-hot-toast"
 import { useState } from "react"
+import { useAuthContext } from "@/components/auth-provider"
 import { Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 
@@ -39,6 +40,7 @@ export function SingInForm() {
 	};
 
 	const router = useRouter();
+	const { refreshAuth } = useAuthContext();
 	// Login
 	const { mutate, isPending } = useMutation({
 		mutationFn: async ({ email, password }: LoginIProps) => {
@@ -54,22 +56,26 @@ export function SingInForm() {
 		resolver: zodResolver(formSchema)
 	});
 	// 2. Define a submit handler.
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		const email = values.email;
 		const password = values.password;
-		mutate({ email, password }, {
-			onSuccess: ({ message, user }: { message: string, user: any }) => {
-				if (user?.username) {
-					toast.success(message);
-					router.push(`/dashboard`)
-				} else {
-					toast.error("Login Failed")
-				}
-			},
-			onError: (error) => {
-				toast.error("Login Failed");
+		mutate(
+			{ email, password },
+			{
+				onSuccess: async ({ message, user }: { message: string, user: any }) => {
+					if (user?.username) {
+						toast.success(message);
+						await refreshAuth();
+						router.push(`/dashboard`);
+					} else {
+						toast.error("Login Failed");
+					}
+				},
+				onError: (error) => {
+					toast.error("Login Failed");
+				},
 			}
-		});
+		);
 	}
 
 	return (

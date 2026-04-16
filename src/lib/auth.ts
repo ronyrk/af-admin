@@ -4,9 +4,10 @@ import { cookies } from "next/headers"
 const secretKey = process.env.JWT_SECRET || "e94b50c81b572c6cf3133605764980b87dade9ecbf2600b98dd15dc74bab5dffe4756a334621fb524b579787c03f53d88d57391ac847bd9166ccde7e32a9848a"
 
 
-export async function createToken(username: string) {
+
+export async function createToken(username: string, role: string) {
     const secret = new TextEncoder().encode(secretKey)
-    const token = await new SignJWT({ username }).setProtectedHeader({ alg: "HS256" }).setExpirationTime("24h").sign(secret)
+    const token = await new SignJWT({ username, role }).setProtectedHeader({ alg: "HS256" }).setExpirationTime("24h").sign(secret)
     return token
 }
 
@@ -14,7 +15,7 @@ export async function verifyToken(token: string) {
     try {
         const secret = new TextEncoder().encode(secretKey)
         const verified = await jwtVerify(token, secret)
-        return verified.payload as { username: string }
+        return verified.payload as { username: string, role: string }
     } catch (err) {
         return null
     }
@@ -39,4 +40,22 @@ export async function clearAuthCookie() {
 export async function getAuthToken() {
     const cookieStore = cookies()
     return cookieStore.get("auth")?.value
+}
+
+
+/**
+ * Get current user from token
+ * @returns {Promise<any>} User data or null if not authenticated
+ */
+export async function getCurrentUser(): Promise<any> {
+    const token = await getAuthToken();
+    if (!token) return null;
+    return await verifyToken(token);
+}
+
+export async function isAuthenticated(): Promise<boolean> {
+    const token = await getAuthToken();
+    if (!token) return false;
+    const user = await verifyToken(token);
+    return !!user;
 }
