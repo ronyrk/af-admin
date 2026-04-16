@@ -22,7 +22,6 @@ import toast from "react-hot-toast"
 import { useState } from "react"
 import { useAuthContext } from "@/components/auth-provider"
 import { Eye, EyeOff } from "lucide-react"
-import Link from "next/link"
 
 
 
@@ -62,9 +61,9 @@ export function SingInForm() {
 		mutate(
 			{ email, password },
 			{
-				onSuccess: async ({ message, user }: { message: string, user: any }) => {
-					if (user?.username) {
-						toast.success(message);
+				onSuccess: async ({ success }: { success: boolean }) => {
+					if (success) {
+						toast.success("Login Successful");
 						await refreshAuth();
 						router.push(`/dashboard`);
 					} else {
