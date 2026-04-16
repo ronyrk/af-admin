@@ -7,7 +7,8 @@ import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
 import Navbar from "@/components/Navbar";
-import { getAuthToken } from "@/lib/auth";
+import { getAuthToken, getCurrentUser } from "@/lib/auth";
+import { AuthProvider } from "@/components/auth-provider";
 
 const inter = Anek_Bangla({ subsets: ["latin"] });
 
@@ -21,17 +22,22 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const token = await getAuthToken() || null;
+
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className="scroll-smooth">
+      <body className={`${inter.className} antialiased bg-background text-foreground`}>
+        {/* Navbar */}
         <TanStackProvider>
-          <NextSSRPlugin
-            routerConfig={extractRouterConfig(ourFileRouter)}
-          />
-          <Navbar token={token} />
-          {children}
-          <Toaster />
+          <AuthProvider>
+            {/* Navbar */}
+            <Navbar />
+
+            {/* Main Content */}
+            {children}
+
+            {/* Toast Notifications */}
+            <Toaster position="top-right" />
+          </AuthProvider>
         </TanStackProvider>
       </body>
     </html>

@@ -1,49 +1,73 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { verifyToken } from './lib/auth'
+import { NextRequest, NextResponse } from 'next/server';
+import { jwtVerify } from 'jose';
 
-// This function can be marked `async` if using `await` inside
+const JWT_SECRET = process.env.JWT_SECRET || 'e94b50c81b572c6cf3133605764980b87dade9ecbf2600b98dd15dc74bab5dffe4756a334621fb524b579787c03f53d88d57391ac847bd9166ccde7e32a9848a';
+const SECRET_KEY = new TextEncoder().encode(JWT_SECRET);
+
+// Routes that don't require authentication
+const PUBLIC_ROUTES = ['/login', '/signup', '/forgot-password'];
+
+// Routes that require authentication
+const PROTECTED_ROUTES = ['/dashboard', '/admin'];
+
 export async function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
-    // Protect admin routes except login
-    if (pathname.startsWith("/dashboard") && pathname !== "/") {
-        const token = request.cookies.get("auth")?.value
+    const token = request.cookies.get('auth')?.value;
 
-        if (!token) {
-            return NextResponse.redirect(new URL("/", request.url))
-        }
+    // Check if route is public
+    const isPublicRoute = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
 
+    // Check if route is protected
+    const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.startsWith(route));
+
+    // If it's a protected route and no token exists, redirect to login
+    if (isProtectedRoute && !token) {
+        const loginUrl = new URL('/login', request.url);
+        loginUrl.searchParams.set('redirect', pathname);
+        return NextResponse.redirect(loginUrl);
+    }
+
+    // If token exists, verify it
+    if (token) {
         try {
-            const verified = await verifyToken(token)
-            // console.log(verified, "decoded");
-            if (!verified) {
-                return NextResponse.redirect(new URL("/", request.url))
-            }
+            await jwtVerify(token, SECRET_KEY);
         } catch (error) {
-            return NextResponse.redirect(new URL("/", request.url))
-        }
-    }
+            // Token is invalid, clear it and redirect to login if on protected route
+            const response = NextResponse.next();
+            response.cookies.delete('auth_token');
 
-    // Redirect authenticated users away from login
-    if (pathname === "/") {
-        const token = request.cookies.get("auth")?.value
-
-        if (token) {
-            try {
-                const verified = await verifyToken(token)
-                if (verified) {
-                    return NextResponse.redirect(new URL("/dashboard", request.url))
-                }
-            } catch (error) {
-                // Continue to login page
+            if (isProtectedRoute) {
+                const loginUrl = new URL('/login', request.url);
+                loginUrl.searchParams.set('redirect', pathname);
+                return NextResponse.redirect(loginUrl);
             }
+
+            return response;
         }
     }
 
-    return NextResponse.next()
+    // If user is logged in and tries to access public auth routes, redirect to dashboard
+    if (isPublicRoute && token) {
+        try {
+            await jwtVerify(token, SECRET_KEY);
+            // Valid token, redirect to dashboard
+            return NextResponse.redirect(new URL('/dashboard', request.url));
+        } catch (error) {
+            // Invalid token, allow access to public routes
+        }
+    }
+
+    return NextResponse.next();
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
-    matcher: ["/", "/dashboard/:path*"],
-}
+    matcher: [
+        /*
+         * Match all request paths except for the ones starting with:
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico (favicon file)
+         */
+        '/((?!_next/static|_next/image|favicon.ico).*)',
+    ],
+};
