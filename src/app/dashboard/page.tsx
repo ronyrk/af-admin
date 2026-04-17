@@ -1,160 +1,209 @@
-import React from 'react'
+import React from 'react';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
-import { filterAndSortDonors } from '@/lib/fillterAndSortDonors';
 import {
 	BeneficialTransactionIProps,
 	ChildDonateRequestProps,
 	DonorPaymentIProps,
 	DonorRequestIProps,
 	PaymentApproveIProps,
-	TotalsIProps
+	TotalsIProps,
 } from '@/types';
 import { GetBranchDetails } from '@/lib/getBranchList';
 import Link from 'next/link';
+import { verifyToken } from '@/lib/auth';
+import { filterAndSortDonors } from '@/lib/fillterAndSortDonors';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export interface ApiResponse {
+	success: boolean;
+	data: {
+		branch: {
+			id: string;
+			code: string;
+			username: string;
+			email: string;
+			branchName: string;
+			district: string;
+			ps: string;
+			address: string;
+			photoUrl: string[];
+			status: string;
+			teamLeader: { name: string; phone: string; address: string; occupation: string; photoUrl: string };
+			president: { name: string; phone: string; address: string; occupation: string };
+			imam: { name: string; phone: string; address: string; occupation: string };
+			secretary: { name: string; phone: string; address: string; occupation: string };
+		};
+		summary: {
+			borrowers: {
+				totalDisbursed: number;
+				totalRecovered: number;
+				totalBalance: number;
+				totalRunning: number;
+				totalCompleted: number;
+			};
+			donors: {
+				lending: number;
+				refund: number;
+				donorDonate: number;
+				leanderDonate: number;
+				totalDonate: number;
+				outstanding: number;
+				leaderCount: number;
+				donorCount: number;
+			};
+			branch: {
+				total: number;
+				totalDonorDisbursed: number;
+				totalDonorRecovered: number;
+				totalDonated: number;
+				totalDonorOutstanding: number;
+				totalBorrowerDisbursed: number;
+				totalBorrowerRecovered: number;
+				totalBorrowerBalance: number;
+			};
+		};
+	};
+}
+
+// ─── Module-level persistent cache (survives hot-reload in dev but never leaks
+//     between requests in prod because each serverless invocation is isolated) ─
+const donorNameCache = new Map<string, string>();
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://af-admin.vercel.app';
 
-const calculateTotals = (transactions: BeneficialTransactionIProps[]): TotalsIProps => {
-	if (!transactions?.length) {
-		return { totalDonate: 0, totalSpend: 0, totalBalance: 0 };
-	}
+// ─── Pure helpers ─────────────────────────────────────────────────────────────
 
-	// Single pass calculation for better performance
-	const totals = transactions.reduce(
-		(acc, item) => {
-			const amount = Number(item.amount) || 0;
-			if (item?.paymentType === 'donate') {
-				acc.totalDonate += amount;
-			} else if (item?.paymentType === 'spend') {
-				acc.totalSpend += amount;
-			}
-			return acc;
-		},
-		{ totalDonate: 0, totalSpend: 0, totalBalance: 0 }
-	);
-
-	totals.totalBalance = totals.totalDonate - totals.totalSpend;
-	return totals;
-};
-
-const formatCurrency = (amount: number): string => {
-	return new Intl.NumberFormat('en-BD', {
+const formatCurrency = (amount: number): string =>
+	new Intl.NumberFormat('en-BD', {
 		style: 'currency',
 		currency: 'BDT',
-		minimumFractionDigits: 2
+		minimumFractionDigits: 2,
 	}).format(amount);
+
+const calculateTotals = (transactions: BeneficialTransactionIProps[]): TotalsIProps => {
+	if (!transactions?.length) return { totalDonate: 0, totalSpend: 0, totalBalance: 0 };
+
+	let totalDonate = 0;
+	let totalSpend = 0;
+
+	for (const item of transactions) {
+		const amount = Number(item.amount) || 0;
+		if (item.paymentType === 'donate') totalDonate += amount;
+		else if (item.paymentType === 'spend') totalSpend += amount;
+	}
+
+	return { totalDonate, totalSpend, totalBalance: totalDonate - totalSpend };
 };
 
-// Memoized donor name cache to reduce API calls
-const donorNameCache = new Map<string, string>();
+// ─── Data fetchers ────────────────────────────────────────────────────────────
 
-async function getDonorName(donorUsername: string): Promise<string> {
-	// Check cache first
-	if (donorNameCache.has(donorUsername)) {
-		return donorNameCache.get(donorUsername)!;
-	}
-
+async function fetchJSON<T>(url: string, label: string): Promise<T[]> {
 	try {
-		const res = await fetch(`${BASE_URL}/api/donor/${donorUsername}`, {
-			next: { revalidate: 0 }
-		});
-
-		if (!res.ok) {
-			console.error(`Failed to fetch donor ${donorUsername}: ${res.status}`);
-			return 'Unknown Donor';
-		}
-
-		const donor: DonorRequestIProps = await res.json();
-		const name = donor.name || 'Unknown Donor';
-
-		// Cache the result
-		donorNameCache.set(donorUsername, name);
-		return name;
-	} catch (error) {
-		console.error(`Error fetching donor name for ${donorUsername}:`, error);
-		return 'Unknown Donor';
-	}
-}
-
-const calculateTotalOutstanding = async (): Promise<number> => {
-	try {
-		// Fetch all required data in parallel for better performance
-		const [paymentList, loanList] = await Promise.all([
-			prisma.donorPayment.findMany(),
-			prisma.payment.findMany()
-		]);
-
-		// Calculate loan totals
-		const totalLoan = loanList.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-		const totalLoanPayment = loanList.reduce((sum, item) => sum + Number(item.loanAmount || 0), 0);
-		const totalLoanRefund = totalLoanPayment - totalLoan;
-
-		// Calculate payment totals using more efficient filtering
-		const totals = paymentList.reduce((acc, item) => {
-			const amount = Number(item.amount || 0);
-			const donate = Number(item.donate || 0);
-			const loanPayment = Number(item.loanPayment || 0);
-
-			switch (item.type) {
-				case "DONATE":
-					acc.donate += donate;
-					if (item.status !== "DONOR") {
-						acc.totalDonate += donate;
-					}
-					break;
-				case "LENDING":
-					acc.totalLending += amount;
-					break;
-				case "REFOUND":
-					acc.totalRefund += loanPayment;
-					break;
-			}
-			return acc;
-		}, {
-			donate: 0,
-			totalDonate: 0,
-			totalLending: 0,
-			totalRefund: 0
-		});
-
-		// Calculate final result
-		const result = totals.totalLending - (totals.totalRefund + totals.totalDonate);
-		const totalAmount = (result + totals.donate) - totalLoanRefund;
-
-		return totalAmount;
-	} catch (error) {
-		console.error('Error calculating total outstanding:', error);
-		return 0;
-	}
-};
-
-// Fetch function with proper error handling
-async function fetchWithErrorHandling<T>(url: string, errorMessage: string): Promise<T[]> {
-	try {
-		const res = await fetch(url, {
-			next: { revalidate: 0 } // Cache for 1 minute
-		});
-
-		if (!res.ok) {
-			throw new Error(`${errorMessage}: ${res.status}`);
-		}
-
-		return await res.json();
-	} catch (error) {
-		console.error(errorMessage, error);
+		const res = await fetch(url, { next: { revalidate: 0 } });
+		if (!res.ok) throw new Error(`${res.status}`);
+		return (await res.json()) as T[];
+	} catch (err) {
+		console.error(`[fetchJSON] ${label}:`, err);
 		return [];
 	}
 }
 
+/**
+ * Batch-resolve donor names, deduplicated.
+ * Only fires one network/cache lookup per unique username.
+ */
+async function batchGetDonorNames(usernames: string[]): Promise<Map<string, string>> {
+	// Deduplicate
+	const unique = [...new Set(usernames)];
+
+	// Split into cached vs uncached
+	const uncached = unique.filter((u) => !donorNameCache.has(u));
+
+	// Fetch uncached in parallel
+	if (uncached.length > 0) {
+		const fetched = await Promise.all(
+			uncached.map(async (username) => {
+				try {
+					const res = await fetch(`${BASE_URL}/api/donor/${username}`, {
+						next: { revalidate: 0 },
+					});
+					if (!res.ok) return [username, 'Unknown Donor'] as const;
+					const donor: DonorRequestIProps = await res.json();
+					return [username, donor.name || 'Unknown Donor'] as const;
+				} catch {
+					return [username, 'Unknown Donor'] as const;
+				}
+			})
+		);
+		// Populate cache
+		for (const [username, name] of fetched) {
+			donorNameCache.set(username, name);
+		}
+	}
+
+	// Build result map for caller
+	const result = new Map<string, string>();
+	for (const u of usernames) {
+		result.set(u, donorNameCache.get(u) ?? 'Unknown Donor');
+	}
+	return result;
+}
+
+async function calculateTotalOutstanding(): Promise<number> {
+	try {
+		const [paymentList, loanList] = await Promise.all([
+			prisma.donorPayment.findMany(),
+			prisma.payment.findMany(),
+		]);
+
+		// Loan totals
+		let totalLoan = 0;
+		let totalLoanPayment = 0;
+		for (const item of loanList) {
+			totalLoan += Number(item.amount || 0);
+			totalLoanPayment += Number(item.loanAmount || 0);
+		}
+		const totalLoanRefund = totalLoanPayment - totalLoan;
+
+		// Payment totals
+		let donate = 0;
+		let totalDonate = 0;
+		let totalLending = 0;
+		let totalRefund = 0;
+
+		for (const item of paymentList) {
+			const amount = Number(item.amount || 0);
+			const donateAmt = Number(item.donate || 0);
+			const loanPayment = Number(item.loanPayment || 0);
+
+			if (item.type === 'DONATE') {
+				donate += donateAmt;
+				if (item.status !== 'DONOR') totalDonate += donateAmt;
+			} else if (item.type === 'LENDING') {
+				totalLending += amount;
+			} else if (item.type === 'REFOUND') {
+				totalRefund += loanPayment;
+			}
+		}
+
+		const result = totalLending - (totalRefund + totalDonate);
+		return result + donate - totalLoanRefund;
+	} catch (err) {
+		console.error('[calculateTotalOutstanding]:', err);
+		return 0;
+	}
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function DashboardPage() {
 	try {
-		// Ensure cookies are processed
-		cookies();
+		const cookieStore = cookies(); // call once
+		const token = cookieStore.get('auth')?.value ?? '';
 
-		const skips = 45;
-
-		// Fetch all data in parallel for better performance
+		// All independent data in a single parallel batch
 		const [
 			donorPaymentList,
 			payments,
@@ -162,244 +211,147 @@ export default async function DashboardPage() {
 			request,
 			paymentRequest,
 			transactions,
-			totalOutstanding
+			totalOutstanding,
+			payload,
 		] = await Promise.all([
 			prisma.donorPayment.findMany(),
-			fetchWithErrorHandling<PaymentApproveIProps>(`${BASE_URL}/api/request`, 'Failed to fetch payments'),
-			fetchWithErrorHandling<ChildDonateRequestProps>(`${BASE_URL}/api/donation-request`, 'Failed to fetch child requests'),
+			fetchJSON<PaymentApproveIProps>(`${BASE_URL}/api/request`, 'payments'),
+			fetchJSON<ChildDonateRequestProps>(`${BASE_URL}/api/donation-request`, 'child-requests'),
 			prisma.donor_request.findMany(),
 			prisma.donor_payment_request.findMany(),
-			fetchWithErrorHandling<BeneficialTransactionIProps>(`${BASE_URL}/api/beneficial/transaction`, 'Failed to fetch transactions'),
-			calculateTotalOutstanding()
+			fetchJSON<BeneficialTransactionIProps>(`${BASE_URL}/api/beneficial/transaction`, 'transactions'),
+			calculateTotalOutstanding(),
+			verifyToken(token) as Promise<{ username: string; role: string } | null>,
 		]);
 
-		const upComing = filterAndSortDonors(donorPaymentList as any, skips, true);
+		const isBranch: boolean = payload?.role === 'branch';
+
+		// Derived values
+		const SKIPS = 45;
+		const upComing = filterAndSortDonors(donorPaymentList as any, SKIPS, true);
 		const totals = calculateTotals(transactions);
-		const currentBalance = totals.totalBalance + totalOutstanding;
+		const currentBalance: number = totals.totalBalance + totalOutstanding;
 
-		// Pre-fetch donor names for better UX
-		const upcomingDonorNames = await Promise.all(
-			upComing.slice(0, 4).map(item => getDonorName(item.donorUsername))
+		// Collect all usernames we need, then resolve in ONE batch (deduped)
+		const upComingSlice = upComing.slice(0, 4);
+		const upcomingUsernames = upComingSlice.map((i: any) => i.donorUsername);
+		const payReqUsernames = paymentRequest.map((i: any) => i.username);
+		const allUsernames = [...upcomingUsernames, ...payReqUsernames];
+
+		// Pre-resolve GetBranchDetails (handles both sync and async returns)
+		const paymentsSlice = payments.slice(0, 4);
+		const branchDetails: string[] = await Promise.all(
+			paymentsSlice.map((item) => Promise.resolve(GetBranchDetails(item.loanusername)))
 		);
 
-		const paymentRequestDonorNames = await Promise.all(
-			paymentRequest.map(item => getDonorName(item.username))
-		);
+		// Fetch branch data + donor names concurrently
+		const [donorNames, branchRes] = await Promise.all([
+			batchGetDonorNames(allUsernames),
+			isBranch
+				? fetch('https://af-admin.vercel.app/api/branch/all-in-one', {
+					method: 'GET',
+					headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+				})
+				: Promise.resolve(null),
+		]);
+
+		const data: ApiResponse | null = branchRes ? await branchRes.json() : null;
+
+		// ─── Render ──────────────────────────────────────────────────────────────
 
 		return (
-			<div className=''>
+			<div>
 				<div className="p-2 bg-white">
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-						{/* Fund Summary Panel */}
-						<Link href="/dashboard" className="cursor-pointer">
-							<div className="border border-gray-300 rounded shadow-sm">
-								<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">
-									Our Fund Summary
-								</div>
-								<div className="p-0">
-									<table className="w-full">
-										<thead>
-											<tr className="border-b">
-												<th className="text-left py-2 px-4">Categories</th>
-												<th className="text-right py-2 px-4">Available balance</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr className="bg-gray-200">
-												<td className="py-2 px-4">কর্জে হাসনা</td>
-												<td className="text-right py-2 px-4">{formatCurrency(totalOutstanding)}</td>
-											</tr>
-											<tr className="bg-gray-100">
-												<td className="py-2 px-4">উপকারী</td>
-												<td className="text-right py-2 px-4">{formatCurrency(totals.totalBalance)}</td>
-											</tr>
-											<tr className="bg-gray-200 font-semibold">
-												<td className="py-2 px-4">Total</td>
-												<td className="text-right py-2 px-4">{formatCurrency(currentBalance)}</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</Link>
+					{isBranch && data ? (
+						// ── Branch view ──────────────────────────────────────────────────
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<FundSummaryPanel
+								rows={[
+									{ label: 'DONOR & LENDER', value: data.data.summary.donors.outstanding },
+									{ label: 'BORROWERS', value: data.data.summary.borrowers.totalBalance },
+								]}
+								total={data.data.summary.branch.total}
+							/>
+						</div>
+					) : (
+						// ── Admin view ───────────────────────────────────────────────────
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<FundSummaryPanel
+								rows={[
+									{ label: 'কর্জে হাসনা', value: totalOutstanding },
+									{ label: 'উপকারী', value: totals.totalBalance },
+								]}
+								total={currentBalance}
+							/>
 
-						{/* Upcoming Money Refund Panel */}
-						<Link href="/dashboard/up-coming" className="cursor-pointer">
-							<div className="border border-gray-300 rounded shadow-sm">
-								<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">
-									Upcoming money refund
-								</div>
-								<div className="p-0">
-									<table className="w-full">
-										<thead>
-											<tr className="border-b">
-												<th className="text-left py-2 px-4">NAME</th>
-												<th className="text-right py-2 px-4">AMOUNT</th>
-											</tr>
-										</thead>
-										<tbody>
-											{upComing.slice(0, 4).map((item, index: number) => (
-												<tr key={`upcoming-${item.donorUsername}-${index}`} className={`${index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"}`}>
-													<td className="py-2 px-4">{upcomingDonorNames[index]}</td>
-													<td className="text-right py-2 px-4">{formatCurrency(Number(item.amount) || 0)}</td>
-												</tr>
-											))}
-											{upComing.length === 0 && (
-												<tr>
-													<td colSpan={2} className="py-4 px-4 text-center text-gray-500">
-														No upcoming refunds
-													</td>
-												</tr>
-											)}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</Link>
+							{/* Upcoming Money Refund */}
+							<TablePanel
+								href="/dashboard/up-coming"
+								title="Upcoming money refund"
+								rows={upComingSlice.map((item: any, i: number) => ({
+									key: `${item.donorUsername}-${i}`,
+									name: donorNames.get(item.donorUsername) ?? 'Unknown Donor',
+									amount: Number(item.amount) || 0,
+								}))}
+								emptyMessage="No upcoming refunds"
+							/>
 
-						{/* Borrowers Payment Request List Panel */}
-						<Link href="/dashboard/pending" className="cursor-pointer">
-							<div className="border border-gray-300 rounded shadow-sm">
-								<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">
-									Borrowers Payment Request List
-								</div>
-								<div className="p-0">
-									<table className="w-full">
-										<thead>
-											<tr className="border-b">
-												<th className="text-left py-2 px-4">NAME</th>
-												<th className="text-right py-2 px-4">AMOUNT</th>
-											</tr>
-										</thead>
-										<tbody>
-											{payments.slice(0, 4).map((item, index: number) => (
-												<tr key={`payment-${item.loanusername}-${index}`} className={`${index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"}`}>
-													<td className="py-2 px-4">{GetBranchDetails(item.loanusername)}</td>
-													<td className="text-right py-2 px-4">{formatCurrency(Number(item.amount) || 0)}</td>
-												</tr>
-											))}
-											{payments.length === 0 && (
-												<tr>
-													<td colSpan={2} className="py-4 px-4 text-center text-gray-500">
-														No payment requests
-													</td>
-												</tr>
-											)}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</Link>
+							{/* Borrowers Payment Request */}
+							<TablePanel
+								href="/dashboard/pending"
+								title="Borrowers Payment Request List"
+								rows={paymentsSlice.map((item, i) => ({
+									key: `${item.loanusername}-${i}`,
+									name: branchDetails[i] ?? 'Unknown',
+									amount: Number(item.amount) || 0,
+								}))}
+								emptyMessage="No payment requests"
+							/>
 
-						{/* Child Donation Request List Panel */}
-						<Link href="/dashboard/child/pending" className="cursor-pointer">
-							<div className="border border-gray-300 rounded shadow-sm">
-								<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">
-									Child Donation Request List
-								</div>
-								<div className="p-0">
-									<table className="w-full">
-										<thead>
-											<tr className="border-b">
-												<th className="text-left py-2 px-4">NAME</th>
-												<th className="text-right py-2 px-4">AMOUNT</th>
-											</tr>
-										</thead>
-										<tbody>
-											{childRequest.slice(0, 4).map((item, index: number) => (
-												<tr key={`child-${item.childName}-${index}`} className={`${index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"}`}>
-													<td className="py-2 px-4">{item.childName}</td>
-													<td className="text-right py-2 px-4">{formatCurrency(Number(item.amount) || 0)}</td>
-												</tr>
-											))}
-											{childRequest.length === 0 && (
-												<tr>
-													<td colSpan={2} className="py-4 px-4 text-center text-gray-500">
-														No child donation requests
-													</td>
-												</tr>
-											)}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</Link>
+							{/* Child Donation Request */}
+							<TablePanel
+								href="/dashboard/child/pending"
+								title="Child Donation Request List"
+								rows={childRequest.slice(0, 4).map((item, i) => ({
+									key: `${item.childName}-${i}`,
+									name: item.childName,
+									amount: Number(item.amount) || 0,
+								}))}
+								emptyMessage="No child donation requests"
+							/>
 
-						{/* New Donor Request List Panel */}
-						<Link href="/dashboard/donor/request" className="cursor-pointer">
-							<div className="border border-gray-300 rounded shadow-sm md:col-span-2">
-								<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">
-									New Donor Request List
-								</div>
-								<div className="p-0">
-									<div className="border-b border-orange-300 mx-4 my-1 h-[2px]"></div>
-									<table className="w-full">
-										<thead>
-											<tr className="border-b">
-												<th className="text-left py-2 px-4">NAME</th>
-												<th className="text-right py-2 px-4">AMOUNT</th>
-											</tr>
-										</thead>
-										<tbody>
-											{request.map((item, index: number) => (
-												<tr key={`donor-request-${item.name}-${index}`} className={`${index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"}`}>
-													<td className="py-2 px-4">{item.name}</td>
-													<td className="text-right py-2 px-4">{formatCurrency(Number(item.amount) || 0)}</td>
-												</tr>
-											))}
-											{request.length === 0 && (
-												<tr>
-													<td colSpan={2} className="py-4 px-4 text-center text-gray-500">
-														No new donor requests
-													</td>
-												</tr>
-											)}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</Link>
+							{/* New Donor Request */}
+							<TablePanel
+								href="/dashboard/donor/request"
+								title="New Donor Request List"
+								spanFull
+								rows={request.map((item, i) => ({
+									key: `${item.name}-${i}`,
+									name: item.name,
+									amount: Number(item.amount) || 0,
+								}))}
+								emptyMessage="No new donor requests"
+							/>
 
-						{/* Old Donor Payment Request List Panel */}
-						<Link href="/dashboard/donor/payment-request" className="cursor-pointer">
-							<div className="border border-gray-300 rounded shadow-sm md:col-span-2">
-								<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">
-									Old Donor Payment Request List
-								</div>
-								<div className="p-0">
-									<div className="border-b border-orange-300 mx-4 my-1 h-[2px]"></div>
-									<table className="w-full">
-										<thead>
-											<tr className="border-b">
-												<th className="text-left py-2 px-4">NAME</th>
-												<th className="text-right py-2 px-4">AMOUNT</th>
-											</tr>
-										</thead>
-										<tbody>
-											{paymentRequest.map((item, index: number) => (
-												<tr key={`payment-request-${item.username}-${index}`} className={`${index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"}`}>
-													<td className="py-2 px-4">{paymentRequestDonorNames[index]}</td>
-													<td className="text-right py-2 px-4">{formatCurrency(Number(item.amount) || 0)}</td>
-												</tr>
-											))}
-											{paymentRequest.length === 0 && (
-												<tr>
-													<td colSpan={2} className="py-4 px-4 text-center text-gray-500">
-														No payment requests
-													</td>
-												</tr>
-											)}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</Link>
-					</div>
+							{/* Old Donor Payment Request */}
+							<TablePanel
+								href="/dashboard/donor/payment-request"
+								title="Old Donor Payment Request List"
+								spanFull
+								rows={paymentRequest.map((item, i) => ({
+									key: `${item.username}-${i}`,
+									name: donorNames.get(item.username) ?? 'Unknown Donor',
+									amount: Number(item.amount) || 0,
+								}))}
+								emptyMessage="No payment requests"
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 		);
-	} catch (error) {
-		console.error('Dashboard error:', error);
+	} catch (err) {
+		console.error('[DashboardPage]:', err);
 		return (
 			<div className="p-4 bg-red-50 border border-red-200 rounded">
 				<h2 className="text-red-800 font-semibold">Error Loading Dashboard</h2>
@@ -407,4 +359,91 @@ export default async function DashboardPage() {
 			</div>
 		);
 	}
+}
+
+// ─── Shared UI components (no state → zero re-render risk) ────────────────────
+
+interface SummaryRow { label: string; value: number }
+
+function FundSummaryPanel({ rows, total }: { rows: SummaryRow[]; total: number }) {
+	return (
+		<Link href="/dashboard" className="cursor-pointer">
+			<div className="border border-gray-300 rounded shadow-sm">
+				<PanelHeader>Our Fund Summary</PanelHeader>
+				<table className="w-full">
+					<thead>
+						<tr className="border-b">
+							<th className="text-left  py-2 px-4">Categories</th>
+							<th className="text-right py-2 px-4">Available balance</th>
+						</tr>
+					</thead>
+					<tbody>
+						{rows.map(({ label, value }, i) => (
+							<tr key={label} className={i % 2 === 0 ? 'bg-gray-200' : 'bg-gray-100'}>
+								<td className="py-2 px-4">{label}</td>
+								<td className="text-right py-2 px-4">{formatCurrency(value)}</td>
+							</tr>
+						))}
+						<tr className="bg-gray-200 font-semibold">
+							<td className="py-2 px-4">Total</td>
+							<td className="text-right py-2 px-4">{formatCurrency(total)}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</Link>
+	);
+}
+
+interface TableRow { key: string; name: string; amount: number }
+
+function TablePanel({
+	href, title, rows, emptyMessage, spanFull,
+}: {
+	href: string;
+	title: string;
+	rows: TableRow[];
+	emptyMessage: string;
+	spanFull?: boolean;
+}) {
+	return (
+		<Link href={href} className={`cursor-pointer${spanFull ? ' md:col-span-2' : ''}`}>
+			<div className="border border-gray-300 rounded shadow-sm">
+				<PanelHeader>{title}</PanelHeader>
+				{spanFull && <div className="border-b border-orange-300 mx-4 my-1 h-[2px]" />}
+				<table className="w-full">
+					<thead>
+						<tr className="border-b">
+							<th className="text-left  py-2 px-4">NAME</th>
+							<th className="text-right py-2 px-4">AMOUNT</th>
+						</tr>
+					</thead>
+					<tbody>
+						{rows.length > 0 ? (
+							rows.map(({ key, name, amount }, i) => (
+								<tr key={key} className={i % 2 === 0 ? 'bg-gray-200' : 'bg-gray-100'}>
+									<td className="py-2 px-4">{name}</td>
+									<td className="text-right py-2 px-4">{formatCurrency(amount)}</td>
+								</tr>
+							))
+						) : (
+							<tr>
+								<td colSpan={2} className="py-4 px-4 text-center text-gray-500">
+									{emptyMessage}
+								</td>
+							</tr>
+						)}
+					</tbody>
+				</table>
+			</div>
+		</Link>
+	);
+}
+
+function PanelHeader({ children }: { children: React.ReactNode }) {
+	return (
+		<div className="bg-[#2d2150] text-white font-semibold py-2 px-4 text-center">
+			{children}
+		</div>
+	);
 }
