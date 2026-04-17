@@ -85,7 +85,8 @@ async function getDonorStats(
 	// Derive per-donor stats matching original business logic
 	const statsMap = new Map<string, DonorStats>();
 
-	for (const [username, acc] of raw.entries()) {
+	// FIX: Use Array.from() to avoid IterableIterator downlevelIteration error
+	for (const [username, acc] of Array.from(raw.entries())) {
 		statsMap.set(username, {
 			totalLending: acc.lending,
 			totalRefund: acc.refund,
