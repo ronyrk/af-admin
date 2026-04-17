@@ -116,7 +116,7 @@ async function fetchJSON<T>(url: string, label: string): Promise<T[]> {
  */
 async function batchGetDonorNames(usernames: string[]): Promise<Map<string, string>> {
 	// Deduplicate
-	const unique = [...new Set(usernames)];
+	const unique = Array.from(new Set(usernames));
 
 	// Split into cached vs uncached
 	const uncached = unique.filter((u) => !donorNameCache.has(u));
