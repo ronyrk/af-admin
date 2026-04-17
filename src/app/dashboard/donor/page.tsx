@@ -165,24 +165,18 @@ const TotalOutstanding = async (): Promise<string> => {
 		.reduce((sum, item) => sum + Number(item.loanPayment || 0), 0);
 
 	// Calculate total DONATE amount for non-DONOR status.
-	const totalLanderDonate = paymentList
+	const totalDonate = paymentList
 		.filter((item) => item.type === "DONATE" && item.status !== "DONOR")
-		.reduce((sum, item) => sum + Number(item.donate || 0), 0);
-	const totalDonorDonate = paymentList
-		.filter((item) => item.type === "DONATE" && item.status === "DONOR")
 		.reduce((sum, item) => sum + Number(item.donate || 0), 0);
 
 	// Calculate the total outstanding amount.
-	const result = totalLending - (totalRefund + totalLanderDonate);
-
-	const finalResult = result + totalDonorDonate; // Add donor donations to the outstanding amount.
-
+	const result = totalLending - (totalRefund + totalDonate);
 
 	// Format the result for readability.
 	const formattedResult = new Intl.NumberFormat("en-BN", {
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 0,
-	}).format(finalResult);
+	}).format(result);
 
 	// Return the formatted result with "/=" appended.
 	return `${formattedResult}/=`;
