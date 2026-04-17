@@ -1,340 +1,333 @@
-import React, { Suspense } from 'react'
+import React, { Suspense } from "react";
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableFooter,
-	TableHead,
-	TableHeader,
-	TableRow,
+	Table, TableBody, TableCell, TableFooter,
+	TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { DonorIProps, DonorPaymentIProps } from '@/types';
-import { cookies } from 'next/headers';
-import { Input } from '@/components/ui/input';
-import DeleteButton from '@/components/DeleteButton';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { ClipboardPenLine } from 'lucide-react';
-import prisma from '@/lib/prisma';
-import { getSearchDonor } from '@/lib/getSearchDonor';
-import SearchBox from '@/components/SearchBox';
-import PaginationPart from '@/components/Pagination';
+import { cookies } from "next/headers";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import prisma from "@/lib/prisma";
+import { ClipboardPenLine } from "lucide-react";
+import SearchBox from "@/components/SearchBox";
+import { getSearchDonor } from "@/lib/getSearchDonor";
+import { verifyToken } from "@/lib/auth";
+import DeleteButton from "@/components/DeleteButton";
+import Pagination from "@/components/beneficial-pagination";
+import { DonorIProps } from "@/types";
+import { UserPayload } from "@/lib/SearchBorrowers";
 
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-const TotalAmount = async (): Promise<string> => {
-	// Ensure cookies are processed (likely for authentication or session validation).
-	cookies();
+type SearchParams = { search?: string; page?: string };
 
-	// Fetch all donor payment records from the database.
-	const paymentList = await prisma.donorPayment.findMany();
-
-	// Calculate the total of "LENDING" type payments.
-	const totalLending = paymentList
-		.filter((item) => item.type === "LENDING")
-		.reduce((sum, item) => sum + Number(item.amount), 0);
-
-	// Calculate the total donations where status is "DONOR".
-	const totalDonations = paymentList
-		.filter((item) => item.type === "DONATE" && item.status === "DONOR")
-		.reduce((sum, item) => sum + Number(item.donate || 0), 0);
-
-	// Combine the two totals to get the final result.
-	const grandTotal = totalLending + totalDonations;
-
-	// Format the result into a localized format for Bangladesh without decimals.
-	const formattedTotal = new Intl.NumberFormat("en-BD", {
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 0,
-	}).format(grandTotal);
-
-	// Append "/=" to the formatted total.
-	return `${formattedTotal}/=`;
+type DonorStats = {
+	totalLending: number;
+	totalRefund: number;
+	totalDonate: number;
+	outstanding: number;
 };
 
+type DonorWithStats = DonorIProps & DonorStats;
 
-const calculateRefund = async (): Promise<string> => {
-	// Ensure cookies are processed (likely for authentication or session validation).
-	cookies();
-
-	// Fetch all donor payment records from the database.
-	const paymentList = await prisma.donorPayment.findMany();
-
-	// Calculate the total loan payment.
-	const totalRefund = paymentList
-		.map((item) => Number(item.loanPayment || 0)) // Convert loanPayment to a number, defaulting to 0 if null/undefined.
-		.reduce((sum, current) => sum + current, 0); // Sum up all loan payments.
-
-	// Format the result for Bangladesh without decimals.
-	const formattedTotal = new Intl.NumberFormat("en-BD", {
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 0,
-	}).format(totalRefund);
-
-	// Append "/=" to the formatted total and return.
-	return `${formattedTotal}/=`;
+type FooterTotals = {
+	totalAmount: number;
+	totalRefund: number;
+	totalDonate: number;
+	totalOutstanding: number;
 };
 
+// ─── Data Fetching ────────────────────────────────────────────────────────────
 
-const TotalDonate = async () => {
-	cookies();
-	const paymentList = await prisma.donorPayment.findMany();
+/**
+ * Single query for all donor payment stats for a given set of usernames.
+ * Replaces N per-row DB calls (TotalLending, TotalRefound, Donate, Outstanding)
+ * with one batched query + JS aggregation.
+ */
+async function getDonorStats(
+	usernames: string[]
+): Promise<Map<string, DonorStats>> {
+	if (usernames.length === 0) return new Map();
 
-	const returnArray2 = paymentList.filter((item) => item.type === "DONATE");
-	let returnStringArray2: string[] = [];
-	returnArray2.forEach((item) => returnStringArray2.push(item.donate as string));
-	const returnNumberArray2 = returnStringArray2.map(Number);
-	const donate = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-	const formatted = new Intl.NumberFormat('en-IN').format(donate)
-
-	return `${formatted}/=`;
-}
-
-const Donate = async (username: string, status: string) => {
-	cookies();
-	const paymentList = await prisma.donorPayment.findMany({
-		where: {
-			donorUsername: username
-		}
+	const payments = await prisma.donorPayment.findMany({
+		where: { donorUsername: { in: usernames } },
+		select: {
+			donorUsername: true,
+			type: true,
+			status: true,
+			amount: true,
+			donate: true,
+			loanPayment: true,
+		},
 	});
 
-	const returnArray2 = paymentList.filter((item) => item.type === "DONATE");
-	let returnStringArray2: string[] = [];
-	returnArray2.forEach((item) => returnStringArray2.push(item.donate as string));
-	const returnNumberArray2 = returnStringArray2.map(Number);
-	const donate = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-	return donate;
-}
+	// Accumulate per-donor
+	const raw = new Map<
+		string,
+		{ lending: number; refund: number; donate: number }
+	>();
 
+	for (const p of payments) {
+		const acc = raw.get(p.donorUsername) ?? { lending: 0, refund: 0, donate: 0 };
 
-
-const TotalLending = async (username: string, status: string) => {
-	cookies();
-	const paymentList = await prisma.donorPayment.findMany({
-		where: {
-			donorUsername: username
+		if (p.type === "LENDING") {
+			acc.lending += Number(p.amount ?? 0);
 		}
-	});
-	const returnArray = paymentList.filter((item) => item.type === "LENDING");
-	let returnStringArray: string[] = [];
-	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
-	const returnNumberArray = returnStringArray.map(Number);
-	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-	const returnArray2 = paymentList.filter((item) => item.type === "DONATE");
-	let returnStringArray2: string[] = [];
-	returnArray2.forEach((item) => returnStringArray2.push(item.donate as string));
-	const returnNumberArray2 = returnStringArray2.map(Number);
-	const donate = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-	const result = status === "LEADER" ? total : total + donate;
-
-	return result;
-}
-
-const TotalRefound = async (username: string, status: string) => {
-	cookies();
-	const paymentList = await prisma.donorPayment.findMany({
-		where: {
-			donorUsername: username
+		if (p.type === "REFOUND") {
+			acc.refund += Number(p.loanPayment ?? 0);
 		}
-	});
-	let returnStringArray: string[] = [];
-	paymentList.forEach((item) => returnStringArray.push(item.loanPayment as string));
-	const returnNumberArray = returnStringArray.map(Number);
-	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-	const result = status === "LEADER" ? total : 0;
-
-	return result;
-}
-const TotalOutstanding = async (): Promise<string> => {
-	// Ensure cookies are processed (likely for authentication or session validation).
-	cookies();
-
-	// Fetch all donor payment records from the database.
-	const paymentList = await prisma.donorPayment.findMany();
-
-	// Calculate total LENDING amount.
-	const totalLending = paymentList
-		.filter((item) => item.type === "LENDING")
-		.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-
-	// Calculate total REFOUND payments.
-	const totalRefund = paymentList
-		.filter((item) => item.type === "REFOUND")
-		.reduce((sum, item) => sum + Number(item.loanPayment || 0), 0);
-
-	// Calculate total DONATE amount for non-DONOR status.
-	const totalDonate = paymentList
-		.filter((item) => item.type === "DONATE" && item.status !== "DONOR")
-		.reduce((sum, item) => sum + Number(item.donate || 0), 0);
-
-	// Calculate the total outstanding amount.
-	const result = totalLending - (totalRefund + totalDonate);
-
-	// Format the result for readability.
-	const formattedResult = new Intl.NumberFormat("en-BN", {
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 0,
-	}).format(result);
-
-	// Return the formatted result with "/=" appended.
-	return `${formattedResult}/=`;
-};
-
-
-const Outstanding = async (username: string, status: string) => {
-	cookies();
-	const paymentList = await prisma.donorPayment.findMany({
-		where: {
-			donorUsername: username
+		if (p.type === "DONATE") {
+			acc.donate += Number(p.donate ?? 0);
 		}
-	});
-	const returnArray = paymentList.filter((item) => item.type === "LENDING");
-	let returnStringArray: string[] = [];
-	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
-	const returnNumberArray = returnStringArray.map(Number);
-	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-	let returnStringArray2: string[] = [];
-	paymentList.forEach((item) => returnStringArray2.push(item.loanPayment as string));
-	const returnNumberArray2 = returnStringArray2.map(Number);
-	const payment = returnNumberArray2.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-	const returnArray3 = paymentList.filter((item) => item.type === "DONATE");
-	let returnStringArray3: string[] = [];
-	returnArray3.forEach((item) => returnStringArray3.push(item.donate as string));
-	const returnNumberArray3 = returnStringArray3.map(Number);
-	const donate = returnNumberArray3.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-	const result = status === "LEADER" ? (total - payment) - donate : 0;
-
-	return result;
-}
-const DonorTotalAmount = async (username: string) => {
-	cookies();
-	const paymentList = await prisma.donorPayment.findMany({
-		where: {
-			donorUsername: username
-		}
-	});
-	const returnArray = paymentList.filter((item) => item.type === "LENDING");
-	let returnStringArray: string[] = [];
-	returnArray.forEach((item) => returnStringArray.push(item.amount as string));
-	const returnNumberArray = returnStringArray.map(Number);
-	const total = returnNumberArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-	const returnArray3 = paymentList.filter((item) => item.type === "DONATE");
-	let returnStringArray3: string[] = [];
-	returnArray3.forEach((item) => returnStringArray3.push(item.donate as string));
-	const returnNumberArray3 = returnStringArray3.map(Number);
-	const donate = returnNumberArray3.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-	return total + donate;
-}
-
-
-async function DonorList({ searchParams }: {
-	searchParams?: {
-		search?: string,
-		page?: string,
+		raw.set(p.donorUsername, acc);
 	}
-}) {
-	cookies();
+
+	// Derive per-donor stats matching original business logic
+	const statsMap = new Map<string, DonorStats>();
+
+	// FIX: Use Array.from() to avoid IterableIterator downlevelIteration error
+	for (const [username, acc] of Array.from(raw.entries())) {
+		statsMap.set(username, {
+			totalLending: acc.lending,
+			totalRefund: acc.refund,
+			totalDonate: acc.donate,
+			// outstanding = lending - refund - donate (mirrors Outstanding fn)
+			outstanding: Math.max(0, acc.lending - acc.refund - acc.donate),
+		});
+	}
+
+	return statsMap;
+}
+
+/**
+ * Single pass over all donorPayments for footer totals.
+ * Replaces 4 independent full-table scans.
+ */
+async function getFooterTotals(): Promise<FooterTotals> {
+	const payments = await prisma.donorPayment.findMany({
+		select: {
+			type: true,
+			status: true,
+			amount: true,
+			donate: true,
+			loanPayment: true,
+		},
+	});
+
+	let totalLending = 0;
+	let totalRefund = 0;
+	let totalDonate = 0;
+	let donorOnlyDonate = 0; // used for outstanding calc
+
+	for (const p of payments) {
+		if (p.type === "LENDING") totalLending += Number(p.amount ?? 0);
+		if (p.type === "REFOUND") totalRefund += Number(p.loanPayment ?? 0);
+		if (p.type === "DONATE") {
+			totalDonate += Number(p.donate ?? 0);
+			if (p.status === "DONOR") donorOnlyDonate += Number(p.donate ?? 0);
+		}
+	}
+
+	// TotalAmount = LENDING + DONOR-status donations (mirrors original TotalAmount)
+	const totalAmount = totalLending + donorOnlyDonate;
+
+	// Outstanding = LENDING - REFOUND payments - non-DONOR donations (mirrors TotalOutstanding)
+	const totalOutstanding = Math.max(
+		0,
+		totalLending - totalRefund - (totalDonate - donorOnlyDonate)
+	);
+
+	return { totalAmount, totalRefund, totalDonate, totalOutstanding };
+}
+
+// ─── DonorList (async server component) ──────────────────────────────────────
+
+async function DonorList({ searchParams, payload, isAdmin }: { searchParams?: SearchParams; payload: UserPayload | null; isAdmin: boolean }) {
 	const query = searchParams?.search || "all";
 	const page = searchParams?.page || "1";
 
-	const donors = await getSearchDonor(query, page) as DonorIProps[];
 
-	async function getStatus(status: string) {
-		if (status === "LEADER") {
-			return "LENDER"
-		} else {
-			return status
-		}
-	};
 
+	// 1. Paginated donors (now role-aware)
+	const { data: donors, pagination } = await getSearchDonor(query, page, payload);
+
+	// 2. Parallel: per-page stats + footer totals
+	const usernames = donors.map((d) => d.username);
+
+	const [statsMap, totals] = await Promise.all([
+		getDonorStats(usernames),
+		getFooterTotals(),
+	]);
+
+	// 3. Enrich donors
+	const enriched: DonorWithStats[] = donors.map((donor) => {
+		const stats = statsMap.get(donor.username) ?? {
+			totalLending: 0,
+			totalRefund: 0,
+			totalDonate: 0,
+			outstanding: 0,
+		};
+		// Ensure amount is always a string for DonorIProps compatibility
+		return { ...donor, amount: donor.amount ?? "", ...stats };
+	});
+
+
+	function getDisplayStatus(status: string) {
+		return status === "LEADER" ? "LENDER" : status;
+	}
 
 	return (
 		<>
 			<TableBody>
-				{
-					donors.map((item, index: number) => (
-						<TableRow key={index}>
-							<TableCell className="font-medium">{item.code}</TableCell>
-							<TableCell className="font-medium uppercase">{item.name}</TableCell>
-							<TableCell className="font-medium uppercase">{getStatus(item.status)}</TableCell>
-							<TableCell className="font-medium uppercase">{TotalLending(item.username, item.status)}</TableCell>
-							<TableCell className="font-medium uppercase">{TotalRefound(item.username, item.status)}</TableCell>
-							<TableCell className="font-medium uppercase">{Donate(item.username, item.status)}</TableCell>
-							<TableCell className="font-medium uppercase">{Outstanding(item.username, item.status)}</TableCell>
-							<TableCell className="font-medium uppercase">
-								<Button className=' bg-color-main' variant={"outline"} size={"sm"} asChild>
-									<Link href={`donor/${item.username}`}><ClipboardPenLine /></Link>
-								</Button>
+				{enriched.map((item) => (
+					<TableRow key={item.username}>
+						<TableCell className="font-medium">{item.code}</TableCell>
+						<TableCell className="font-medium uppercase">{item.name}</TableCell>
+						<TableCell className="font-medium uppercase">
+							{getDisplayStatus(item.status)}
+						</TableCell>
+						<TableCell className="font-medium">
+							{item.totalLending.toLocaleString()}
+						</TableCell>
+						<TableCell className="font-medium">
+							{item.totalRefund.toLocaleString()}
+						</TableCell>
+						<TableCell className="font-medium">
+							{item.totalDonate.toLocaleString()}
+						</TableCell>
+						<TableCell className="font-medium">
+							{item.outstanding.toLocaleString()}
+						</TableCell>
+						<TableCell>
+							<Button
+								className="bg-color-main"
+								variant="outline"
+								size="sm"
+								asChild
+							>
+								<Link href={`donor/${item.username}`}>
+									<ClipboardPenLine />
+								</Link>
+							</Button>
+						</TableCell>
+						{isAdmin && (
+							<TableCell>
+								<DeleteButton type="donor" username={item.username} />
 							</TableCell>
-							<TableCell className="font-medium uppercase">
-								<DeleteButton type='donor' username={item.username} />
-							</TableCell>
-						</TableRow>
-					))
-				}
+						)}
+					</TableRow>
+				))}
+
+				{enriched.length === 0 && (
+					<TableRow>
+						<TableCell
+							colSpan={isAdmin ? 9 : 8}
+							className="text-center py-8 text-muted-foreground"
+						>
+							No donors found.
+						</TableCell>
+					</TableRow>
+				)}
 			</TableBody>
+
+			<TableFooter>
+				<TableRow>
+					<TableCell className="font-semibold" colSpan={3}>
+						Total
+					</TableCell>
+					<TableCell className="font-semibold">
+						{totals.totalAmount.toLocaleString()}
+					</TableCell>
+					<TableCell className="font-semibold">
+						{totals.totalRefund.toLocaleString()}
+					</TableCell>
+					<TableCell className="font-semibold">
+						{totals.totalDonate.toLocaleString()}
+					</TableCell>
+					<TableCell className="font-semibold">
+						{totals.totalOutstanding.toLocaleString()}
+					</TableCell>
+					<TableCell colSpan={2} />
+				</TableRow>
+			</TableFooter>
+
+			<caption className="caption-bottom">
+				<div className="flex justify-center py-2">
+					<Pagination
+						currentPage={pagination.currentPage}
+						totalPages={pagination.totalPages}
+						hasNext={pagination.hasNext}
+						hasPrev={pagination.hasPrev}
+					/>
+				</div>
+			</caption>
 		</>
-	)
-};
+	);
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default async function DonorPage({ searchParams }: { searchParams?: SearchParams }) {
+	// Read token once at page level (matches borrowers pattern)
+	const token = cookies().get("auth")?.value ?? "";
+	// Get payload from token
+	const payload = (await verifyToken(token)) as { username: string; role: string } | null;
+
+	const isAdmin = payload?.role === "admin";
 
 
-
-async function page({ searchParams }: {
-	searchParams?: {
-		search?: string,
-		page?: string,
-	}
-}) {
-	const length = (await prisma.donor.findMany()).length;
 	return (
-		<div className='flex flex-col'>
+		<div className="flex flex-col">
 			<h2 className="text-xl text-center">Donor List</h2>
-			<div className="flex justify-between p-2 ">
+
+			<div className="flex justify-between p-2">
 				<Button asChild>
-					<Link className=' bg-color-main hover:bg-color-sub' href={`donor/create`}>Donor Create</Link>
+					<Link className="bg-color-main hover:bg-color-sub" href="donor/create">
+						Donor Create
+					</Link>
 				</Button>
-				<SearchBox />
+				<Suspense
+					fallback={
+						<div className="w-48 h-9 bg-muted animate-pulse rounded-md" />
+					}
+				>
+					<SearchBox />
+				</Suspense>
 			</div>
+
 			<Table>
 				<TableHeader>
 					<TableRow>
 						<TableHead>CODE</TableHead>
-						<TableHead className='w-[200px]'>NAME</TableHead>
+						<TableHead className="w-[200px]">NAME</TableHead>
 						<TableHead>TYPE</TableHead>
-						<TableHead className=' uppercase'>amount</TableHead>
-						<TableHead className=' uppercase'>Refound</TableHead>
-						<TableHead className=' uppercase'>donate</TableHead>
-						<TableHead className=' uppercase' >Outstanding</TableHead>
-						<TableHead>UPDATED</TableHead>
-						<TableHead>DELETED</TableHead>
+						<TableHead className="uppercase">AMOUNT</TableHead>
+						<TableHead className="uppercase">REFUND</TableHead>
+						<TableHead className="uppercase">DONATE</TableHead>
+						<TableHead className="uppercase">OUTSTANDING</TableHead>
+						<TableHead>DETAILS</TableHead>
+						{isAdmin && <TableHead>DELETE</TableHead>}
 					</TableRow>
 				</TableHeader>
-				<Suspense fallback={<h2 className='p-4 text-center '>Loading...</h2>} >
-					<DonorList searchParams={searchParams} />
+
+				<Suspense
+					fallback={
+						<TableBody>
+							{Array.from({ length: 10 }).map((_, i) => (
+								<TableRow key={i}>
+									{Array.from({ length: 9 }).map((_, j) => (
+										<TableCell key={j}>
+											<div className="h-4 bg-muted animate-pulse rounded" />
+										</TableCell>
+									))}
+								</TableRow>
+							))}
+						</TableBody>
+					}
+				>
+					<DonorList searchParams={searchParams} isAdmin={isAdmin} payload={payload} />
 				</Suspense>
-				<TableFooter>
-					<TableRow>
-						<TableCell colSpan={3}>Total</TableCell>
-						<TableCell >{TotalAmount()}</TableCell>
-						<TableCell >{calculateRefund()}</TableCell>
-						<TableCell >{TotalDonate()}</TableCell>
-						<TableCell >{TotalOutstanding()}</TableCell>
-					</TableRow>
-				</TableFooter>
 			</Table>
-
-			<div className="flex justify-center py-4">
-				<PaginationPart item={10} data={length} />
-			</div>
 		</div>
-	)
+	);
 }
-
-export default page

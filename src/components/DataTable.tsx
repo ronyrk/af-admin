@@ -15,14 +15,17 @@ import prisma from '@/lib/prisma';
 import DeleteButton from './DeleteButton';
 import LenderTableContext from './LenderTableContext';
 import LenderDonationCreate from './LenderDonationCreate';
-import { string } from 'zod';
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/auth';
 
 interface ParamsIProps {
-    data: DonorIProps
+    data: DonorIProps,
 }
 
-async function TableRowList(params: ParamsIProps) {
+async function TableRowList(params: ParamsIProps & { isAdmin: boolean }) {
     const { status, username } = params.data;
+    const isAdmin = params.isAdmin;
+
     unstable_noStore();
     const data = await prisma.donorPayment.findMany({
         where: {
@@ -63,9 +66,11 @@ async function TableRowList(params: ParamsIProps) {
                         <TableCell>{loanAmount(item.amount as string, item.type)}</TableCell>
                         <TableCell className='px-4'>{loanPayment(item.loanPayment as string, item.donate as string)} </TableCell>
                         <TableCell className='px-4'>{item.type} </TableCell>
-                        <TableCell className='px-4'>
-                            <DeleteButton type='donor/payment' username={item.id as string} />
-                        </TableCell>
+                        {isAdmin && (
+                            <TableCell className='px-4'>
+                                <DeleteButton type='donor/payment' username={item.id as string} />
+                            </TableCell>
+                        )}
                     </TableRow>
                 ))
             }
@@ -75,7 +80,13 @@ async function TableRowList(params: ParamsIProps) {
 }
 
 
-function DonorTable(params: ParamsIProps) {
+async function DonorTable(params: ParamsIProps) {
+    // Read token once at page level (matches borrowers pattern)
+    const token = cookies().get("auth")?.value ?? "";
+    // Get payload from token
+    const payload = (await verifyToken(token)) as { username: string; role: string } | null;
+
+    const isAdmin = payload?.role === "admin";
     return (
         <div className=' border-[2px] rounded-sm px-2'>
             <h2 className=" text-center font-semibold text-xl py-2 text-color-main uppercase">Transaction</h2>
@@ -94,11 +105,11 @@ function DonorTable(params: ParamsIProps) {
                         <TableHead>LOAN AMOUNT</TableHead>
                         <TableHead>LOAN PAYMENT</TableHead>
                         <TableHead>Type</TableHead>
-                        <TableHead>DELETE</TableHead>
+                        {isAdmin && <TableHead>DELETE</TableHead>}
                     </TableRow>
                 </TableHeader>
                 <Suspense fallback={<h2>Loading...</h2>}>
-                    <TableRowList data={params.data} />
+                    <TableRowList data={params.data} isAdmin={isAdmin} />
                 </Suspense>
             </Table>
 
