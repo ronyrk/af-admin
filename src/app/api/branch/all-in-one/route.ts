@@ -131,7 +131,6 @@ const DONOR_STATS_INIT: DonorStats = {
 
 function calcDonorStats(donors: DonorRow[]): DonorStats {
     const acc = { ...DONOR_STATS_INIT };
-    let payment = 0;
 
     for (const donor of donors) {
         if (donor.status === "LEADER") {
@@ -139,7 +138,6 @@ function calcDonorStats(donors: DonorRow[]): DonorStats {
         } else {
             acc.donorDonate += parseAmount(donor.amount);
         }
-        // console.log(donor.amount, donor.status, "donor");
 
         const isLeader = donor.status === "LEADER";
         if (isLeader) acc.leaderCount++;
@@ -170,18 +168,13 @@ function calcDonorStats(donors: DonorRow[]): DonorStats {
 
     // outstanding = total loaned out minus what has been refunded back
     acc.outstanding = acc.lending - (acc.refund + acc.leanderDonate);
-    // add donated amount to outstanding, since it's also money that has left the donor's hands
-    acc.outstanding = acc.outstanding + acc.donorDonate;
-
-
-    console.log(acc)
     return acc;
 }
 // ─── BRANCH SUMMARY ───────────────────────────────────────────────────────────
 
 function calcBranchSummary(b: BorrowerStats, d: DonorStats): BranchSummary {
     return {
-        total: d.outstanding - b.totalBalance,
+        total: d.outstanding - b.totalBalance,  // total balance from borrowers
         totalDonorDisbursed: d.lending + d.donorDonate,  // original loaned = outstanding + refunded
         totalDonorRecovered: d.refund,
         totalDonated: d.totalDonate,

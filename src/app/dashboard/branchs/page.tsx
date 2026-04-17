@@ -70,34 +70,33 @@ export interface ApiResponse {
 
         summary: {
             borrowers: {
-                count: number;
                 totalDisbursed: number;
                 totalRecovered: number;
                 totalBalance: number;
-                totalPaid: number;
-                totalDue: number;
                 totalRunning: number;
                 totalCompleted: number;
             };
 
             donors: {
-                amount: number;       // total donor amount
+                lending: number;       // total donor amount
                 refund: number;       // total loan payments returned to donors
-                donate: number;       // total donated amount
+                donorDonate: number;
+                leanderDonate: number;
+                totalDonate: number;  // total donated amount
                 outstanding: number;  // amount still loaned out (not yet refunded)
                 leaderCount: number;
                 donorCount: number;
             };
 
             branch: {
-                totalFunds: number;
-                totalLoanOut: number;
-                totalLoanRecovered: number;
-                totalLoanBalance: number;
+                total: number;
+                totalDonorDisbursed: number;
+                totalDonorRecovered: number;
+                totalDonated: number;
+                totalDonorOutstanding: number;
                 totalBorrowerDisbursed: number;
                 totalBorrowerRecovered: number;
                 totalBorrowerBalance: number;
-                totalBorrowerDue: number;
             };
         };
     };
@@ -117,7 +116,6 @@ export default async function DashboardPage() {
             }
         });
         const data: ApiResponse = await response.json();
-        console.log('Branchs data:', data.data.summary.branch.totalFunds);
 
         return (
             <div className=''>
@@ -140,15 +138,15 @@ export default async function DashboardPage() {
                                         <tbody>
                                             <tr className="bg-gray-200">
                                                 <td className="py-2 px-4">DONOR & LENDER</td>
-                                                <td className="text-right py-2 px-4">{formatCurrency(100)}</td>
+                                                <td className="text-right py-2 px-4">{formatCurrency(data.data.summary.donors.outstanding)}</td>
                                             </tr>
                                             <tr className="bg-gray-100">
                                                 <td className="py-2 px-4">BORROWERS</td>
-                                                <td className="text-right py-2 px-4">{formatCurrency(data.data.summary.branch.totalFunds)}</td>
+                                                <td className="text-right py-2 px-4">{formatCurrency(data.data.summary.borrowers.totalBalance)}</td>
                                             </tr>
                                             <tr className="bg-gray-200 font-semibold">
                                                 <td className="py-2 px-4">Total</td>
-                                                <td className="text-right py-2 px-4">{formatCurrency(100)}</td>
+                                                <td className="text-right py-2 px-4">{formatCurrency(data.data.summary.branch.total)}</td>
                                             </tr>
                                         </tbody>
                                     </table>
