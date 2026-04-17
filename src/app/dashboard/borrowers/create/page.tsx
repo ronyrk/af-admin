@@ -14,111 +14,208 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import axios from "axios"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import axios, { AxiosError } from "axios"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
-import { BranchIProps, DonorIProps, LoanIProps } from "@/types"
-import { useState } from "react"
+import { BranchIProps, LoanIProps } from "@/types"
+import { useCallback, useMemo, useState } from "react"
 import { UploadButton } from "@/lib/uploadthing"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { useAuthContext } from "@/components/auth-provider"
 
+// ─── Constants ────────────────────────────────────────────────────────────────
 
+const BRANCH_STALE_TIME = 5 * 60 * 1000 // 5 minutes — branch list rarely changes
+
+// ─── Schema ───────────────────────────────────────────────────────────────────
 
 const formSchema = z.object({
-	code: z.string().min(4),
-	username: z.string(),
-	branch: z.string(),
-	balance: z.string(),
-	about: z.optional(z.string()),
-	phone: z.string(),
-	occupation: z.string(),
-	address: z.string(),
-	name: z.string(),
-});
+	code: z.string().min(4, "Code must be at least 4 characters"),
+	username: z.string().min(1, "Username is required"),
+	branch: z.string().min(1, "Branch is required"),
+	balance: z.string().min(1, "Amount is required"),
+	about: z.string().optional(),
+	phone: z.string().min(1, "Phone is required"),
+	occupation: z.string().min(1, "Occupation is required"),
+	address: z.string().min(1, "Address is required"),
+	name: z.string().min(1, "Name is required"),
+})
+
+type FormValues = z.infer<typeof formSchema>
+
+// ─── Upload State ──────────────────────────────────────────────────────────────
+
+type UploadState = {
+	image: string
+	nidFont: string
+	nidBack: string
+	form1: string
+	form2: string
+}
+
+const INITIAL_UPLOADS: UploadState = {
+	image: "",
+	nidFont: "",
+	nidBack: "",
+	form1: "",
+	form2: "",
+}
+
+// ─── Helpers (outside component — stable references) ──────────────────────────
+
+/** Replaces whitespace with hyphens for username formatting */
+const formatUsername = (value: string) => value.replace(/\s/g, "-")
+
+/** Extracts a user-facing error message from Axios or unknown errors */
+const getErrorMessage = (error: unknown): string => {
+	if (axios.isAxiosError(error)) {
+		return error.response?.data?.message ?? error.message
+	}
+	if (error instanceof Error) return error.message
+	return "Something went wrong"
+}
+
+// ─── Upload Field Component ────────────────────────────────────────────────────
+
+type UploadFieldProps = {
+	label: string
+	uploaded: boolean
+	onUploadComplete: (url: string) => void
+}
+
+function UploadField({ label, uploaded, onUploadComplete }: UploadFieldProps) {
+	return (
+		<div className="flex flex-col items-center justify-center gap-1">
+			<Label className="pb-1">
+				{label}
+				{uploaded && (
+					<span className="ml-1 text-xs text-green-500">✓</span>
+				)}
+			</Label>
+			<UploadButton
+				className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
+				endpoint="imageUploader"
+				onClientUploadComplete={(res) => {
+					onUploadComplete(res[0].url)
+					toast.success(`${label} uploaded`)
+				}}
+				onUploadError={(error: Error) => {
+					toast.error(error.message)
+				}}
+			/>
+		</div>
+	)
+}
+
+// ─── Main Component ────────────────────────────────────────────────────────────
 
 function BorrowerCreate() {
-	const [image, setImage] = useState<string>("");
-	const [nidFont, setNidFont] = useState<string>("");
-	const [nidBack, setNidBack] = useState<string>("");
-	const [Form1, setForm1] = useState<string>("");
-	const [Form2, setForm2] = useState<string>("");
-	const router = useRouter();
+	const [uploads, setUploads] = useState<UploadState>(INITIAL_UPLOADS)
+	const router = useRouter()
+	const { user } = useAuthContext()
+	const queryClient = useQueryClient()
 
-	// Function to handle username input change
-	const handleUsernameChange = (value: string) => {
-		// Replace spaces with hyphens
-		const formattedValue = value.replace(/\s/g, '-');
-		return formattedValue;
-	};
-	// 1. Define your form.
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
-	});
+	// All 5 uploads must be present before submission is allowed
+	const isUploadComplete = useMemo(
+		() => Object.values(uploads).every((url) => url.length > 0),
+		[uploads]
+	)
 
-	const { mutate, isPending } = useMutation({
-		mutationFn: async ({ username, name, code, branch, address, about, balance, form1, form2, nidback, nidfont, occupation, phone, photosUrl }: LoanIProps) => {
-			const response = await axios.post("/api/loan", {
-				username, name, code, branch, address, about, balance, form1, form2, nidback, nidfont, occupation, phone, photosUrl
-			});
-			return response.data;
+	// Stable setter — avoids re-creating a new function per upload field
+	const handleUpload = useCallback(
+		(key: keyof UploadState) => (url: string) => {
+			setUploads((prev) => ({ ...prev, [key]: url }))
 		},
-	});
-	// Branch List
-	const { data, isLoading } = useQuery<BranchIProps[]>({
+		[]
+	)
+
+	// ── Form ──────────────────────────────────────────────────────────────────
+
+	const form = useForm<FormValues>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			code: "",
+			username: "",
+			name: "",
+			branch: "",
+			address: "",
+			balance: "",
+			occupation: "",
+			phone: "",
+			about: "",
+		},
+	})
+
+	// ── Branch Query ──────────────────────────────────────────────────────────
+
+	const { data: branches, isLoading: branchesLoading } = useQuery<BranchIProps[]>({
 		queryKey: ["branch"],
 		queryFn: async () => {
-			const response = await axios.get('/api/branch');
-			return response.data;
+			const response = await axios.get("/api/branch")
+			return response.data
 		},
-		refetchInterval: 10000,
-	});
+		staleTime: BRANCH_STALE_TIME,     // use cached data for 5 min
+		gcTime: BRANCH_STALE_TIME * 2,    // keep in cache for 10 min
+	})
 
-	const upload = image.length >= 1 && nidBack.length >= 1 && nidFont.length >= 1 && Form1.length >= 1 && Form2.length >= 1;
+	// ── Mutation ──────────────────────────────────────────────────────────────
 
-	// 2. Define a submit handler.
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		const photosUrl = image;
-		const form1 = Form1;
-		const form2 = Form2;
-		const nidfont = nidFont;
-		const nidback = nidBack;
-		const code = values.code;
-		const username = values.username;
-		const address = values.address;
-		const balance = values.balance;
-		const name = values.name;
-		const occupation = values.occupation;
-		const phone = values.phone;
-		const about = values.about;
-		const branch = values.branch;
-		// Borrowers Created
-		if (upload === true) {
-			mutate({ username, name, code, branch, address, about, balance, form1, form2, nidback, nidfont, occupation, phone, photosUrl }, {
-				onSuccess: ({ message, loan }: { message: string, loan: LoanIProps }) => {
-					if (loan?.id) {
-						toast.success(message);
-					} else {
-						toast.error(message);
-					}
-					router.push(`/dashboard/borrowers`);
-					router.refresh();
-				},
-				onError: ({ message }: { message: any }) => {
-					toast.error(message);
-				}
-			});
-		} else {
-			toast.error("Upload Photo");
+	const { mutate, isPending } = useMutation({
+		mutationFn: async (payload: LoanIProps) => {
+			const response = await axios.post("/api/loan", payload)
+			return response.data
+		},
+		onSuccess: ({ message, loan }: { message: string; loan: LoanIProps }) => {
+			if (loan?.id) {
+				toast.success(message)
+				// Invalidate borrowers list so it reflects the new entry
+				queryClient.invalidateQueries({ queryKey: ["borrowers"] })
+			} else {
+				toast.error(message)
+			}
+			router.push("/dashboard/borrowers")
+			router.refresh()
+		},
+		onError: (error: unknown) => {
+			toast.error(getErrorMessage(error))
+		},
+	})
+
+	// ── Submit Handler ────────────────────────────────────────────────────────
+
+	function onSubmit(values: FormValues) {
+		if (!isUploadComplete) {
+			toast.error("Please upload all required photos before submitting")
+			return
 		}
-	};
+
+		mutate({
+			...values,
+			photosUrl: uploads.image,
+			form1: uploads.form1,
+			form2: uploads.form2,
+			nidfont: uploads.nidFont,
+			nidback: uploads.nidBack,
+		})
+	}
+
+	// ── Render ────────────────────────────────────────────────────────────────
 
 	return (
-		<div className="">
+		<div>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-					<div className="grid items-center grid-flow-row-dense grid-cols-3 gap-3 ">
+					<div className="grid grid-flow-row-dense grid-cols-3 items-center gap-3">
+
+						{/* Code */}
 						<FormField
 							control={form.control}
 							name="code"
@@ -126,13 +223,14 @@ function BorrowerCreate() {
 								<FormItem>
 									<FormLabel>Code</FormLabel>
 									<FormControl>
-										<Input placeholder="code" {...field} />
+										<Input placeholder="Code" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
 
+						{/* Username */}
 						<FormField
 							control={form.control}
 							name="username"
@@ -140,18 +238,20 @@ function BorrowerCreate() {
 								<FormItem>
 									<FormLabel>Username</FormLabel>
 									<FormControl>
-										<Input placeholder="username"
+										<Input
+											placeholder="Username"
 											{...field}
-
-											onChange={(e) => {
-												const formattedValue = handleUsernameChange(e.target.value);
-												field.onChange(formattedValue);
-											}} />
+											onChange={(e) =>
+												field.onChange(formatUsername(e.target.value))
+											}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
+
+						{/* Name */}
 						<FormField
 							control={form.control}
 							name="name"
@@ -165,34 +265,50 @@ function BorrowerCreate() {
 								</FormItem>
 							)}
 						/>
+
+						{/* Branch */}
 						<FormField
 							control={form.control}
 							name="branch"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Branch</FormLabel>
-									<FormControl>
-										<Select onValueChange={field.onChange} defaultValue={field.value}>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Select a verified branch" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{
-													data?.map((item, index) => (
-
-														<SelectItem key={index} value={item.username}>{item.branchName}</SelectItem>
-
-													))
-												}
-											</SelectContent>
-										</Select>
-									</FormControl>
+									<Select
+										onValueChange={field.onChange}
+										defaultValue={field.value}
+										disabled={branchesLoading}
+									>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue
+													placeholder={
+														branchesLoading
+															? "Loading branches..."
+															: "Select a branch"
+													}
+												/>
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{user?.role === "admin"
+												? branches?.map((item) => (
+													<SelectItem key={item.id} value={item.username}>
+														{item.branchName}
+													</SelectItem>
+												))
+												: (
+													<SelectItem value={user?.username as string}>
+														{user?.username}
+													</SelectItem>
+												)}
+										</SelectContent>
+									</Select>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
+
+						{/* Address */}
 						<FormField
 							control={form.control}
 							name="address"
@@ -200,12 +316,14 @@ function BorrowerCreate() {
 								<FormItem>
 									<FormLabel>Address</FormLabel>
 									<FormControl>
-										<Input placeholder="address" {...field} />
+										<Input placeholder="Address" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
+
+						{/* Balance */}
 						<FormField
 							control={form.control}
 							name="balance"
@@ -213,87 +331,41 @@ function BorrowerCreate() {
 								<FormItem>
 									<FormLabel>Amount</FormLabel>
 									<FormControl>
-										<Input type="number" placeholder="amount" {...field} />
+										<Input type="number" placeholder="Amount" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
-						<div className="flex flex-col items-center justify-center p-0">
-							<Label className="pb-1">Profile Picture</Label>
-							<UploadButton
-								className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
-								endpoint="imageUploader"
-								onClientUploadComplete={(res) => {
-									setImage(res[0].url)
-									toast.success("Image Upload successfully")
-								}}
-								onUploadError={(error: Error) => {
-									// Do something with the error.
-									toast.error(error.message);
-								}}
-							/>
-						</div>
-						<div className="flex flex-col items-center justify-center p-0">
-							<Label className="pb-1">Form One Picture</Label>
-							<UploadButton
-								className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
-								endpoint="imageUploader"
-								onClientUploadComplete={(res) => {
-									setForm1(res[0].url)
-									toast.success("Image Upload successfully")
-								}}
-								onUploadError={(error: Error) => {
-									// Do something with the error.
-									toast.error(error.message);
-								}}
-							/>
-						</div>
-						<div className="flex flex-col items-center justify-center p-0">
-							<Label className="pb-1">Form two Picture</Label>
-							<UploadButton
-								className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
-								endpoint="imageUploader"
-								onClientUploadComplete={(res) => {
-									setForm2(res[0].url)
-									toast.success("Image Upload successfully")
-								}}
-								onUploadError={(error: Error) => {
-									// Do something with the error.
-									toast.error(error.message);
-								}}
-							/>
-						</div>
-						<div className="flex flex-col items-center justify-center p-0">
-							<Label className="pb-1">NID Font Picture</Label>
-							<UploadButton
-								className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
-								endpoint="imageUploader"
-								onClientUploadComplete={(res) => {
-									setNidFont(res[0].url)
-									toast.success("Image Upload successfully")
-								}}
-								onUploadError={(error: Error) => {
-									// Do something with the error.
-									toast.error(error.message);
-								}}
-							/>
-						</div>
-						<div className="flex flex-col items-center justify-center p-0">
-							<Label className="pb-1">NID Back Picture</Label>
-							<UploadButton
-								className="ut-button:bg-color-sub ut-button:ut-readying:bg-color-sub/80"
-								endpoint="imageUploader"
-								onClientUploadComplete={(res) => {
-									setNidBack(res[0].url)
-									toast.success("Image Upload successfully")
-								}}
-								onUploadError={(error: Error) => {
-									// Do something with the error.
-									toast.error(error.message);
-								}}
-							/>
-						</div>
+
+						{/* Upload Fields */}
+						<UploadField
+							label="Profile Picture"
+							uploaded={!!uploads.image}
+							onUploadComplete={handleUpload("image")}
+						/>
+						<UploadField
+							label="Form One Picture"
+							uploaded={!!uploads.form1}
+							onUploadComplete={handleUpload("form1")}
+						/>
+						<UploadField
+							label="Form Two Picture"
+							uploaded={!!uploads.form2}
+							onUploadComplete={handleUpload("form2")}
+						/>
+						<UploadField
+							label="NID Front Picture"
+							uploaded={!!uploads.nidFont}
+							onUploadComplete={handleUpload("nidFont")}
+						/>
+						<UploadField
+							label="NID Back Picture"
+							uploaded={!!uploads.nidBack}
+							onUploadComplete={handleUpload("nidBack")}
+						/>
+
+						{/* Occupation */}
 						<FormField
 							control={form.control}
 							name="occupation"
@@ -301,12 +373,14 @@ function BorrowerCreate() {
 								<FormItem>
 									<FormLabel>Occupation</FormLabel>
 									<FormControl>
-										<Input placeholder="occupation" {...field} />
+										<Input placeholder="Occupation" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
+
+						{/* Phone */}
 						<FormField
 							control={form.control}
 							name="phone"
@@ -314,12 +388,14 @@ function BorrowerCreate() {
 								<FormItem>
 									<FormLabel>Phone</FormLabel>
 									<FormControl>
-										<Input placeholder="phone" {...field} />
+										<Input placeholder="Phone" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
+
+						{/* About */}
 						<div className="col-span-2">
 							<FormField
 								control={form.control}
@@ -328,7 +404,11 @@ function BorrowerCreate() {
 									<FormItem>
 										<FormLabel>About</FormLabel>
 										<FormControl>
-											<Textarea cols={20} rows={4} placeholder="Type your message here." {...field} />
+											<Textarea
+												rows={4}
+												placeholder="Type your message here."
+												{...field}
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -336,11 +416,18 @@ function BorrowerCreate() {
 							/>
 						</div>
 					</div>
-					{isPending ? <Button disabled >Loading...</Button> : <Button disabled={upload === false} type="submit">Submit</Button>}
+
+					{/* Submit */}
+					<Button
+						type="submit"
+						disabled={isPending || !isUploadComplete}
+					>
+						{isPending ? "Submitting..." : "Submit"}
+					</Button>
 				</form>
 			</Form>
 		</div>
 	)
 }
 
-export default BorrowerCreate;
+export default BorrowerCreate

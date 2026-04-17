@@ -25,6 +25,8 @@ import { Button } from './ui/button';
 import BorrowersLoanCreate from './BorrowersLoanCreate';
 import BorrowersLoanPayment from './BorrowersLoanPayment';
 import DeleteButton from './DeleteButton';
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/auth';
 
 function Zero(data: string) {
     if (Number(data) !== 0) {
@@ -34,7 +36,7 @@ function Zero(data: string) {
     }
 };
 
-async function LoanList({ username, paymentList, borrowers }: { username: string, paymentList: PaymentIProps[], borrowers: LoanIProps }) {
+async function LoanList({ username, paymentList, borrowers, isAdmin }: { username: string, paymentList: PaymentIProps[], borrowers: LoanIProps, isAdmin: boolean }) {
     try {
         unstable_noStore();
         const res = await fetch(`https://af-admin.vercel.app/api/loan_list/${username}`);
@@ -68,9 +70,11 @@ async function LoanList({ username, paymentList, borrowers }: { username: string
                             <TableCell>{Zero(item.loanAmount)}</TableCell>
                             <TableCell>{Zero(item.amount)}</TableCell>
                             <TableCell>{LoanOutStanding(index)}</TableCell>
-                            <TableCell className='px-4'>
-                                <DeleteButton type='payment' username={item.id as string} />
-                            </TableCell>
+                            {isAdmin && (
+                                <TableCell className='px-4'>
+                                    <DeleteButton type='payment' username={item.id as string} />
+                                </TableCell>
+                            )}
                         </TableRow>
                     ))
                 }
@@ -82,7 +86,10 @@ async function LoanList({ username, paymentList, borrowers }: { username: string
 }
 
 
-function BorrowersTransaction({ username, paymentList, data }: { username: string, paymentList: PaymentIProps[], data: LoanIProps }) {
+async function BorrowersTransaction({ username, paymentList, data }: { username: string, paymentList: PaymentIProps[], data: LoanIProps }) {
+    const token = cookies().get("auth")?.value ?? "";
+    const payload = await verifyToken(token) as { username: string; role: string } | null;
+    const isAdmin = payload?.role === "admin";
     return (
         <div className=' border-[2px] rounded-sm px-2'>
             <h2 className=" text-center font-semibold text-xl py-2 text-color-main uppercase">Transaction</h2>
@@ -111,11 +118,11 @@ function BorrowersTransaction({ username, paymentList, data }: { username: strin
                         <TableHead>LOAN AMOUNT</TableHead>
                         <TableHead>LOAN PAYMENT</TableHead>
                         <TableHead>LOAN OUTSTANDING</TableHead>
-                        <TableHead>DELETED</TableHead>
+                        {isAdmin && <TableHead>DELETED</TableHead>}
                     </TableRow>
                 </TableHeader>
                 <Suspense fallback={<h2 className='text-center'>Loading...</h2>}>
-                    <LoanList username={username} paymentList={paymentList} borrowers={data} />
+                    <LoanList isAdmin={isAdmin} username={username} paymentList={paymentList} borrowers={data} />
                 </Suspense>
             </Table>
 

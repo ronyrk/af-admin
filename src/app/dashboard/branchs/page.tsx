@@ -108,7 +108,7 @@ export default async function DashboardPage() {
     try {
         // Ensure cookies are processed
         cookies();
-        const response = await fetch('http://localhost:3000/api/branch/all-in-one', {
+        const response = await fetch('https://af-admin.vercel.app/api/branch/all-in-one', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
