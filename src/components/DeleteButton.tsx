@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 
 interface DeleteButtonProps {
 	username: string;
-	type: "branch" | "donor" | "borrower";
+	type: string;
 }
 
 export default function DeleteButton({ username, type }: DeleteButtonProps) {
