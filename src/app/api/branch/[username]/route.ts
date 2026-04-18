@@ -13,7 +13,7 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 		});
 		return NextResponse.json(result);
 	} catch (error) {
-		console.log(error);
+		// console.log(error);
 		return NextResponse.json({ message: "Branch Get Failed" });
 	}
 };
@@ -92,13 +92,13 @@ export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 			});
 		});
 
-		console.log({ result })
+		// console.log({ result })
 
 		return NextResponse.json({
 			message: "Branch and all related data deleted successfully",
 		});
 	} catch (error) {
-		console.error("Delete branch error:", error);
+		// console.error("Delete branch error:", error);
 		return NextResponse.json(
 			{ error: "Failed to delete branch" },
 			{ status: 500 }

@@ -39,7 +39,7 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
         );
 
     } catch (error) {
-        console.error("Error fetching donor payment:", error);
+        // console.error("Error fetching donor payment:", error);
 
         // Handle different types of errors
         if (error instanceof Error) {

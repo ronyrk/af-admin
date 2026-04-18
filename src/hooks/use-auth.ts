@@ -49,7 +49,7 @@ export function useAuth(): UseAuthReturn {
 
             return decoded;
         } catch (err) {
-            console.error('[Auth] Token decode error:', err);
+            // console.error('[Auth] Token decode error:', err);
             return null;
         }
     }, []);
@@ -74,7 +74,7 @@ export function useAuth(): UseAuthReturn {
                 setError('Failed to refresh auth');
             }
         } catch (err) {
-            console.error('[Auth] Refresh error:', err);
+            // console.error('[Auth] Refresh error:', err);
             setError(err instanceof Error ? err.message : 'Auth error');
             setUser(null);
         } finally {
@@ -106,7 +106,7 @@ export function useAuth(): UseAuthReturn {
                 setError('Logout failed');
             }
         } catch (err) {
-            console.error('[Auth] Logout error:', err);
+            // console.error('[Auth] Logout error:', err);
             setError(err instanceof Error ? err.message : 'Logout error');
         } finally {
             setIsLoading(false);

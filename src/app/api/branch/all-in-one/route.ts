@@ -331,7 +331,7 @@ export async function GET(request: Request): Promise<NextResponse> {
             { status: 200 }
         );
     } catch (error) {
-        console.error("[BRANCH_GET]", error);
+        // console.error("[BRANCH_GET]", error);
         return NextResponse.json(
             { success: false, message: "Internal server error" },
             { status: 500 }

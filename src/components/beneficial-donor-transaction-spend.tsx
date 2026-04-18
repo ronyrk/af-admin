@@ -227,7 +227,7 @@ export function BeneficialDonorSpendTransactionCreate({
                 : "Failed to create spending transaction";
 
             toast.error(errorMessage);
-            console.error("Transaction creation error:", error);
+            // console.error("Transaction creation error:", error);
         }
     });
 
@@ -243,7 +243,7 @@ export function BeneficialDonorSpendTransactionCreate({
             mutate(values);
         } catch (error) {
             toast.error("Failed to submit form");
-            console.error("Form submission error:", error);
+            // console.error("Form submission error:", error);
         }
     }, [mutate, beneficial]);
 

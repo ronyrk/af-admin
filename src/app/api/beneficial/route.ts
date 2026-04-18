@@ -25,7 +25,7 @@ const beneficialCreateSchema = z.object({
 
 // Helper function to handle Prisma errors
 function handlePrismaError(error: any) {
-    console.error('Prisma error:', error);
+    // console.error('Prisma error:', error);
 
     if (error?.code === 'P2002') {
         const target = error?.meta?.target;
@@ -189,7 +189,7 @@ export const POST = async (request: Request) => {
                     );
                 }
             } catch (error) {
-                console.error('Error checking beneficial donor:', error);
+                // console.error('Error checking beneficial donor:', error);
                 return NextResponse.json(
                     { message: "Error validating beneficial donor" },
                     { status: 500 }
@@ -224,7 +224,7 @@ export const POST = async (request: Request) => {
                 }
             }
         } catch (error) {
-            console.error('Error checking existing user:', error);
+            // console.error('Error checking existing user:', error);
             // Continue with creation if check fails
         }
 
@@ -274,7 +274,7 @@ export const POST = async (request: Request) => {
         }
 
     } catch (error: any) {
-        console.error('Unexpected error in POST /api/beneficial:', error);
+        // console.error('Unexpected error in POST /api/beneficial:', error);
 
         // Handle different types of errors
         if (error.name === 'ValidationError') {
@@ -321,7 +321,7 @@ export const GET = async () => {
         );
 
     } catch (error) {
-        console.error('Error retrieving beneficial:', error);
+        // console.error('Error retrieving beneficial:', error);
         return NextResponse.json(
             { message: "Error retrieving beneficial" },
             { status: 500 }

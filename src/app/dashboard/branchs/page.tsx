@@ -158,7 +158,7 @@ export default async function DashboardPage() {
             </div>
         );
     } catch (error) {
-        console.error('Dashboard error:', error);
+        // console.error('Dashboard error:', error);
         return (
             <div className="p-4 bg-red-50 border border-red-200 rounded">
                 <h2 className="text-red-800 font-semibold">Error Loading Dashboard</h2>

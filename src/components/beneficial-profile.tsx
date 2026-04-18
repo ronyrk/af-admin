@@ -260,7 +260,7 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
                 // console.log('Beneficial Donors Response:', response.data);
                 return response.data;
             } catch (error) {
-                console.error('Error fetching beneficial donors:', error);
+                // console.error('Error fetching beneficial donors:', error);
             }
         },
         staleTime: 60 * 1000,
@@ -343,7 +343,7 @@ function BeneficialProfileEdit({ data }: { data: BeneficialIProps }) {
                 router.refresh();
             },
             onError: (error) => {
-                console.error('Update error:', error);
+                // console.error('Update error:', error);
                 toast.error("Profile Update Failed");
             }
         });
