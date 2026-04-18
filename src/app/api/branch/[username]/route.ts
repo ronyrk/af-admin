@@ -39,41 +39,67 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	}
 };
 
-// Deleted branch
 export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
 
-		const loanList = await prisma.loan.findMany({
-			where: {
-				branch: username
-			}
+		// 1. Verify branch exists + fetch related usernames
+		const branch = await prisma.branchList.findUnique({
+			where: { username },
+			select: {
+				username: true,
+				borrowers: { select: { username: true } },
+				donorLists: { select: { username: true } },
+			},
 		});
-		for (const loans of loanList) {
-			await prisma.request.deleteMany({
-				where: {
-					loanusername: loans.username,
-				}
+
+		if (!branch) {
+			return NextResponse.json({ error: "Branch not found" }, { status: 404 });
+		}
+
+		const borrowerUsernames = branch.borrowers.map((b) => b.username);
+		const donorUsernames = branch.donorLists.map((d) => d.username);
+
+		// 2. Sequential transaction — order guaranteed
+		await prisma.$transaction(async (tx) => {
+			// Step 1: Delete borrower payments first (child of borrowers)
+			if (borrowerUsernames.length > 0) {
+				await tx.payment.deleteMany({
+					where: { loanusername: { in: borrowerUsernames } },
+				});
+			}
+
+			// Step 2: Delete donor payments first (child of donors)
+			if (donorUsernames.length > 0) {
+				await tx.donorPayment.deleteMany({
+					where: { donorUsername: { in: donorUsernames } },
+				});
+			}
+
+			// Step 3: Delete borrowers (child of branch)
+			await tx.borrowers.deleteMany({
+				where: { branch: username },
 			});
-			await prisma.payment.deleteMany({
-				where: {
-					loanusername: loans.username,
-				}
+
+			// Step 4: Delete donors (child of branch)
+			await tx.donorList.deleteMany({
+				where: { branch: username },
 			});
-		};
-		await prisma.loan.deleteMany({
-			where: {
-				branch: username
-			}
+
+			// Step 5: Delete branch itself (root)
+			await tx.branchList.delete({
+				where: { username },
+			});
 		});
-		await prisma.member.deleteMany({
-			where: {
-				branch: username,
-			}
+
+		return NextResponse.json({
+			message: "Branch and all related data deleted successfully",
 		});
-		await prisma.branchList.delete({ where: { username } });
-		return NextResponse.json({ message: "deleted successfully" });
 	} catch (error) {
-		return NextResponse.json({ error });
+		console.error("Delete branch error:", error);
+		return NextResponse.json(
+			{ error: "Failed to delete branch" },
+			{ status: 500 }
+		);
 	}
-}
+};

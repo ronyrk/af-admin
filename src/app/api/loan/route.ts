@@ -9,7 +9,7 @@ export const POST = async (request: Request) => {
 	try {
 		const body: LoanIProps = await request.json();
 		const { username, name, code, branch, address, about, disbursed, recovered, balance, form1, form2, nidback, nidfont, occupation, phone, photosUrl } = body;
-		const loan = await prisma.loan.create({
+		const loan = await prisma.borrowers.create({
 			data: {
 				username, name, code, branch, address, about, disbursed, recovered, balance, form1, form2, nidback, nidfont, occupation, phone, photosUrl
 			}
@@ -26,7 +26,7 @@ export const POST = async (request: Request) => {
 // All Loan
 export const GET = async (request: Request) => {
 	try {
-		const loan = await prisma.loan.findMany();
+		const loan = await prisma.borrowers.findMany();
 		return NextResponse.json(loan);
 	} catch (error) {
 		throw new Error("Server Error");

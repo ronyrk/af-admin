@@ -26,7 +26,7 @@ export type BorrowerStats = {
 	due: number;
 };
 export type LoanWithStats = (
-	Awaited<ReturnType<typeof prisma.loan.findMany>>[number]
+	Awaited<ReturnType<typeof prisma.borrowers.findMany>>[number]
 ) & BorrowerStats;
 
 export type PaginatedResult<T> = {
@@ -145,7 +145,7 @@ export async function getSearchBorrowers(
 	const where = buildWhereClause(role, username, query);
 
 	// Step 1 — lightweight projection of all matching usernames
-	const allLoans = await prisma.loan.findMany({
+	const allLoans = await prisma.borrowers.findMany({
 		where,
 		select: { username: true },
 	});
@@ -174,7 +174,7 @@ export async function getSearchBorrowers(
 	}
 
 	// Step 5 — fetch full loan records for this page only
-	const loans = await prisma.loan.findMany({
+	const loans = await prisma.borrowers.findMany({
 		where: { username: { in: pageUsernames } },
 	});
 
@@ -205,7 +205,7 @@ export async function getSearchBorrowers(
 export async function getSearchBorrowersByBranch(
 	page: string,
 	branch: string
-): Promise<PaginatedResult<Awaited<ReturnType<typeof prisma.loan.findMany>>[number]>> {
+): Promise<PaginatedResult<Awaited<ReturnType<typeof prisma.borrowers.findMany>>[number]>> {
 	unstable_noStore();
 
 	if (!branch?.trim()) {
@@ -218,8 +218,8 @@ export async function getSearchBorrowersByBranch(
 	const where = { branch };
 
 	const [data, totalCount] = await prisma.$transaction([
-		prisma.loan.findMany({ where, orderBy: { code: "asc" }, skip, take }),
-		prisma.loan.count({ where }),
+		prisma.borrowers.findMany({ where, orderBy: { code: "asc" }, skip, take }),
+		prisma.borrowers.count({ where }),
 	]);
 
 	return { data, pagination: buildPagination(currentPage, take, totalCount) };
