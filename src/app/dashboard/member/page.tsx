@@ -7,7 +7,7 @@ import Image from 'next/image';
 import DeleteButton from '@/components/DeleteButton';
 
 async function getBranchName(username: string) {
-	const data = await prisma.branch.findUnique({
+	const data = await prisma.branchList.findUnique({
 		where: {
 			username
 		}
