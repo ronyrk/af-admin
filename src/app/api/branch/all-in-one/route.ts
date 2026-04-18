@@ -1,4 +1,4 @@
-import { getAuthToken, getCurrentUser, verifyToken } from "@/lib/auth";
+import { verifyToken } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
@@ -71,48 +71,43 @@ const BORROWER_STATS_INIT: BorrowerStats = {
     totalCompleted: 0,
 };
 
-
 function calcBorrowerStats(borrowers: BorrowerRow[]): BorrowerStats {
     const acc = { ...BORROWER_STATS_INIT };
-    let payment = 0;
-
 
     for (const b of borrowers) {
         const balance = parseAmount(b.balance);
         let loanTotal = 0;
         let paymentTotal = 0;
 
-
-
         for (const p of b.payments) {
-            payment += 1;
-
             loanTotal += parseAmount(p.loanAmount);
             paymentTotal += parseAmount(p.amount);
         }
 
+        // Disbursed = total loan principal + remaining balance
         const disbursed = loanTotal + balance;
 
         acc.totalDisbursed += disbursed;
         acc.totalRecovered += paymentTotal;
-        acc.totalBalance = (acc.totalDisbursed - acc.totalRecovered);
+        acc.totalBalance += balance; // ✅ Fixed: accumulate per-borrower balance
 
-        if (acc.totalBalance < 0) acc.totalRunning++;
-        else if (acc.totalBalance > 0) acc.totalCompleted++;
+        // ✅ Fixed: balance > 0 means loan still running, 0 or less means completed
+        if (balance > 0) acc.totalRunning++;
+        else acc.totalCompleted++;
     }
-    console.log(payment, "payment details borrowers");
+
     return acc;
 }
 
 // ─── DONOR STATS ──────────────────────────────────────────────────────────────
 
 type DonorStats = {
-    lending: number;       // total donor amount
-    refund: number;       // total loan payments returned to donors
+    lending: number;
+    refund: number;
     donorDonate: number;
     leanderDonate: number;
-    totalDonate: number;  // total donated amount
-    outstanding: number;  // amount still loaned out (not yet refunded)
+    totalDonate: number;
+    outstanding: number;
     leaderCount: number;
     donorCount: number;
 };
@@ -126,22 +121,21 @@ const DONOR_STATS_INIT: DonorStats = {
     outstanding: 0,
     leaderCount: 0,
     donorCount: 0,
-
 };
 
 function calcDonorStats(donors: DonorRow[]): DonorStats {
     const acc = { ...DONOR_STATS_INIT };
 
     for (const donor of donors) {
-        if (donor.status === "LEADER") {
+        const isLeader = donor.status === "LEADER";
+
+        if (isLeader) {
             acc.lending += parseAmount(donor.amount);
+            acc.leaderCount++;
         } else {
             acc.donorDonate += parseAmount(donor.amount);
+            acc.donorCount++;
         }
-
-        const isLeader = donor.status === "LEADER";
-        if (isLeader) acc.leaderCount++;
-        else acc.donorCount++;
 
         for (const p of donor.donorPayments) {
             if (p.type === "LENDING") {
@@ -152,30 +146,30 @@ function calcDonorStats(donors: DonorRow[]): DonorStats {
                 acc.refund += parseAmount(p.loanPayment);
             }
 
-            if (p.type === "DONATE" && donor.status === "DONOR") {
-                acc.donorDonate += parseAmount(p.donate);
-            }
-            if (p.type === "DONATE" && donor.status === "LEADER") {
-                acc.leanderDonate += parseAmount(p.donate);
-            }
             if (p.type === "DONATE") {
                 acc.totalDonate += parseAmount(p.donate);
+
+                if (donor.status === "DONOR") {
+                    acc.donorDonate += parseAmount(p.donate);
+                } else if (isLeader) {
+                    acc.leanderDonate += parseAmount(p.donate);
+                }
             }
         }
-
     }
-
 
     // outstanding = total loaned out minus what has been refunded back
     acc.outstanding = acc.lending - (acc.refund + acc.leanderDonate);
+
     return acc;
 }
+
 // ─── BRANCH SUMMARY ───────────────────────────────────────────────────────────
 
 function calcBranchSummary(b: BorrowerStats, d: DonorStats): BranchSummary {
     return {
-        total: d.outstanding - b.totalBalance,  // total balance from borrowers
-        totalDonorDisbursed: d.lending + d.donorDonate,  // original loaned = outstanding + refunded
+        total: d.outstanding - b.totalBalance,
+        totalDonorDisbursed: d.lending + d.donorDonate,
         totalDonorRecovered: d.refund,
         totalDonated: d.totalDonate,
         totalDonorOutstanding: d.outstanding,
@@ -184,8 +178,8 @@ function calcBranchSummary(b: BorrowerStats, d: DonorStats): BranchSummary {
         totalBorrowerBalance: b.totalBalance,
     };
 }
+
 // ─── PRISMA SELECT SHAPE ──────────────────────────────────────────────────────
-// Defined once — reused for type inference + runtime query.
 
 const BRANCH_SELECT = {
     id: true,
@@ -225,7 +219,7 @@ const BRANCH_SELECT = {
             balance: true,
             recovered: true,
             status: true,
-            payments: true
+            payments: true,
         },
     },
     donorLists: {
@@ -242,10 +236,20 @@ const BRANCH_SELECT = {
 export async function GET(request: Request): Promise<NextResponse> {
     const authorization = request.headers.get("authorization");
     const token = authorization?.split(" ")[1];
-    const payload = await verifyToken(token as string);
-    const { username } = payload as { username: string; role: string };
-    try {
 
+    let username: string;
+
+    try {
+        const payload = await verifyToken(token as string);
+        username = (payload as { username: string; role: string }).username;
+    } catch {
+        return NextResponse.json(
+            { success: false, message: "Invalid or expired token" },
+            { status: 401 }
+        );
+    }
+
+    try {
         if (!username) {
             return NextResponse.json(
                 { success: false, message: "Username is required" },
@@ -264,7 +268,7 @@ export async function GET(request: Request): Promise<NextResponse> {
                 { status: 404 }
             );
         }
-        // console.log(branch?.borrowers, "payments count");
+
         // Compute stats — pure functions, no I/O
         const borrowerStats = calcBorrowerStats(branch.borrowers);
         const donorStats = calcDonorStats(branch.donorLists);
