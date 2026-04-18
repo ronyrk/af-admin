@@ -118,7 +118,7 @@ export async function changePassword(
             });
         }
     } catch (error) {
-        console.error("[changePassword]", error);
+        // console.error("[changePassword]", error);
         return {
             success: false,
             errors: "An unexpected error occurred. Please try again.",

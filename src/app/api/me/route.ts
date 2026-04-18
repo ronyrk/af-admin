@@ -87,7 +87,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse<MeRespons
         });
 
     } catch (error) {
-        console.error('[Auth] /api/me error:', error);
+        // console.error('[Auth] /api/me error:', error);
         // FIX: 501 → 500 (Not Implemented vs Internal Server Error)
         return NextResponse.json({ success: false, user: null }, { status: 500 });
     }

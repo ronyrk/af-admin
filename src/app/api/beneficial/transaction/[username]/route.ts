@@ -67,7 +67,7 @@ export const DELETE = async (request: Request, { params }: ParamsIProps) => {
         );
 
     } catch (error: any) {
-        console.error('Beneficial Transaction Deletion Error:', error);
+        // console.error('Beneficial Transaction Deletion Error:', error);
 
         // Handle Prisma-specific errors
         if (error?.code) {

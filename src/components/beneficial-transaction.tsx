@@ -201,7 +201,7 @@ export function BeneficialTransactionCreate({
                 );
             }
 
-            console.error('Transaction creation error:', error);
+            // console.error('Transaction creation error:', error);
 
             // Enhanced error handling with specific messages
             const errorData = error.response?.data;

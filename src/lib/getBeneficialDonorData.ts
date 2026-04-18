@@ -56,7 +56,7 @@ export async function getBeneficialDonorData(params: FilterParams) {
             }
         };
     } catch (error) {
-        console.error('Error fetching beneficial data:', error);
+        // console.error('Error fetching beneficial data:', error);
         return {
             data: [],
             pagination: {

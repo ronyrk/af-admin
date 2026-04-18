@@ -92,7 +92,7 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
                 description: "An unexpected error occurred while fetching donor data",
                 variant: "destructive",
             })
-            console.error("Error fetching donor data:", error)
+            // console.error("Error fetching donor data:", error)
         } finally {
             setIsLoadingDonor(false)
         }
@@ -128,7 +128,7 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
                     description: "An unexpected error occurred. Please try again.",
                     variant: "destructive",
                 })
-                console.error("Error deleting entry:", error)
+                // console.error("Error deleting entry:", error)
             } finally {
                 setIsPending(false)
             }
@@ -162,7 +162,7 @@ export default function DonorPaymentRequest({ initialEntries }: DataEntryListPro
                 description: "An unexpected error occurred. Please try again.",
                 variant: "destructive",
             })
-            console.error("Error approving entry:", error)
+            // console.error("Error approving entry:", error)
         } finally {
             setIsPending(false)
         }

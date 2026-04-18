@@ -14,7 +14,7 @@ export const GET = async () => {
         });
         return NextResponse.json(transactions, { status: 200 });
     } catch (error) {
-        console.error('Fetch Transactions Error:', error);
+        // console.error('Fetch Transactions Error:', error);
         return NextResponse.json(
             {
                 message: "An error occurred while fetching beneficial transactions",
@@ -75,7 +75,7 @@ export const POST = async (request: Request) => {
         );
 
     } catch (error: any) {
-        console.error('Transaction Creation Error:', error);
+        // console.error('Transaction Creation Error:', error);
 
         // Handle JSON parsing errors
         if (error instanceof SyntaxError) {

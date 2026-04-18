@@ -174,7 +174,7 @@ async function fetchBeneficialDonor(username: string): Promise<BeneficialDonorIP
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error fetching beneficial donor:', error);
+        // console.error('Error fetching beneficial donor:', error);
         return null;
     }
 }

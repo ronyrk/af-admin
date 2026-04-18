@@ -81,7 +81,7 @@ export async function deleteEntry(id: string) {
 
 		return { success: true }
 	} catch (error) {
-		console.error("Error deleting entry:", error)
+		// console.error("Error deleting entry:", error)
 		return { success: false, error: "Failed to delete entry" }
 	}
 }
@@ -108,7 +108,7 @@ export async function deleteDonorPaymentRequest(id: string) {
 
 		return { success: true }
 	} catch (error) {
-		console.error("Error deleting entry:", error)
+		// console.error("Error deleting entry:", error)
 		return { success: false, error: "Failed to delete entry" }
 	}
 }
@@ -164,7 +164,7 @@ export async function approveEntry(entry: DonorPaymentRequestIProps) {
 
 		return { success: true };
 	} catch (error) {
-		console.error("Error approving entry:", error);
+		// console.error("Error approving entry:", error);
 		return { success: false, error: "Failed to approve entry" };
 	}
 }
@@ -182,7 +182,8 @@ export async function getDonorData(username: string) {
 			data: donor,
 		}
 	} catch (error) {
-		console.error("Error fetching donor data:", error)
+		// console.error("Error fetching donor data:", error)
+
 		return {
 			success: false,
 			error: "Failed to fetch donor data",

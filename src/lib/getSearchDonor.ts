@@ -81,7 +81,7 @@ export async function getSearchDonor(
     // If payload is present and role-based filtering is needed, add here
     if (payload && payload.role === "branch") {
         // Example: only show donors for this branch (customize as needed)
-        // where = { ...where, branch: payload.username };
+        where = { ...where, branch: payload.username };
         // If not needed, leave as is
     }
 

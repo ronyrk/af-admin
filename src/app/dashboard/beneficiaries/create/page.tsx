@@ -121,7 +121,7 @@ function BeneficialCreate() {
                 }
                 return response.data;
             } catch (error) {
-                console.error('Error fetching districts:', error);
+                // console.error('Error fetching districts:', error);
                 if (axios.isAxiosError(error)) {
                     throw new Error(`Failed to fetch districts: ${error.response?.data?.message || error.message}`);
                 }
@@ -142,13 +142,13 @@ function BeneficialCreate() {
                 // console.log('Beneficial Donors Response:', response.data);
 
                 if (!response.data || !Array.isArray(response.data)) {
-                    console.warn('Invalid donors data format, using fallback');
+                    // console.warn('Invalid donors data format, using fallback');
                     return [];
                 }
 
                 return response.data;
             } catch (error) {
-                console.error('Error fetching beneficial donors:', error);
+                // console.error('Error fetching beneficial donors:', error);
                 // Return empty array instead of mock data for production
                 return [];
             }

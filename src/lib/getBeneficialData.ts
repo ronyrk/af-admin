@@ -76,7 +76,7 @@ export async function getBeneficialData(params: FilterParams) {
             }
         };
     } catch (error) {
-        console.error('Error fetching beneficial data:', error);
+        // console.error('Error fetching beneficial data:', error);
         return {
             data: [],
             pagination: {
@@ -114,7 +114,7 @@ export async function getLocationOptions() {
             })).filter(ps => ps.policeStation && ps.district)
         };
     } catch (error) {
-        console.error('Error fetching location options:', error);
+        // console.error('Error fetching location options:', error);
         return { districts: [], policeStations: [] };
     }
 }

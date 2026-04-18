@@ -18,6 +18,63 @@ import { UserPayload } from "@/lib/SearchBorrowers";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+export interface ApiResponse {
+	success: boolean;
+	data: {
+		branch: {
+			id: string;
+			code: string;
+			username: string;
+			email: string;
+			branchName: string;
+			district: string;
+			ps: string;
+			address: string;
+			photoUrl: string[];
+			status: string;
+			teamLeader: {
+				name: string;
+				phone: string;
+				address: string;
+				occupation: string;
+				photoUrl: string;
+			};
+			president: { name: string; phone: string; address: string; occupation: string };
+			imam: { name: string; phone: string; address: string; occupation: string };
+			secretary: { name: string; phone: string; address: string; occupation: string };
+		};
+		summary: {
+			borrowers: {
+				totalDisbursed: number;
+				totalRecovered: number;
+				totalBalance: number;
+				totalRunning: number;
+				totalCompleted: number;
+			};
+			donors: {
+				lending: number;
+				refund: number;
+				donorDonate: number;
+				leanderDonate: number;
+				totalDonate: number;
+				outstanding: number;
+				leaderCount: number;
+				donorCount: number;
+			};
+			branch: {
+				total: number;
+				totalDonorDisbursed: number;
+				totalDonorRecovered: number;
+				totalDonated: number;
+				totalDonorOutstanding: number;
+				totalBorrowerDisbursed: number;
+				totalBorrowerRecovered: number;
+				totalBorrowerBalance: number;
+			};
+		};
+	};
+}
+
 type SearchParams = { search?: string; page?: string };
 
 type DonorStats = {
@@ -43,6 +100,27 @@ type FooterTotals = {
  * Replaces N per-row DB calls (TotalLending, TotalRefound, Donate, Outstanding)
  * with one batched query + JS aggregation.
  */
+
+async function getBranchSummary(token: string): Promise<ApiResponse | null> {
+	try {
+		const response = await fetch(
+			"https://af-admin.vercel.app/api/branch/all-in-one",
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				next: { revalidate: 60 },
+			}
+		);
+		if (!response.ok) return null;
+		const data: ApiResponse = await response.json();
+		return { success: true, data: data.data };
+	} catch {
+		return null;
+	}
+}
+
 async function getDonorStats(
 	usernames: string[]
 ): Promise<Map<string, DonorStats>> {
@@ -176,6 +254,18 @@ async function DonorList({ searchParams, payload, isAdmin }: { searchParams?: Se
 		return status === "LEADER" ? "LENDER" : status;
 	}
 
+	const branchSummary = await getBranchSummary(cookies().get("auth")?.value ?? "");
+
+
+	// Only show total amount to admin, as per original logic
+	const footerAmount = isAdmin ? totals.totalAmount : branchSummary?.data.summary.donors.lending;
+
+	const footerRefund = isAdmin ? totals.totalRefund : branchSummary?.data.summary.donors.refund;
+
+	const footerDonate = isAdmin ? totals.totalDonate : branchSummary?.data.summary.donors.totalDonate;
+
+	const footerOutstanding = isAdmin ? totals.totalOutstanding : branchSummary?.data.summary.donors.outstanding;
+
 	return (
 		<>
 			<TableBody>
@@ -236,16 +326,16 @@ async function DonorList({ searchParams, payload, isAdmin }: { searchParams?: Se
 						Total
 					</TableCell>
 					<TableCell className="font-semibold">
-						{totals.totalAmount.toLocaleString()}
+						{footerAmount}
 					</TableCell>
 					<TableCell className="font-semibold">
-						{totals.totalRefund.toLocaleString()}
+						{footerRefund}
 					</TableCell>
 					<TableCell className="font-semibold">
-						{totals.totalDonate.toLocaleString()}
+						{footerDonate}
 					</TableCell>
 					<TableCell className="font-semibold">
-						{totals.totalOutstanding.toLocaleString()}
+						{footerOutstanding}
 					</TableCell>
 					<TableCell colSpan={2} />
 				</TableRow>

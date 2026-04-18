@@ -20,7 +20,7 @@ export const POST = async (request: NextRequest) => {
 		// ── Fire both queries simultaneously ─────────────────────────────────
 		const [admin, branch] = await Promise.all([
 			prisma.admin.findUnique({ where: { email } }),
-			prisma.branch.findUnique({ where: { email } }),
+			prisma.branchList.findUnique({ where: { email } }),
 		]);
 
 		const user = admin ?? branch;
@@ -57,6 +57,7 @@ export const POST = async (request: NextRequest) => {
 		return response;
 
 	} catch (error) {
+		// console.log({ error })
 		return NextResponse.json(
 			{ message: "An error occurred during login." },
 			{ status: 500 }

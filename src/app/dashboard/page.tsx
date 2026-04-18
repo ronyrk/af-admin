@@ -105,7 +105,7 @@ async function fetchJSON<T>(url: string, label: string): Promise<T[]> {
 		if (!res.ok) throw new Error(`${res.status}`);
 		return (await res.json()) as T[];
 	} catch (err) {
-		console.error(`[fetchJSON] ${label}:`, err);
+		// console.error(`[fetchJSON] ${label}:`, err);
 		return [];
 	}
 }
@@ -191,7 +191,7 @@ async function calculateTotalOutstanding(): Promise<number> {
 		const result = totalLending - (totalRefund + totalDonate);
 		return result + donate - totalLoanRefund;
 	} catch (err) {
-		console.error('[calculateTotalOutstanding]:', err);
+		// console.error('[calculateTotalOutstanding]:', err);
 		return 0;
 	}
 }
@@ -351,7 +351,7 @@ export default async function DashboardPage() {
 			</div>
 		);
 	} catch (err) {
-		console.error('[DashboardPage]:', err);
+		// console.error('[DashboardPage]:', err);
 		return (
 			<div className="p-4 bg-red-50 border border-red-200 rounded">
 				<h2 className="text-red-800 font-semibold">Error Loading Dashboard</h2>
