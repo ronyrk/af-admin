@@ -8,7 +8,7 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
 
-		const result = await prisma.branch.findUnique({
+		const result = await prisma.branchList.findUnique({
 			where: { username }
 		});
 		return NextResponse.json(result);
@@ -25,7 +25,7 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 		const { username } = params;
 		const body = await request.json();
 		const { password, branchName, address, photoUrl, teamLeaderName, teamLeaderAddress, teamLeaderPhone, teamLeaderOccupation, teamLeaderPhotoUrl, presidentName, presidentAddress, presidentPhone, presidentOccupation, ImamName, ImamAddress, ImamPhone, ImamOccupation, SecretaryName, SecretaryAddress, SecretaryPhone, SecretaryOccupation, district, ps } = body;
-		const result = await prisma.branch.update({
+		const result = await prisma.branchList.update({
 			where: {
 				username
 			},
@@ -71,7 +71,7 @@ export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 				branch: username,
 			}
 		});
-		await prisma.branch.delete({ where: { username } });
+		await prisma.branchList.delete({ where: { username } });
 		return NextResponse.json({ message: "deleted successfully" });
 	} catch (error) {
 		return NextResponse.json({ error });

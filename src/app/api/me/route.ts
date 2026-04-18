@@ -37,7 +37,7 @@ async function fetchUserByRole(username: string, role: Role) {
         return user ? { ...user, name: user.name } : null;
     }
 
-    const user = await prisma.branch.findUnique({
+    const user = await prisma.branchList.findUnique({
         where: { username },
         select: { username: true, branchName: true, email: true },
     });

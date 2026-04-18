@@ -13,7 +13,7 @@ export async function GetBranchDetails(username: string) {
 		};
 		const loan: LoanIProps = await res.json();
 		const BranchUserName = loan.branch;
-		const branch = await prisma.branch.findUnique({ where: { username: BranchUserName } });
+		const branch = await prisma.branchList.findUnique({ where: { username: BranchUserName } });
 		return `${branch?.branchName}`;
 	} catch (error) {
 		throw new Error("Server Error  Branch");

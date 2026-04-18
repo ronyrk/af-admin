@@ -111,16 +111,9 @@ function NavbarContent() {
 									{/* User Actions */}
 									<DropdownMenuGroup>
 										<DropdownMenuItem asChild>
-											<Link href="/dashboard/profile" className="flex items-center gap-2 cursor-pointer">
-												<User className="w-4 h-4" />
-												<span>Profile Settings</span>
-											</Link>
-										</DropdownMenuItem>
-
-										<DropdownMenuItem asChild>
-											<Link href="/dashboard/settings" className="flex items-center gap-2 cursor-pointer">
+											<Link href="/dashboard/password" className="flex items-center gap-2 cursor-pointer">
 												<Settings className="w-4 h-4" />
-												<span>Settings</span>
+												<span>Password Change</span>
 											</Link>
 										</DropdownMenuItem>
 									</DropdownMenuGroup>
