@@ -61,7 +61,7 @@ export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 		const donorUsernames = branch.donorLists.map((d) => d.username);
 
 		// 2. Sequential transaction — order guaranteed
-		await prisma.$transaction(async (tx) => {
+		const result = await prisma.$transaction(async (tx) => {
 			// Step 1: Delete borrower payments first (child of borrowers)
 			if (borrowerUsernames.length > 0) {
 				await tx.payment.deleteMany({
@@ -91,6 +91,8 @@ export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 				where: { username },
 			});
 		});
+
+		console.log({ result })
 
 		return NextResponse.json({
 			message: "Branch and all related data deleted successfully",
