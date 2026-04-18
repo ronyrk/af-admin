@@ -37,18 +37,32 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	}
 };
 
-// Deleted branch
 export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		await prisma.donorPayment.deleteMany({
-			where: {
-				donorUsername: username
-			}
+
+		// Check donor exists first
+		const donor = await prisma.donorList.findUnique({
+			where: { username },
+			select: { username: true },
 		});
-		await prisma.donorList.delete({ where: { username } });
-		return NextResponse.json({ message: "deleted successfully" });
+
+		if (!donor) {
+			return NextResponse.json({ error: "Donor not found" }, { status: 404 });
+		}
+
+		// Delete all related DonorPayments, then the donor — in a transaction
+		await prisma.$transaction([
+			prisma.donorPayment.deleteMany({
+				where: { donorUsername: username },
+			}),
+			prisma.donorList.delete({
+				where: { username },
+			}),
+		]);
+
+		return NextResponse.json({ message: "Donor deleted successfully" });
 	} catch (error) {
-		return NextResponse.json({ error });
+		return NextResponse.json({ error: "Failed to delete donor" }, { status: 500 });
 	}
-}
+};

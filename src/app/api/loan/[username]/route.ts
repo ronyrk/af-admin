@@ -36,23 +36,35 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	}
 };
 
-// Deleted branch
 export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		await prisma.request.deleteMany({
-			where: {
-				loanusername: username
-			}
+
+		// Check borrower exists first
+		const borrower = await prisma.borrowers.findUnique({
+			where: { username },
+			select: { username: true },
 		});
-		await prisma.payment.deleteMany({
-			where: {
-				loanusername: username
-			}
-		});
-		await prisma.borrowers.delete({ where: { username } });
-		return NextResponse.json({ message: "deleted successfully" });
+
+		if (!borrower) {
+			return NextResponse.json({ error: "Borrower not found" }, { status: 404 });
+		}
+
+		// Delete all related data, then the borrower — in a transaction
+		await prisma.$transaction([
+			prisma.request.deleteMany({
+				where: { loanusername: username },
+			}),
+			prisma.payment.deleteMany({
+				where: { loanusername: username },
+			}),
+			prisma.borrowers.delete({
+				where: { username },
+			}),
+		]);
+
+		return NextResponse.json({ message: "Borrower deleted successfully" });
 	} catch (error) {
-		return NextResponse.json({ error });
+		return NextResponse.json({ error: "Failed to delete borrower" }, { status: 500 });
 	}
-}
+};
