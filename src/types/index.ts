@@ -15,6 +15,7 @@ export interface DonorIProps {
 	socailMedia2: string,
 	socailMedia1: string,
 	mobile: string,
+	branch: string,
 };
 export interface IncomeIProps {
 	id?: string,
