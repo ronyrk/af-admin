@@ -1,8 +1,14 @@
 // app/borrowers/page.tsx
 import React, { Suspense } from "react";
 import {
-	Table, TableBody, TableCaption, TableCell,
-	TableFooter, TableHead, TableHeader, TableRow,
+	Table,
+	TableBody,
+	TableCaption,
+	TableCell,
+	TableFooter,
+	TableHead,
+	TableHeader,
+	TableRow,
 } from "@/components/ui/table";
 import { cookies } from "next/headers";
 import { Button } from "@/components/ui/button";
@@ -10,30 +16,13 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { ClipboardPenLine } from "lucide-react";
 import SearchBox from "@/components/SearchBox";
-import { getSearchBorrowers } from "@/lib/SearchBorrowers";
+// BUG FIX: import LoanWithStats so enriched rows are correctly typed
+import { getSearchBorrowers, type LoanWithStats } from "@/lib/SearchBorrowers";
 import { verifyToken } from "@/lib/auth";
 import DeleteButton from "@/components/DeleteButton";
 import Pagination from "@/components/beneficial-pagination";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 type SearchParams = { search?: string; page?: string };
-
-type BorrowerWithStats = {
-	code: string;
-	name: string;
-	username: string;
-	balance: string;
-	totalDisbursed: number;
-	totalRecovered: number;
-	due: number;
-};
-
-type FooterTotals = {
-	totalDisbursed: number;
-	totalRecovered: number;
-	totalDue: number;
-};
 
 export interface ApiResponse {
 	success: boolean;
@@ -49,7 +38,6 @@ export interface ApiResponse {
 			address: string;
 			photoUrl: string[];
 			status: string;
-
 			teamLeader: {
 				name: string;
 				phone: string;
@@ -57,29 +45,10 @@ export interface ApiResponse {
 				occupation: string;
 				photoUrl: string;
 			};
-
-			president: {
-				name: string;
-				phone: string;
-				address: string;
-				occupation: string;
-			};
-
-			imam: {
-				name: string;
-				phone: string;
-				address: string;
-				occupation: string;
-			};
-
-			secretary: {
-				name: string;
-				phone: string;
-				address: string;
-				occupation: string;
-			};
+			president: { name: string; phone: string; address: string; occupation: string };
+			imam: { name: string; phone: string; address: string; occupation: string };
+			secretary: { name: string; phone: string; address: string; occupation: string };
 		};
-
 		summary: {
 			borrowers: {
 				totalDisbursed: number;
@@ -88,18 +57,16 @@ export interface ApiResponse {
 				totalRunning: number;
 				totalCompleted: number;
 			};
-
 			donors: {
-				lending: number;       // total donor amount
-				refund: number;       // total loan payments returned to donors
+				lending: number;
+				refund: number;
 				donorDonate: number;
 				leanderDonate: number;
-				totalDonate: number;  // total donated amount
-				outstanding: number;  // amount still loaned out (not yet refunded)
+				totalDonate: number;
+				outstanding: number;
 				leaderCount: number;
 				donorCount: number;
 			};
-
 			branch: {
 				total: number;
 				totalDonorDisbursed: number;
@@ -114,38 +81,7 @@ export interface ApiResponse {
 	};
 }
 
-// ─── Data Fetching ────────────────────────────────────────────────────────────
-
-/**
- * FIX: Use groupBy aggregate — pushes all math to DB, returns only summary rows.
- * O(1) query instead of O(n) full table scan + JS aggregation.
- */
-async function getBorrowersWithStats(
-	usernames: string[]
-): Promise<Map<string, { totalDisbursed: number; totalRecovered: number }>> {
-	if (usernames.length === 0) return new Map();
-
-	const payments = await prisma.payment.findMany({
-		where: { loanusername: { in: usernames } },
-		select: { loanusername: true, loanAmount: true, amount: true },
-	});
-
-	const statsMap = new Map<string, { totalDisbursed: number; totalRecovered: number }>();
-	for (const p of payments) {
-		const existing = statsMap.get(p.loanusername) ?? { totalDisbursed: 0, totalRecovered: 0 };
-		statsMap.set(p.loanusername, {
-			totalDisbursed: existing.totalDisbursed + Number(p.loanAmount),
-			totalRecovered: existing.totalRecovered + Number(p.amount),
-		});
-	}
-	return statsMap;
-}
-
-/**
- * FIX: Use aggregate instead of fetching all rows.
- * Previously loaded every Payment record into memory — now a single DB sum.
- */
-async function getFooterTotals(): Promise<FooterTotals> {
+async function getFooterTotals() {
 	const payments = await prisma.payment.findMany({
 		select: { loanAmount: true, amount: true },
 	});
@@ -164,21 +100,15 @@ async function getFooterTotals(): Promise<FooterTotals> {
 	};
 }
 
-/**
- * FIX: Only called when needed (non-admin). Keeps the external fetch
- * out of the admin code path entirely.
- */
 async function getBranchSummary(token: string): Promise<ApiResponse | null> {
 	try {
 		const response = await fetch(
 			"https://af-admin.vercel.app/api/branch/all-in-one",
 			{
-				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${token}`,
 				},
-				// Cache for 60s — avoids re-fetching on every page navigation
 				next: { revalidate: 60 },
 			}
 		);
@@ -190,59 +120,34 @@ async function getBranchSummary(token: string): Promise<ApiResponse | null> {
 	}
 }
 
-// ─── BorrowersList (async server component) ───────────────────────────────────
-
 async function BorrowersList({
 	searchParams,
 	token,
 	isAdmin,
+	// BUG FIX: accept the already-verified payload from the page so we don't
+	// call verifyToken a second time inside this component
+	payload,
 }: {
 	searchParams?: SearchParams;
 	token: string;
 	isAdmin: boolean;
+	payload: { username: string; role: string } | null;
 }) {
-	const query = searchParams?.search || "all";
-	const page = searchParams?.page || "1";
+	const query = searchParams?.search ?? "all";
+	const page = searchParams?.page ?? "1";
 
-	const payload = await verifyToken(token);
-
-	// 1. Paginated borrowers from DB
+	// Stats are pre-attached by getSearchBorrowers — no separate stats call needed
 	const { data: borrowers, pagination } = await getSearchBorrowers(
 		query,
 		page,
 		payload
 	);
 
-	// 2. Parallel fetch: stats + footer totals + (branch summary only if branch user)
-	//    FIX: Run independent async work concurrently with Promise.all
-	const usernames = borrowers.map((b) => b.username);
-
-	const [statsMap, totals, branchSummary] = await Promise.all([
-		getBorrowersWithStats(usernames),
+	const [totals, branchSummary] = await Promise.all([
 		isAdmin ? getFooterTotals() : Promise.resolve(null),
 		!isAdmin ? getBranchSummary(token) : Promise.resolve(null),
 	]);
 
-	// 3. Enrich borrowers
-	//    FIX: `borrower.balance` is the *current outstanding balance*, not an extra
-	//    disbursement. Do NOT add it to totalDisbursed — that double-counts.
-	//    totalDisbursed comes entirely from payment records (loanAmount).
-	const enriched: BorrowerWithStats[] = borrowers
-		.map((borrower) => {
-			const stats = statsMap.get(borrower.username) ?? {
-				totalDisbursed: 0,
-				totalRecovered: 0,
-			};
-			return {
-				...borrower,
-				totalDisbursed: stats.totalDisbursed,
-				totalRecovered: stats.totalRecovered,
-				due: Math.max(0, stats.totalDisbursed - stats.totalRecovered),
-			};
-		})
-		.sort((a, b) => b.due - a.due);
-
-	// 4. Footer values
 	const footerDisbursed = isAdmin
 		? totals!.totalDisbursed.toLocaleString()
 		: branchSummary?.data.summary.borrowers.totalDisbursed?.toLocaleString() ?? "—";
@@ -255,12 +160,13 @@ async function BorrowersList({
 		? totals!.totalDue.toLocaleString()
 		: branchSummary?.data.summary.borrowers.totalBalance?.toLocaleString() ?? "—";
 
+	// BUG FIX: total data columns = 5 data + 1 details + (1 delete if admin)
 	const colSpan = isAdmin ? 7 : 6;
 
 	return (
 		<>
 			<TableBody>
-				{enriched.map((item) => (
+				{borrowers.map((item: LoanWithStats) => (
 					<TableRow key={item.username}>
 						<TableCell className="font-medium">{item.code}</TableCell>
 						<TableCell className="font-medium uppercase">{item.name}</TableCell>
@@ -293,7 +199,7 @@ async function BorrowersList({
 					</TableRow>
 				))}
 
-				{enriched.length === 0 && (
+				{borrowers.length === 0 && (
 					<TableRow>
 						<TableCell
 							colSpan={colSpan}
@@ -307,18 +213,20 @@ async function BorrowersList({
 
 			<TableFooter>
 				<TableRow>
+					{/* BUG FIX: colSpan 2 covers CODE + NAME columns correctly */}
 					<TableCell className="font-semibold" colSpan={2}>
 						Total
 					</TableCell>
 					<TableCell className="font-semibold">{footerDisbursed}</TableCell>
 					<TableCell className="font-semibold">{footerRecovered}</TableCell>
 					<TableCell className="font-semibold">{footerDue}</TableCell>
-					<TableCell colSpan={isAdmin ? 2 : 1} />
+					{/* BUG FIX: always 1 for Details; add a second empty cell if admin for Delete */}
+					<TableCell />
+					{isAdmin && <TableCell />}
 				</TableRow>
 			</TableFooter>
 
-			{/* FIX: Pagination sits outside <tfoot> to avoid double-wrapping */}
-			<caption className="caption-bottom">
+			<TableCaption>
 				<div className="flex justify-center py-2">
 					<Pagination
 						currentPage={pagination.currentPage}
@@ -327,21 +235,22 @@ async function BorrowersList({
 						hasPrev={pagination.hasPrev}
 					/>
 				</div>
-			</caption>
+			</TableCaption>
 		</>
 	);
 }
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function BorrowersPage({
 	searchParams,
 }: {
 	searchParams?: SearchParams;
 }) {
-	// FIX: Read token ONCE at the page level and pass it down — not twice
 	const token = cookies().get("auth")?.value ?? "";
-	const payload = await verifyToken(token) as { username: string; role: string } | null;
+	// BUG FIX: verify once here, pass result down — BorrowersList no longer re-verifies
+	const payload = (await verifyToken(token)) as {
+		username: string;
+		role: string;
+	} | null;
 	const isAdmin = payload?.role === "admin";
 
 	return (
@@ -367,13 +276,13 @@ export default async function BorrowersPage({
 			<Table>
 				<TableHeader>
 					<TableRow>
-						<TableHead>CODE</TableHead>
-						<TableHead className="w-[300px]">BORROWERS NAME</TableHead>
-						<TableHead>DISBURSED</TableHead>
-						<TableHead>RECOVERED</TableHead>
-						<TableHead>BALANCE</TableHead>
-						<TableHead>DETAILS</TableHead>
-						{isAdmin && <TableHead>DELETE</TableHead>}
+						<TableHead>Code</TableHead>
+						<TableHead className="w-[300px]">Borrowers name</TableHead>
+						<TableHead>Disbursed</TableHead>
+						<TableHead>Recovered</TableHead>
+						<TableHead>Balance</TableHead>
+						<TableHead>Details</TableHead>
+						{isAdmin && <TableHead>Delete</TableHead>}
 					</TableRow>
 				</TableHeader>
 
@@ -392,11 +301,11 @@ export default async function BorrowersPage({
 						</TableBody>
 					}
 				>
-					{/* FIX: Pass resolved values — no re-reading cookies inside child */}
 					<BorrowersList
 						searchParams={searchParams}
 						token={token}
 						isAdmin={isAdmin}
+						payload={payload}
 					/>
 				</Suspense>
 			</Table>

@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { type ActionResult, changePassword } from "@/actions/change-password";
+import { type ActionResult, changePassword } from "@/lib/actions/change-password";
 import {
     Eye,
     EyeOff,
