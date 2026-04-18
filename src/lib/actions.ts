@@ -171,7 +171,7 @@ export async function approveEntry(entry: DonorPaymentRequestIProps) {
 export async function getDonorData(username: string) {
 	try {
 		cookies();
-		const donor = await prisma.donor.findUnique({
+		const donor = await prisma.donorList.findUnique({
 			where: {
 				username: username,
 			},

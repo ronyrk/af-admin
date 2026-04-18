@@ -2,7 +2,7 @@ import prisma from "./prisma"
 
 export const getDonorName = async (username: string) => {
     try {
-        const user = await prisma.donor.findUnique({
+        const user = await prisma.donorList.findUnique({
             where: {
                 username
             }

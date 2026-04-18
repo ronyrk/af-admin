@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 // Donor List
 export const GET = async () => {
 	try {
-		const result = await prisma.donor.findMany(
+		const result = await prisma.donorList.findMany(
 			{
 				orderBy: {
 					code: "asc"
@@ -26,9 +26,10 @@ export const POST = async (request: Request) => {
 	try {
 		const body: DonorIProps = await request.json();
 		const { username, email, code, password, name, photoUrl, about, amount, lives, hometown, status, socailMedia1, socailMedia2, mobile } = body;
-		const result = await prisma.donor.create({
-			data: { username, email, code, password, name, photoUrl, about, amount, lives, hometown, status, socailMedia1, socailMedia2, mobile }
-		});
+		const result = await prisma.donorList
+			.create({
+				data: { username, email, code, password, name, photoUrl, about, amount, lives, hometown, status, socailMedia1, socailMedia2, mobile }
+			});
 		return NextResponse.json({ message: "successfully Donor Created", result }, { status: 200 });
 	} catch (error: any) {
 		if (error?.code === 'P2002') {

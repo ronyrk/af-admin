@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 export const GET = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		const result = await prisma.loan.findUnique({
+		const result = await prisma.borrowers.findUnique({
 			where: {
 				username
 			},
@@ -24,7 +24,7 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
 		const { name, code, branch, address, about, disbursed, recovered, balance, form1, form2, nidback, nidfont, occupation, phone, photosUrl } = await request.json();
-		const result = await prisma.loan.update({
+		const result = await prisma.borrowers.update({
 			where: { username },
 			data: {
 				name, code, branch, address, about, form1, form2, nidback, nidfont, occupation, phone, photosUrl
@@ -36,23 +36,35 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	}
 };
 
-// Deleted branch
 export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
-		await prisma.request.deleteMany({
-			where: {
-				loanusername: username
-			}
+
+		// Check borrower exists first
+		const borrower = await prisma.borrowers.findUnique({
+			where: { username },
+			select: { username: true },
 		});
-		await prisma.payment.deleteMany({
-			where: {
-				loanusername: username
-			}
-		});
-		await prisma.loan.delete({ where: { username } });
-		return NextResponse.json({ message: "deleted successfully" });
+
+		if (!borrower) {
+			return NextResponse.json({ error: "Borrower not found" }, { status: 404 });
+		}
+
+		// Delete all related data, then the borrower — in a transaction
+		await prisma.$transaction([
+			prisma.request.deleteMany({
+				where: { loanusername: username },
+			}),
+			prisma.payment.deleteMany({
+				where: { loanusername: username },
+			}),
+			prisma.borrowers.delete({
+				where: { username },
+			}),
+		]);
+
+		return NextResponse.json({ message: "Borrower deleted successfully" });
 	} catch (error) {
-		return NextResponse.json({ error });
+		return NextResponse.json({ error: "Failed to delete borrower" }, { status: 500 });
 	}
-}
+};

@@ -5,14 +5,14 @@ import prisma from "./prisma";
 export async function getBorrowers(query: string) {
 	unstable_noStore();
 	if (query === "all") {
-		const result = await prisma.loan.findMany({
+		const result = await prisma.borrowers.findMany({
 			orderBy: {
 				code: "asc"
 			}
 		});
 		return result;
 	}
-	const result = await prisma.loan.findMany({
+	const result = await prisma.borrowers.findMany({
 		where: {
 			OR: [
 				{
@@ -44,7 +44,7 @@ export async function getBorrowers(query: string) {
 
 export async function getBorrowersByBranch(branch: string) {
 	unstable_noStore();
-	const result = await prisma.loan.findMany({
+	const result = await prisma.borrowers.findMany({
 		where: {
 			branch
 		}
