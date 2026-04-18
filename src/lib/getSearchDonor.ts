@@ -69,7 +69,7 @@ export async function getSearchDonor(
     query: string,
     page: string,
     payload?: UserPayload | null
-): Promise<PaginatedResult<Awaited<ReturnType<typeof prisma.donor.findMany>>[number]>> {
+): Promise<PaginatedResult<Awaited<ReturnType<typeof prisma.donorList.findMany>>[number]>> {
     unstable_noStore();
 
     const currentPage = parsePage(page);
@@ -86,13 +86,13 @@ export async function getSearchDonor(
     }
 
     const [data, totalCount] = await prisma.$transaction([
-        prisma.donor.findMany({
+        prisma.donorList.findMany({
             where,
             orderBy: { code: "asc" },
             skip,
             take,
         }),
-        prisma.donor.count({ where }),
+        prisma.donorList.count({ where }),
     ]);
 
     return {

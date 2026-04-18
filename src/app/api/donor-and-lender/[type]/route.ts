@@ -6,10 +6,10 @@ export const GET = async (request: Request, { params }: { params: { type: string
 	try {
 		const { type } = params;
 		if (type === "return") {
-			const result = await prisma.donor.findMany({ where: { status: "LEADER" } });
+			const result = await prisma.donorList.findMany({ where: { status: "LEADER" } });
 			return NextResponse.json(result);
 		} else {
-			const result = await prisma.donor.findMany();
+			const result = await prisma.donorList.findMany();
 			return NextResponse.json(result);
 		}
 

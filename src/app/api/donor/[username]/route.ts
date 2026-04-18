@@ -8,7 +8,7 @@ export const GET = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
 
-		const result = await prisma.donor.findUnique({
+		const result = await prisma.donorList.findUnique({
 			where: {
 				username
 			},
@@ -25,7 +25,7 @@ export const PATCH = async (request: Request, { params }: ParamsIProps) => {
 	try {
 		const { username } = params;
 		const { password, name, photoUrl, about, lives, hometown, status, socailMedia2, socailMedia1, mobile } = await request.json();
-		const result = await prisma.donor.update({
+		const result = await prisma.donorList.update({
 			where: { username },
 			data: {
 				password, name, photoUrl, about, lives, hometown, status, socailMedia2, socailMedia1, mobile
@@ -46,7 +46,7 @@ export const DELETE = async (request: Request, { params }: ParamsIProps) => {
 				donorUsername: username
 			}
 		});
-		await prisma.donor.delete({ where: { username } });
+		await prisma.donorList.delete({ where: { username } });
 		return NextResponse.json({ message: "deleted successfully" });
 	} catch (error) {
 		return NextResponse.json({ error });
