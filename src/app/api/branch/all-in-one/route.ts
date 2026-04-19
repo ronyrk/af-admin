@@ -159,7 +159,7 @@ function calcDonorStats(donors: DonorRow[]): DonorStats {
     }
 
     // outstanding = total loaned out minus what has been refunded back
-    acc.outstanding = acc.lending - (acc.refund + acc.leanderDonate);
+    acc.outstanding = (acc.lending + acc.totalDonate) - (acc.refund + acc.leanderDonate);
 
     return acc;
 }
