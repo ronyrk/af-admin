@@ -270,7 +270,7 @@ export default async function DashboardPage() {
 									{ label: 'DONOR & LENDER', value: data.data.summary.donors.outstanding },
 									{ label: 'BORROWERS', value: data.data.summary.borrowers.totalBalance },
 								]}
-								total={data.data.summary.branch.total}
+								total={data.data.summary.branch.total + data.data.summary.branch.totalBorrowerRecovered}
 							/>
 						</div>
 					) : (
@@ -374,7 +374,7 @@ function FundSummaryPanel({ rows, total }: { rows: SummaryRow[]; total: number }
 					<thead>
 						<tr className="border-b">
 							<th className="text-left  py-2 px-4">Categories</th>
-							<th className="text-right py-2 px-4">Available balance</th>
+							<th className="text-right py-2 px-4">Amount</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -385,7 +385,7 @@ function FundSummaryPanel({ rows, total }: { rows: SummaryRow[]; total: number }
 							</tr>
 						))}
 						<tr className="bg-gray-200 font-semibold">
-							<td className="py-2 px-4">Total</td>
+							<td className="py-2 px-4">Available balance</td>
 							<td className="text-right py-2 px-4">{formatCurrency(total)}</td>
 						</tr>
 					</tbody>
