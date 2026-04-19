@@ -270,7 +270,7 @@ export default async function DashboardPage() {
 									{ label: 'DONOR & LENDER', value: data.data.summary.donors.outstanding },
 									{ label: 'BORROWERS', value: data.data.summary.borrowers.totalBalance },
 								]}
-								total={data.data.summary.branch.total + data.data.summary.branch.totalBorrowerRecovered}
+								total={data.data.summary.branch.total}
 							/>
 						</div>
 					) : (
