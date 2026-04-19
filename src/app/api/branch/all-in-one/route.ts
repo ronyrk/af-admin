@@ -91,12 +91,12 @@ function calcBorrowerStats(borrowers: BorrowerRow[]): BorrowerStats {
         acc.totalRecovered += paymentTotal;
         acc.totalBalance += balance;
         // ✅ Fixed: accumulate per-borrower balance
-        acc.totalBalance = acc.totalDisbursed - acc.totalRecovered;
 
         // ✅ Fixed: balance > 0 means loan still running, 0 or less means completed
         if (balance > 0) acc.totalRunning++;
         else acc.totalCompleted++;
     }
+    acc.totalBalance = acc.totalDisbursed - acc.totalRecovered;
 
     return acc;
 }
