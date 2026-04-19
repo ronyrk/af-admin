@@ -157,6 +157,7 @@ async function getDonorStats(
 			acc.donate += Number(p.donate ?? 0);
 		}
 
+
 		raw.set(p.donorUsername, acc);
 	}
 
@@ -170,7 +171,7 @@ async function getDonorStats(
 			totalRefund: acc.refund,
 			totalDonate: acc.donate,
 			// outstanding = lending - refund - donate (mirrors Outstanding fn)
-			outstanding: Math.max(0, acc.lending - acc.refund - acc.donate),
+			outstanding: Math.max(0, acc.lending - acc.refund + acc.donate),
 		});
 	}
 
